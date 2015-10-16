@@ -58,3 +58,4 @@ docs/_build/
 target/
 
 # SQlite database
+*.sqlite3
