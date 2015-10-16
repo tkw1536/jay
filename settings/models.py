@@ -18,6 +18,6 @@ class GlobalSettings(models.Model):
 	value = models.CharField(max_length = 256)
 
 class VotingSystem(models.Model):
-	subdomain_name = models.SlugField(max_length = 30, null = True)
-	machine_name = models.SlugField(max_length = 50)
+	subdomain_name = models.SlugField(max_length = 30, unique = True, null = True)
+	machine_name = models.SlugField(max_length = 50, unique = True)
 	simple_name = models.CharField(max_length = 80)
