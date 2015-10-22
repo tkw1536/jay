@@ -12,6 +12,7 @@ class SuperAdmin(models.Model):
 	user = models.ForeignKey(User)
 
 class UserProfile(models.Model):
+	user = models.OneToOneField(User)
 	username = models.CharField(max_length = 32, unique = True)
 	fullname = models.CharField(max_length = 128)
 	eid = models.IntegerField()
