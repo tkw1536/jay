@@ -10,13 +10,13 @@ class Admin(models.Model):
 	user = models.ForeignKey(User)
 	system = models.ForeignKey(VotingSystem)
 
-	def __unicode__(self):
+    def __unicode__(self):
         return u'[%s] %s' % (self.system.machine_name, self.user)
 
 class SuperAdmin(models.Model):
 	user = models.ForeignKey(User)
 
-	def __unicode__(self):
+    def __unicode__(self):
         return u'%s' % (self.user)
 
 class UserProfile(models.Model):
@@ -25,7 +25,7 @@ class UserProfile(models.Model):
 	fullname = models.CharField(max_length = 128)
 	eid = models.IntegerField()
 
-	def __unicode__(self):
+    def __unicode__(self):
         return u'[%s] %s' % (self.eid, self.fullname)
 
 admin.site.register(Admin)
