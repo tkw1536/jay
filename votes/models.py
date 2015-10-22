@@ -55,7 +55,7 @@ class Status(models.Model):
 	stage = models.CharField(max_length = 1, choices = STAGES, default = INIT)
 
 class ActiveVote(models.Model):
-	vote = models.OneToOneField(Vote)
+	vote = models.ForeignKey(Vote)
 
 	user = models.ForeignKey(User)
 
