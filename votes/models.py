@@ -18,6 +18,9 @@ class Vote(models.Model):
 	min_votes = models.IntegerField()
 	max_votes = models.IntegerField()
 
+	def __unicode__(self):
+        return u'[%s] %s' % (self.machine_name, self.name)
+
 
 class Option(models.Model):
 	vote = models.ForeignKey(Vote)
@@ -31,6 +34,9 @@ class Option(models.Model):
 	personal_link = models.URLField()
 
 	count = models.IntegerField()
+
+	def __unicode__(self):
+        return u'[%s] %s' % (self.number, self.name)
 
 class Status(models.Model):
 	INIT = 'I'
@@ -54,16 +60,25 @@ class Status(models.Model):
 	public_time = models.DateTimeField(null = True)
 	stage = models.CharField(max_length = 1, choices = STAGES, default = INIT)
 
+	def __unicode__(self):
+        return self.stage
+
 class ActiveVote(models.Model):
 	vote = models.ForeignKey(Vote)
 
 	user = models.ForeignKey(User)
+
+	def __unicode__(self):
+        return u'%s voted for %s' % (self.user, self.vote)
 
 class PassiveVote(models.Model):
 	vote = models.OneToOneField(Vote)
 
 	num_voters = models.IntegerField()
 	num_eligible = models.IntegerField()
+
+	def __unicode__(self):
+        return u'%s of %s voted' % (self.num_voters, self.num_eligible)
 
 admin.site.register(Vote)
 admin.site.register(Option)
