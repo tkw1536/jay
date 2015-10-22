@@ -1,6 +1,6 @@
 from django.db import models
 
-
+from django.contrib import admin
 
 # Create your models here.
 class PrimitiveFilter(models.Model):
@@ -22,9 +22,30 @@ class PrimitiveFilter(models.Model):
 		(TRUE, 'True')
 	)
 
-	field = models.CharField(max_length = 64)
+	field = models.CharField(max_length = 64, null=True, blank=True)
 	operation = models.CharField(max_length = 2, choices = OPERATION_CHOICES)
-	value = models.CharField(max_length = 64)
+	value = models.CharField(max_length = 64, null=True, blank=True)
+
+	def __unicode__(self):
+		op = self.operation
+		word = ''
+		if op == FALSE || op == TRUE:
+			return self.get_operation.display()
+
+		if op == CONTAINS:
+			word = "contains"
+		elif op == REGEX:
+			word = "matches"
+		elif op == GREATER:
+			word = ">"
+		elif op == SMALLER:
+			word = "<"
+		elif op == EQUALS:
+			word = "=="
+
+		return u'%s %s %s' % (self.field, word, self.value)
+
+
 
 class ComplexFilter(models.Model):
 	AND = 'AND'
@@ -45,9 +66,17 @@ class ComplexFilter(models.Model):
 
 	# This is a simple filter if the operation is none. Otherwise left
 	# and right are used to link to more logic filters
-	simple_filter = models.ForeignKey(PrimitiveFilter, null=True)
+	simple_filter = models.ForeignKey(PrimitiveFilter, null=True, blank=True)
 
 	# This is used unless the operation is none, and the primitve filter is set
-	left = models.ForeignKey('self', related_name='parent_left', null=True)
-	right = models.ForeignKey('self', related_name='parent_right', null=True)
+	left = models.ForeignKey('self', related_name='parent_left', null=True, blank=True)
+	right = models.ForeignKey('self', related_name='parent_right', null=True, blank=True)
 
+	def __unicode__(self):
+		if self.operation == NONE:
+			return u'(%s)' % (self.simple_filter)
+		else:
+			return u'(%s %s %s)' % (self.left, self.get_operation_display(), self.right)
+
+admin.site.register(PrimitiveFilter)
+admin.site.register(ComplexFilter)
