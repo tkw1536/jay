@@ -29,7 +29,7 @@ class PrimitiveFilter(models.Model):
 	def __unicode__(self):
 		op = self.operation
 		word = ''
-		if op == FALSE || op == TRUE:
+		if op == FALSE or op == TRUE:
 			return self.get_operation.display()
 
 		if op == CONTAINS:
