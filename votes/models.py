@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.contrib import admin
+
 from settings.models import VotingSystem
 
 
@@ -53,13 +55,18 @@ class Status(models.Model):
 	stage = models.CharField(max_length = 1, choices = STAGES, default = INIT)
 
 class ActiveVote(models.Model):
-	vote = models.ForeignKey(Vote)
+	vote = models.OneToOneField(Vote)
 
 	user = models.ForeignKey(User)
 
 class PassiveVote(models.Model):
-	vote = models.ForeignKey(Vote)
+	vote = models.OneToOneField(Vote)
 
 	num_voters = models.IntegerField()
 	num_eligible = models.IntegerField()
 
+admin.site.register(Vote)
+admin.site.register(Option)
+admin.site.register(Status)
+admin.site.register(ActiveVote)
+admin.site.register(PassiveVote)

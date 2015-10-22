@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.contrib import admin
+
 # Create your models here.
 class GlobalSettings(models.Model):
 	DOMAIN_NAME = 'FQDN'
@@ -21,3 +23,6 @@ class VotingSystem(models.Model):
 	subdomain_name = models.SlugField(max_length = 30, unique = True, null = True)
 	machine_name = models.SlugField(max_length = 50, unique = True)
 	simple_name = models.CharField(max_length = 80)
+
+admin.site.register(GlobalSettings)
+admin.site.register(VotingSystem)
