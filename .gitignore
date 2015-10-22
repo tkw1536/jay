@@ -60,5 +60,8 @@ target/
 # SQlite database
 *.sqlite3
 
-#
+# Ignore Django migrations
 */migrations/*
+
+# Exclude Django settings to not leak sensitive details
+jay/settings.py
