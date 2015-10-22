@@ -29,18 +29,18 @@ class PrimitiveFilter(models.Model):
 	def __unicode__(self):
 		op = self.operation
 		word = ''
-		if op == FALSE or op == TRUE:
+		if op == self.FALSE or op == self.TRUE:
 			return self.get_operation.display()
 
-		if op == CONTAINS:
+		if op == self.CONTAINS:
 			word = "contains"
-		elif op == REGEX:
+		elif op == self.REGEX:
 			word = "matches"
-		elif op == GREATER:
+		elif op == self.GREATER:
 			word = ">"
-		elif op == SMALLER:
+		elif op == self.SMALLER:
 			word = "<"
-		elif op == EQUALS:
+		elif op == self.EQUALS:
 			word = "=="
 
 		return u'%s %s %s' % (self.field, word, self.value)
