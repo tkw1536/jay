@@ -17,7 +17,7 @@ class SuperAdmin(models.Model):
 	user = models.ForeignKey(User)
 
 	def __unicode__(self):
-        return u'[%s] %s' % (self.system.machine_name, self.user)
+        return u'%s' % (self.user)
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
