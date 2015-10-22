@@ -19,7 +19,7 @@ class Vote(models.Model):
 	max_votes = models.IntegerField()
 
 	def __unicode__(self):
-        return u'[%s] %s' % (self.machine_name, self.name)
+		return u'[%s] %s' % (self.machine_name, self.name)
 
 
 class Option(models.Model):
@@ -36,7 +36,7 @@ class Option(models.Model):
 	count = models.IntegerField()
 
 	def __unicode__(self):
-        return u'[%s] %s' % (self.number, self.name)
+		return u'[%s] %s' % (self.number, self.name)
 
 class Status(models.Model):
 	INIT = 'I'
@@ -61,7 +61,7 @@ class Status(models.Model):
 	stage = models.CharField(max_length = 1, choices = STAGES, default = INIT)
 
 	def __unicode__(self):
-        return self.stage
+		return self.stage
 
 class ActiveVote(models.Model):
 	vote = models.ForeignKey(Vote)
@@ -69,7 +69,7 @@ class ActiveVote(models.Model):
 	user = models.ForeignKey(User)
 
 	def __unicode__(self):
-        return u'%s voted for %s' % (self.user, self.vote)
+		return u'%s voted for %s' % (self.user, self.vote)
 
 class PassiveVote(models.Model):
 	vote = models.OneToOneField(Vote)
@@ -78,7 +78,7 @@ class PassiveVote(models.Model):
 	num_eligible = models.IntegerField()
 
 	def __unicode__(self):
-        return u'%s of %s voted' % (self.num_voters, self.num_eligible)
+		return u'%s of %s voted' % (self.num_voters, self.num_eligible)
 
 admin.site.register(Vote)
 admin.site.register(Option)

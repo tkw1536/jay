@@ -20,7 +20,7 @@ class GlobalSettings(models.Model):
 	value = models.CharField(max_length = 256)
 
 	def __unicode__(self):
-        return u'%s: %s' % (self.key, self.value)
+		return u'%s: %s' % (self.key, self.value)
 
 class VotingSystem(models.Model):
 	subdomain_name = models.SlugField(max_length = 30, unique = True, null = True)
@@ -28,7 +28,7 @@ class VotingSystem(models.Model):
 	simple_name = models.CharField(max_length = 80)
 
 	def __unicode__(self):
-        return u'[%s] %s' % (self.machine_name, self.simple_name)
+		return u'[%s] %s' % (self.machine_name, self.simple_name)
 
 admin.site.register(GlobalSettings)
 admin.site.register(VotingSystem)
