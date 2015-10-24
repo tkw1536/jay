@@ -1,6 +1,6 @@
 # How do we even filter?
 
-It's a tree, let's explore it:
+### It's a tree, let's explore it:
 
 * Is the operation of this filter "NOOP"?
   * Is the simple_filter defined?
@@ -10,4 +10,18 @@ It's a tree, let's explore it:
     * Throw exception, cancelling the filtering
 * else
   * Evaluate left and right subtrees
-  * Return the LEFT OP RIGHT
+  * Return LEFT OP RIGHT
+
+### Also, caching:
+
+Since we don't want to evaluate the entire filter tree everytime:
+
+* For (filter_tree, user)
+  * hash = hash(filter_tree, user)
+    * If (hash, result) exists in cache
+      * return result
+    * else
+      * calculate result = filter_eval(filter_tree, user)
+      * calculate hash = hash(filter_tree, user)
+      * store (hash, result) in cache
+      * return result
