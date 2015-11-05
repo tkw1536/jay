@@ -1,0 +1,34 @@
+{
+  "name": "Filtertree 42",
+  "description": "It's not a forest.",
+  "filter":
+    {
+      "operation": "^[AND|OR|NOT|XOR|NAND]$",
+      "left": {
+        "primitive": {
+          "field": ".*",
+          "operation": "^[EQ|IN|RE|GT|LT|FL|TR]$",
+          "value": ".*"
+        }
+      },
+      "right": {
+        "filter": {
+          "operation": "^[AND|OR|NOT|XOR|NAND]$",
+          "left": {
+            "primitive": {
+              "field": ".*",
+              "operation": "^[EQ|IN|RE|GT|LT|FL|TR]$",
+              "value": ".*"
+            }
+          },
+          "right": {
+            "primitive": {
+              "field": ".*",
+              "operation": "^[EQ|IN|RE|GT|LT|FL|TR]$",
+              "value": ".*"
+            }
+          }
+        }
+      }
+    }
+}
