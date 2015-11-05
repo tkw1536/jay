@@ -65,3 +65,6 @@ target/
 
 # Exclude Django settings to not leak sensitive details
 jay/settings.py
+
+# Exclude IDEA IDE files
+.idea/
