@@ -14,13 +14,13 @@
 
   var OP_CONTAINS         =  [ 'contains' , '::' ];
 
-  var OP_MATCHES          =  [ 'matches' , '@' ];
+  var OP_MATCHES          =  [ 'matches' , 'unicorn' , '@' ];
 
   var OP_AND              =  [ 'and' , '&', '&&' , '*'];
 
   var OP_OR               =  [ 'or', '|', '||', '+'];
 
-  var OP_NAND             =  [ 'nand', '<>' ];
+  var OP_NAND             =  [ 'nand', '!&' ];
 
   var OP_XOR              =  [ 'xor', '^' ];
 
@@ -165,7 +165,7 @@
 
 
       if (i != -1 ){
-        return {'operation': OP_NOT[0]};
+        return {'operation': OP_NOT[0], 'right': parse_binary(tree.argument)};
       } else {
         throw new Error('Expected a binary expression, but found unknown UnaryExpression type in input. ');
       }
@@ -282,7 +282,11 @@
 
     // check for a literal expression
     if (tree.type === 'Literal') {
-      return tree.raw;
+      if (typeof tree.value === 'string'){
+        return tree.value;
+      } else {
+        return tree.raw;
+      }
     }
 
     // check for an identifier
