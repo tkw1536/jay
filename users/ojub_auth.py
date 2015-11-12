@@ -29,7 +29,9 @@ class OjubBackend(object):
 		try:
 			user = User.objects.get(username=uname)
 		except User.DoesNotExist:
-			user = User(username=uname, password="stored in LDAP")
+			user = User(username=uname)
+
+			user.set_unusable_password()
 
 			# TODO Don't hardcode this
 			if user.username in ["lkuboschek", "twiesing"]:
