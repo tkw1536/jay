@@ -34,7 +34,7 @@ class OjubBackend(object):
 			user.set_unusable_password()
 
 			# TODO Don't hardcode this
-			if user.username in ["lkuboschek", "twiesing"]:
+			if user.username in ["lkuboschek", "twiesing", "jinzhang", "rdeliallis"]:
 				user.is_staff = True
 				user.is_superuser = True
 
