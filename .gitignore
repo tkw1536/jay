@@ -56,3 +56,15 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# SQlite database
+*.sqlite3
+
+# Ignore Django migrations
+**/migrations/
+
+# Exclude Django settings to not leak sensitive details
+jay/settings.py
+
+# Exclude IDEA IDE files
+.idea/
