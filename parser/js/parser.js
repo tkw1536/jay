@@ -149,11 +149,11 @@
     // check for literals
     if (tree.type === 'Literal') {
       if (tree.raw === 'true'){
-        return {'operation': true};
+        return {'operation': 'true'};
       } else if (tree.raw === 'false'){
-        return {'operation': false};
+        return {'operation': 'false'};
       } else if (tree.raw === 'null'){
-        return {'operation': false};
+        return {'operation': 'false'};
       }
     }
 
@@ -249,13 +249,19 @@
       throw new Error('Expected a binary expression, but found unknown BinaryExpression / LogicalExpression in input. ');
     }
 
+    var is_primitive = false;
+
     // check if we have a primitive expression.
     try {
-      return {'operation': !!parse_primitive(tree)};
+      parse_primitive(tree);
+      is_primitive = true;
     } catch (e){}
 
-    // we do not know what this is
-    throw new Error('Expected a binary expression, but found unknown expression type in input. ');
+    if (is_primitive) {
+      throw new Error('Expected a binary expression, but found a primitive instead. ');
+    } else {
+      throw new Error('Expected a binary expression, but found unknown expression type in input. ');
+    }
   }
 
   var parse_primitive = function ( tree ) {
