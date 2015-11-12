@@ -20,13 +20,11 @@ class SuperAdmin(models.Model):
 		return u'%s' % (self.user)
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(User)
-	username = models.CharField(max_length = 32, unique = True)
-	fullname = models.CharField(max_length = 128)
-	eid = models.IntegerField()
+	user = models.OneToOneField(User, related_name="profile")
+	details = models.TextField()
 
 	def __unicode__(self):
-		return u'[%s] %s' % (self.eid, self.fullname)
+		return u'[Profile] %s' % (self.user.username)
 
 admin.site.register(Admin)
 admin.site.register(SuperAdmin)
