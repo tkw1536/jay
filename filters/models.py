@@ -73,7 +73,7 @@ class ComplexFilter(models.Model):
 	right = models.ForeignKey('self', related_name='parent_right', null=True, blank=True)
 
 	def __unicode__(self):
-		if self.operation == NONE:
+		if self.operation == self.NONE:
 			return u'(%s)' % (self.simple_filter)
 		else:
 			return u'(%s %s %s)' % (self.left, self.get_operation_display(), self.right)
