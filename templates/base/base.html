@@ -7,16 +7,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Jay -  Home</title>
+  <title>Jay - Home</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static "css/bootstrap/bootstrap.min.css" %}" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="/css/style.css" rel="stylesheet">
+  <link href="{% static "css/style.css" %}" rel="stylesheet">
 
   <!-- Set up an icon -->
-  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" href="{% static "favicon.ico" %}">
 
 {% block page_title %}{% endblock %}
 {% block head %}{% endblock %}
@@ -33,15 +33,18 @@
           <li role="presentation"><a href="/login#">Login</a></li>
         </ul>
       </nav>
-      <img src="/img/logo.svg" width="50px" height="50px">
+      <img src="{% static "img/logo.svg" %}" width="50px" height="50px">
     </div>
+
+    {% block content %}
+      <p>This is Jay, your friendly voting system.</p>
+    {% endblock %}
 
     <footer class="footer">
       <p>&copy; Jay 2015</p>
     </footer>
 
   </div> <!-- /container -->
-{% block content %}{% endblock %}
 
 {% block scripts %}{% endblock %}
 </body>
