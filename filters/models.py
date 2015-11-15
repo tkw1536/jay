@@ -24,7 +24,7 @@ class UserFilter(models.Model):
 
 		# try to clean the value
 		newtree = clean_string(self.tree)
-		
+
 		# if it didn't work, throw an error
 		if newtree == None:
 			raise ValidationError({
@@ -38,7 +38,7 @@ class UserFilter(models.Model):
 		"""
 			Checks if this filter matches an object.
 		"""
-		return evaluate_json(self.value, obj)
+		return evaluate_json(self.tree, obj)
 
 
 admin.site.register(UserFilter)
