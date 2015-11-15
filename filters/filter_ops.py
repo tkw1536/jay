@@ -284,7 +284,7 @@ def from_json(obj):
     # try to parse the json
     try:
         jobj = json.loads(obj)
-    except:
+    except Exception as e:
         return None
 
     # clean it up
@@ -296,6 +296,32 @@ def from_json(obj):
 
     # simplify it
     return simplify_operation(pobj)
+
+def clean_string(obj):
+    """
+        Cleans up and simplifies a JSOn string representation of an object.
+
+        obj: Object String to clean up.
+    """
+
+    # read it into a normal json
+    jsonstr = from_json(obj)
+
+    # if we are invalid
+    if jsonstr == None:
+        return None
+
+    # stringify it again
+    return json.dumps(jsonstr)
+
+def evaluate_json(tree, obj):
+    """
+        Checks if a json string representation of a tree matches an object. 
+    """
+    try:
+        return evaluate_binary(json.loads(tree), obj)
+    except:
+        return None
 
 def evaluate_binary(tree, obj):
     """
