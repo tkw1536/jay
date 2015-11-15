@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 
+from users.models import UserProfile
+
 import requests
 
 OPENJUB_BASE = "https://api.jacobs-cs.club/"
@@ -26,6 +28,13 @@ class OjubBackend(object):
 		uname = resp['user']
 		token = resp['token']
 
+		details = requests.get(OPENJUB_BASE + "user/me",
+			params = {'token':token})
+
+		if details.status_code != requests.codes.ok:
+			print("Could not get user details")
+			return None
+
 		try:
 			user = User.objects.get(username=uname)
 		except User.DoesNotExist:
@@ -38,13 +47,6 @@ class OjubBackend(object):
 				user.is_staff = True
 				user.is_superuser = True
 
-			details = requests.get(OPENJUB_BASE + "user/me",
-				params = {'token':token})
-
-			if details.status_code != requests.codes.ok:
-				print("Could not get user details")
-				return None
-
 			data = details.json()
 
 			user.first_name = data['firstName']
@@ -52,6 +54,15 @@ class OjubBackend(object):
 			user.email = data['email']
 
 			user.save()
+
+		# Make a user profile if there isn't one already
+		try:
+			profile = UserProfile.objects.get(user=user)
+		except UserProfile.DoesNotExist:
+			profile = UserProfile(user=user)
+
+		profile.details = details.text
+		profile.save()
 
 		return user
 
