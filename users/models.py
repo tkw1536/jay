@@ -1,9 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.core.exceptions import ValidationError
+
 from django.contrib import admin
 
 from settings.models import VotingSystem
+
+import json
 
 # Create your models here.
 class Admin(models.Model):
@@ -25,6 +29,15 @@ class UserProfile(models.Model):
 
 	def __unicode__(self):
 		return u'[Profile] %s' % (self.user.username)
+
+	def clean(self):
+		# make sure that the details are a valid json object
+		try:
+			json.loads(self.details)
+		except:
+			raise ValidationError({
+				'details': ValidationError('Details needs to be a valid JSON object', code='invalid')
+			})
 
 admin.site.register(Admin)
 admin.site.register(SuperAdmin)
