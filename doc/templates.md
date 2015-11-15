@@ -12,7 +12,6 @@
 * admins.html - Admin management
 * vote_admins.html - Voting system admin management
 
-
 #### Votes
 
 * vote_edit.html - Vote editor
