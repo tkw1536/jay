@@ -2,7 +2,6 @@ import json
 
 # binary constants
 BINARY_CONST = ['true', 'false']
-
 # unary binary operations
 UNARY_OPS = ['not']
 
@@ -297,3 +296,128 @@ def from_json(obj):
 
     # simplify it
     return simplify_operation(pobj)
+
+def evaluate_binary(tree, obj):
+    """
+        Checks if a filter tree matches an object.
+
+        tree: Filter tree to check against.
+        obj: Object to check matching against.
+    """
+    # read operation to perform
+    op = tree['operation']
+
+    # not
+    if op == 'not':
+        return not evaluate_binary(tree['right'], obj)
+
+    if op == 'and':
+        return (evaluate_binary(tree['left'], obj) and evaluate_binary(tree['right'], obj))
+
+    if op == 'nand':
+        return not (evaluate_binary(tree['left'], obj) and evaluate_binary(tree['right'], obj))
+
+    if op == 'or':
+        return evaluate_binary(tree['left'], obj) or evaluate_binary(tree['right'], obj)
+
+    if op == 'xor':
+        return evaluate_binary(tree['left'], obj) ^ evaluate_binary(tree['right'], obj)
+
+    if op == 'true':
+        return True
+
+    if op == 'false':
+        return False
+
+    # it is not a logical operation => use it as a filter
+    return evaluate_filter(tree, obj)
+
+def evaluate_filter(tree, obj):
+    """
+        Checks if a primtive filter matches an object.
+
+        tree: Primitive filter tree to check against.
+        obj: Object to check matching against.
+    """
+
+    # read the operation to perform
+    op = tree['operation']
+
+    # read key and value to check
+    key = tree['key']
+    value = tree['value']
+
+    # if the key is not the key, return False
+    if not key in obj:
+        return False
+
+    # read the key from the object
+    obj_key = obj[key]
+
+    if op == 'equals':
+        # check for string equality
+        return str(obj_key) == str(value)
+
+    if op == 'less then':
+        # parse both object and value as a float
+        try:
+            value = float(value)
+            obj_key = float(obj_key)
+        except:
+            return False
+
+        # check for less
+        return obj_key < value
+
+    if op == 'less then or equal':
+        # parse both object and value as a float
+        try:
+            value = float(value)
+            obj_key = float(obj_key)
+        except:
+            return False
+
+        # check for less equal
+        return obj_key <= value
+
+    if op == 'greater then':
+        # parse both object and value as a float
+        try:
+            value = float(value)
+            obj_key = float(obj_key)
+        except:
+            return False
+
+        # check for greater
+        return obj_key > value
+
+    if op == 'greater then or equal':
+        # parse both object and value as a float
+        try:
+            value = float(value)
+            obj_key = float(obj_key)
+        except:
+            return False
+
+        # check for greater or equal
+        return obj_key >= value
+
+    if op == 'contains':
+        try:
+            # check if the key can be found somewhere in the value
+            return obj_key.index(value) >= 0
+        except:
+            return False
+
+    if op == 'matches':
+        try:
+            # trun the value into a string
+            obj_key = str(obj_key)
+
+            # check if that value matches the regular expression
+            return (True if re.match(value, obj_key) else False)
+        except:
+            return False
+
+    # we have an unsupported filter, so we assume it does not match at all
+    return False
