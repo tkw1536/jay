@@ -1,0 +1,56 @@
+{% extends "base/base.html" %}
+
+{% block page_title %}Vote{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-6">
+      <h1>Vote <small>Vote Name</small></h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+  </div><!-- row -->
+
+  <div class="row">
+    <div class="col-sm-6">
+      <p class="text-muted">Choose 3 of 2 options</p>
+    </div>
+  </div>
+
+  <!-- Options start below -->
+  <div class="row">
+
+    <div class="col-sm-6">
+      <div class="vote-option panel panel-default">
+        <div class="panel-body">
+          <span style="display: none; float:right;" class="glyphicon glyphicon-ok"></span>
+          <img style="margin-right: 1em; display: inline; float: left;" width=48px height=64px src="https://api.jacobs-cs.club/user/image/nilee/image.jpg"></img>
+          <p style="margin-bottom: 0;" class="lead">Option Name</p>
+          <a href="//hw.is">Option Link</a>
+          <p style="float:left; margin-top: 1em;">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- row -->
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript">
+$(function() {
+  $(".vote-option").click(function() {
+    var el = $(this);
+    var body = el.children(".panel-body")
+    var icon = body.children("span")
+
+    el.toggleClass("panel-default")
+    el.toggleClass("panel-success")
+
+    body.toggleClass("bg-success")
+
+    icon.toggle()
+  })
+})
+</script>
+{% endblock %}

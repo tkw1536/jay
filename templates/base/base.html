@@ -18,7 +18,7 @@
   <!-- Set up an icon -->
   <link rel="icon" href="{% static "favicon.ico" %}">
 
-{% block page_title %}{% endblock %}
+  <title>Jay - {% block page_title %}{% endblock %}</title>
 {% block head %}{% endblock %}
 </head>
 
@@ -46,6 +46,8 @@
 
   </div> <!-- /container -->
 
-{% block scripts %}{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+{% endblock %}
 </body>
 </html>
