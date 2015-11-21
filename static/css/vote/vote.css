@@ -1,0 +1,16 @@
+div.vote-option span {
+  display: none;
+}
+
+div.vote-option img {
+  margin-right: 1em;
+}
+
+div.vote-option {
+  cursor: pointer;
+}
+
+div.vote-option p.full-desc {
+  margin-top: 1em;
+  float: left;
+}
