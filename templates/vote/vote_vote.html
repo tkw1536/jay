@@ -40,8 +40,8 @@
   <div class="row form-inline form-group">
       <fieldset>
         <div class="col-sm-12">
-          <button type="button" class="btn btn-link pull-left">Start over</button>
-          <button type="button" class="btn btn-primary pull-right">Confirm</button>
+          <button id="reset" type="button" class="btn btn-link pull-left">Start over</button>
+          <button id="submit" type="button" class="btn btn-primary pull-right">Confirm</button>
         </div>
       </fieldset>
   </div>
@@ -51,31 +51,74 @@
 {% block scripts %}
 {{ block.super }}
 <script type="text/javascript">
-$(function() {
-  $(".vote-option").click(function() {
-    var el = $(this);
-    var body = el.children(".panel-body")
-    var icon = body.children("span")
+  $(function() {
+    var minNums = {{ vote.min_votes }}
+    var maxNums = {{ vote.max_votes }}
 
-    el.toggleClass("panel-default")
-    el.toggleClass("panel-success")
-    el.toggleClass("selected")
+    // Get number of currently selected items
+    function getNumSelected() {
+      return $("div.vote-option.selected").length
+    }
 
-    body.toggleClass("bg-success")
+    // Check if selected number of options is valid
+    function isValidSelection() {
+      var selCount = getNumSelected()
 
-    icon.toggle()
+      return (minNums <= selCount && selCount <= maxNums)
+    }
+
+    function updateSubmitButton() {
+      var btn = $("button#submit")
+      if(isValidSelection()) {
+        btn.prop("disabled", false)
+      } else {
+        btn.prop("disabled", true)
+      }
+    }
+
+    // Allow user to select options by clicking
+    $(".vote-option").click(function() {
+      var el = $(this);
+      var body = el.children(".panel-body")
+      var icon = body.children("span")
+
+      el.toggleClass("panel-default")
+      el.toggleClass("panel-success")
+      el.toggleClass("selected")
+
+      body.toggleClass("bg-success")
+
+      icon.toggle()
+
+      updateSubmitButton()
+    })
+
+    // Expanding description on click
+    $(".vote-option .show-desc").click(function() {
+      var el = $(this)
+
+      el.parent().hide()
+      el.hide()
+
+      el.parent().next().show()
+
+      return false
+    })
+
+    // Deselect everything on reset
+    $("button#reset").click(function() {
+      $(".vote-option.selected")
+        .removeClass("selected")
+        .removeClass("panel-success")
+        .addClass("panel-default")
+
+        .children(".panel-body")
+          .removeClass("bg-success")
+            .children("span")
+            .toggle()
+
+      updateSubmitButton()
+    })
   })
-
-  $(".vote-option .show-desc").click(function() {
-    var el = $(this)
-
-    el.parent().hide()
-    el.hide()
-
-    el.parent().next().show()
-
-    return false
-  })
-})
 </script>
 {% endblock %}
