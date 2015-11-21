@@ -1,0 +1,23 @@
+<div class="col-sm-6">
+  <div class="vote-option panel panel-default" style="cursor: pointer;">
+    <div class="panel-body">
+      <span class="pull-right glyphicon glyphicon-ok"></span>
+      {% if option.picture_url %}
+        <img class="pull-left" width=48px height=64px src="{{ option.picture_url }}"></img>
+      {% endif %}
+
+      <p style="margin-bottom: 0;" class="lead">{{ option.name }}</p>
+
+      {% if option.personal_link %}
+        <a href="{{ option.personal_link }}">{{ option.link_name | default:"Homepage"}}</a>
+      {% endif %}
+
+      {% if option.description %}
+        <p>{{ option.description | truncatewords_html:5 }}<a href="#" class="caret show-desc"></a></p>
+        <p class="full-desc" class="pull-left" style="display: none;">
+          {{ option.description }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
