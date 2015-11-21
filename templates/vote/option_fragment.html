@@ -1,3 +1,4 @@
+{% load markdown %}
 <div class="col-sm-6">
   <div class="vote-option panel panel-default" style="cursor: pointer;">
     <div class="panel-body">
@@ -15,7 +16,7 @@
       {% if option.description %}
         <p>{{ option.description | truncatewords_html:5 }}<a href="#" class="caret show-desc"></a></p>
         <p class="full-desc" class="pull-left" style="display: none;">
-          {{ option.description }}
+          {{ option.description | markdown | safe }}
         </p>
       {% endif %}
     </div>
