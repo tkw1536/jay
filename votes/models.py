@@ -13,6 +13,8 @@ class Vote(models.Model):
 	name = models.CharField(max_length = 64)
 	machine_name = models.SlugField(max_length = 64)
 
+	description = models.TextField()
+
 	creator = models.ForeignKey(User)
 
 	min_votes = models.IntegerField()
@@ -28,12 +30,14 @@ class Option(models.Model):
 	number = models.IntegerField()
 
 	name = models.CharField(max_length = 64)
-	description = models.TextField()
+	description = models.TextField(blank = True)
 
-	picture_url = models.URLField()
-	personal_link = models.URLField()
+	picture_url = models.URLField(blank = True)
 
-	count = models.IntegerField()
+	personal_link = models.URLField(blank = True)
+	link_name = models.CharField(blank = True, max_length = 16)
+
+	count = models.IntegerField(default = 0, blank = True)
 
 	def __unicode__(self):
 		return u'[%s] %s' % (self.number, self.name)
