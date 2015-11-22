@@ -43,7 +43,7 @@
       <fieldset>
         <div class="col-sm-12">
           <button id="reset" type="button" class="btn btn-link pull-left">Start over</button>
-          <button id="submit" type="button" class="btn btn-primary pull-right">Confirm</button>
+          <button id="submit" disabled type="button" class="btn btn-primary pull-right">Confirm</button>
         </div>
       </fieldset>
   </div>
@@ -121,6 +121,8 @@
 
       updateSubmitButton()
     })
+
+    updateSubmitButton()
   })
 </script>
 {% endblock %}
