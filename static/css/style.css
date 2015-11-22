@@ -1,5 +1,21 @@
 @import url(https://fonts.googleapis.com/css?family=Arimo);
 
+
+/* Custom footer */
+footer#footer {
+  text-align: center;
+  line-height: 50px;
+}
+
+footer#footer div.row {
+  border-top: 1px solid lightgrey;
+}
+
+footer#footer a {
+  float: right;
+  margin-left: 5%;
+}
+
 /* Space out content a bit */
 body {
   padding-top: 20px;

@@ -31,13 +31,12 @@
             </a>
           </div>
 
-          <div class="collapse navbar-collapse" id="primary-menu">
+          <div class="navbar-collapse" id="primary-menu">
             <ul class="nav navbar-nav navbar-right">
               <li role="presentation"><a href="/">Home</a></li>
               <li role="presentation"><a href="manage.html">Manage</a></li>
-              <li role="presentation"><a href="/imprint">Imprint</a></li>
               {%if user.is_authenticated %}
-                <li role="presentation"><span>Hey {{ user.first_name }}</span></li>
+                <li role="presentation"><a href="#">{{ user.username }}</a></li>
               {% else %}
                 <li role="presentation"><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>
               {% endif %}
@@ -52,14 +51,30 @@
       <p>This is Jay, your friendly voting system.</p>
     {% endblock %}
 
-    <footer class="footer">
-      <p>&copy; Jay 2015</p>
-    </footer>
-
   </div> <!-- /container -->
+
+  <footer id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <span class="text-muted navbar-left">&copy; 2015 Jay Services Inc.</span>
+        </div>
+
+        <div class="col-md-4">
+        </div>
+
+        <div class="col-md-4">
+          <a href="#" class="text-muted">Imprint</a>
+          <a href="#" class="text-muted">Privacy&nbsp;Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
 
 {% block scripts %}
 <script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap/bootstrap.js' %}"></script>
 {% endblock %}
 </body>
 </html>
