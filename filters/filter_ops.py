@@ -123,7 +123,7 @@ def clean_primtive(obj):
 
     # if it is not a string
     if isinstance(obj, str):
-        return unicode(obj)
+        return obj
     if isinstance(obj, unicode):
         return obj
 
@@ -316,7 +316,7 @@ def clean_string(obj):
 
 def evaluate_json(tree, obj):
     """
-        Checks if a json string representation of a tree matches an object. 
+        Checks if a json string representation of a tree matches an object.
     """
     try:
         return evaluate_binary(json.loads(tree), obj)
