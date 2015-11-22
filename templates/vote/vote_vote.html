@@ -28,7 +28,9 @@
   <div class="row">
 
     {% for opt in options %}
-      {% include "vote/option_fragment.html" with option=opt %}
+      <div class="col-sm-6">
+        {% include "vote/option_fragment.html" with option=opt %}
+      </div>
     {% empty %}
       <div class="col-sm-6 col-sm-3-offset">
         There are no options in this vote.
