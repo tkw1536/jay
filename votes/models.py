@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 
 from settings.models import VotingSystem
-
+from filters.models import UserFilter
 
 # Create your models here.
 class Vote(models.Model):
@@ -12,6 +12,8 @@ class Vote(models.Model):
 
 	name = models.CharField(max_length = 64)
 	machine_name = models.SlugField(max_length = 64)
+
+	filter = models.ForeignKey(UserFilter, null=True)
 
 	description = models.TextField()
 
