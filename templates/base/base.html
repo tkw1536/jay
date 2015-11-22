@@ -16,22 +16,36 @@
   <!-- Set up an icon -->
   <link rel="icon" href="{% static "favicon.ico" %}">
 
-  <title>Jay - {% block page_title %}{% endblock %}</title>
+  <title>Jay - {% block page_title %}Base{% endblock %}</title>
 {% block head %}{% endblock %}
 </head>
 
 <body>
   <div class="container">
     <div class="header clearfix">
-      <nav>
-        <ul class="nav nav-pills pull-right">
-          <li role="presentation" class="active"><a href="/">Home</a></li>
-          <li role="presentation"><a href="manage.html">Manage</a></li>
-          <li role="presentation"><a href="/imprint">Imprint</a></li>
-          <li role="presentation"><a href="/login#">Login</a></li>
-        </ul>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">
+              <span class="text-primary">Jay</span>
+            </a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="primary-menu">
+            <ul class="nav navbar-nav navbar-right">
+              <li role="presentation"><a href="/">Home</a></li>
+              <li role="presentation"><a href="manage.html">Manage</a></li>
+              <li role="presentation"><a href="/imprint">Imprint</a></li>
+              {%if user.is_authenticated %}
+                <li role="presentation"><span>Hey {{ user.first_name }}</span></li>
+              {% else %}
+                <li role="presentation"><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>
+              {% endif %}
+            </ul>
+          </div>  <!-- navbar-collapse -->
+        </div> <!-- container-fluid -->
       </nav>
-      <img src="{% static "img/logo.svg" %}" width="50px" height="50px">
+      <!-- <img src="{% static "img/logo.svg" %}" width="50px" height="50px">-->
     </div>
 
     {% block content %}
