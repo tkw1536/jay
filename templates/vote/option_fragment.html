@@ -1,5 +1,5 @@
 {% load markdown %}
-<div class="vote-option panel panel-default" style="cursor: pointer;">
+<div data-option-id="{{ option.id }}" class="vote-option panel panel-default" style="cursor: pointer;">
   <div class="panel-body">
     <span class="pull-right glyphicon glyphicon-ok"></span>
     {% if option.picture_url %}

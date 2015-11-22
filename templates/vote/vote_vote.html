@@ -40,12 +40,14 @@
   </div> <!-- row -->
 
   <div class="row form-inline form-group">
-      <fieldset>
+      <form method="post" action="#">
+        <input id="options_selected" type="hidden" name="options_selected" value="[]" />
+
         <div class="col-sm-12">
           <button id="reset" type="button" class="btn btn-link pull-left">Start over</button>
-          <button id="submit" disabled type="button" class="btn btn-primary pull-right">Confirm</button>
+          <button id="submit" disabled type="submit" class="btn btn-primary pull-right">Confirm</button>
         </div>
-      </fieldset>
+      </form>
   </div>
 
 {% endblock %}
@@ -67,6 +69,17 @@
       var selCount = getNumSelected()
 
       return (minNums <= selCount && selCount <= maxNums)
+    }
+
+    function updateSelectedField() {
+      var selected_field = $("input#options_selected")
+      var selected_ids = []
+
+      $(".vote-option.selected").each(function(index, el) {
+        selected_ids.push(parseInt($(el).attr('data-option-id')))
+      });
+
+      selected_field.prop("value", JSON.stringify(selected_ids))
     }
 
     function updateSubmitButton() {
@@ -92,6 +105,7 @@
 
       icon.toggle()
 
+      updateSelectedField()
       updateSubmitButton()
     })
 
