@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
 
 {% load staticfiles %}
+{% load markdown %}
 
 {% block page_title %}Vote{% endblock %}
 
@@ -12,7 +13,7 @@
   <div class="row">
     <div class="col-sm-10">
       <h1>Vote <small>{{ vote.name }}</small></h1>
-      <p>{{ vote.description }}</p>
+      <p>{{ vote.description | markdown | safe }}</p>
     </div>
   </div><!-- row -->
 
