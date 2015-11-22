@@ -45,7 +45,8 @@
   </div> <!-- row -->
 
   <div class="row form-inline form-group">
-      <form method="post" action="#">
+      <form method="post" action=".">
+        {% csrf_token %}
         <input id="options_selected" type="hidden" name="options_selected" value="[]" />
 
         <div class="col-sm-12">
