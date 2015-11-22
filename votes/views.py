@@ -30,9 +30,8 @@ class VoteView(View):
         print(user_details)
 
         if not filter.matches(user_details):
-            print("User doesn't match: ", user_details)
-            print("Filter is: ", filter.tree)
-            return HttpResponse("Nope")
+            print("User doesn't match filter.")
+            return HttpResponse("You are not eligible")
 
         options = vote.option_set.all()
 
