@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', TemplateView.as_view(template_name="base/base.html")),
     url(r'^demo/', include(demo_urls)),
-    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls)),
+    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html'}),
 ]
