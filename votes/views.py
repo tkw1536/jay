@@ -2,6 +2,9 @@ import json
 
 from django.shortcuts import render, get_object_or_404, render_to_response
 
+from django.db import transaction
+from django.db.models import F
+
 from django.http import HttpResponse
 from django.views.generic import View
 
@@ -108,4 +111,31 @@ class VoteView(View):
         # TODO Check status of vote before counting vote
         # TODO Do the actual vote counting
 
-        return HttpResponse("It worked, but did nothing. TODO Put something more affirmative here.")
+        # Steps (all in one transaction)
+        # 1. Check if user has already voted
+        # 2. Increase count of selected options
+        # 3. Create ActiveVote with vote and user
+
+        with transaction.atomic():
+            try:
+                av = ActiveVote.objects.get(user=request.user, vote=vote)
+                ctx['alert_head'] = "You have already voted."
+                ctx['alert_text'] = "Every user can only vote once. You have."
+                return self.render_error_response(ctx)
+
+            except ActiveVote.DoesNotExist:
+                av = ActiveVote(user=request.user, vote=vote)
+                av.save()
+
+                for opt in options_obj:
+                    opt.count = F('count') + 1
+                    opt.save()
+
+        ctx = {}
+
+        ctx['page_title'] = "Vote Done"
+        ctx['alert_type'] = "success"
+        ctx['alert_head'] = "You voted!"
+        ctx['alert_text'] = "Your votes have been counted."
+
+        return render_to_response("vote/vote_error.html", context=ctx)
