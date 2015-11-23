@@ -14,20 +14,20 @@ class Admin(models.Model):
 	user = models.ForeignKey(User)
 	system = models.ForeignKey(VotingSystem)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'[%s] %s' % (self.system.machine_name, self.user)
 
 class SuperAdmin(models.Model):
 	user = models.ForeignKey(User)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s' % (self.user)
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User, related_name="profile")
 	details = models.TextField()
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'[Profile] %s' % (self.user.username)
 
 	def clean(self):

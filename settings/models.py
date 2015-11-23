@@ -19,7 +19,7 @@ class GlobalSettings(models.Model):
 	key = models.CharField(max_length = 8, choices = KEY_CHOICES)
 	value = models.CharField(max_length = 256)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s: %s' % (self.key, self.value)
 
 class VotingSystem(models.Model):
@@ -27,7 +27,7 @@ class VotingSystem(models.Model):
 	machine_name = models.SlugField(max_length = 50, unique = True)
 	simple_name = models.CharField(max_length = 80)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'[%s] %s' % (self.machine_name, self.simple_name)
 
 admin.site.register(GlobalSettings)
