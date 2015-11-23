@@ -45,9 +45,10 @@
   </div> <!-- row -->
 
   <div class="row form-inline form-group">
-      <form method="post" action=".">
+      <form method="post" action="{% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name %}">
         {% csrf_token %}
         <input id="options_selected" type="hidden" name="options_selected" value="[]" />
+        <input id="vote_id" type="hidden" name="vote_id" value="{{ vote.id }}" />
 
         <div class="col-sm-12">
           <button id="reset" type="button" class="btn btn-link pull-left">Start over</button>
