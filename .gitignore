@@ -64,7 +64,8 @@ target/
 **/migrations/
 
 # Exclude Django settings to not leak sensitive details
-jay/settings.py
+jay/local_settings.py
+jay/prod_settings.py
 
 # Exclude IDEA IDE files
 .idea/
