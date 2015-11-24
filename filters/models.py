@@ -14,8 +14,8 @@ class UserFilter(models.Model):
 	value = models.CharField(max_length=255)
 	tree = models.TextField()
 
-	def __unicode__(self):
-		return u'%s %s %s' % (self.value, self.system)
+	def __str__(self):
+		return u'%s: %s' % (self.system.machine_name, self.value)
 
 	def clean(self):
 		"""

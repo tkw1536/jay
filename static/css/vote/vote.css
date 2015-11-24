@@ -1,0 +1,20 @@
+/* Hide checkmark by default */
+div.vote-option span {
+  display: none;
+}
+
+/* Give text next to img some room to breathe */
+div.vote-option img {
+  margin-right: 1em;
+}
+
+/* Make clickability obvious */
+div.vote-option {
+  cursor: pointer;
+}
+
+/* Float full description div */
+div.vote-option div.full-desc {
+  margin-top: 1em;
+  float: left;
+}
