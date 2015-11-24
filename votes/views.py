@@ -15,7 +15,7 @@ from votes.models import Vote, Option, Status, ActiveVote
 from filters.models import UserFilter
 from users.models import UserProfile
 
-# TODO Check eligibility on GET already
+VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 
 class VoteView(View):
     @method_decorator(login_required)
@@ -53,10 +53,10 @@ class VoteView(View):
         if not error:
             return render(request, "vote/vote_vote.html", context=ctx)
         else:
-            return render(request, "vote/vote_error.html", context=ctx, status=403)
+            return render(request, VOTE_ERROR_TEMPLATE, context=ctx, status=403)
 
     def render_error_response(self, ctx):
-        return render_to_response("vote/vote_error.html", context=ctx)
+        return render_to_response(VOTE_ERROR_TEMPLATE, context=ctx)
 
     @method_decorator(login_required)
     def post(self, request, system_name, vote_name):
@@ -138,4 +138,4 @@ class VoteView(View):
         ctx['alert_head'] = "You voted!"
         ctx['alert_text'] = "Your votes have been counted."
 
-        return render_to_response("vote/vote_error.html", context=ctx)
+        return render_to_response(VOTE_ERROR_TEMPLATE, context=ctx)
