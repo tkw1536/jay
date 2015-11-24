@@ -39,16 +39,26 @@ class VoteView(View):
             if not filter:
                 ctx['alert_head'] = "No filter given."
                 ctx['alert_text'] = "This vote has not been configured properly."
+                error = True
             elif not filter.matches(user_details):
                 ctx['alert_head'] = "Not eligible"
                 ctx['alert_text'] = "You are not eligible for this vote. Tough luck."
+                error = True
+
 
         except UserProfile.DoesNotExist:
             ctx['alert_head'] = "User details invalid."
             ctx['alert_text'] = "Your user details could not be retrieved from CampusNet. Please log out and try again later."
-
-        if 'alert_head' in ctx:
             error = True
+
+        try:
+            av = ActiveVote.objects.get(user=request.user, vote=vote)
+            ctx['alert_type'] = "warning"
+            ctx['alert_head'] = "You have already voted."
+            ctx['alert_text'] = "Every user can only vote once. You have."
+
+        except ActiveVote.DoesNotExist:
+            pass
 
         if not error:
             return render(request, "vote/vote_vote.html", context=ctx)
@@ -104,6 +114,7 @@ class VoteView(View):
         except UserProfile.DoesNotExist:
             ctx['alert_head'] = "User details invalid."
             ctx['alert_text'] = "Your user details could not be retrieved from CampusNet. Please log out and try again later."
+
 
         if 'alert_head' in ctx:
             return self.render_error_response(ctx)
