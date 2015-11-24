@@ -10,6 +10,17 @@
 {% endblock %}
 
 {% block content %}
+  {% if alert_head %}
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="alert alert-{{ alert_type | default:"danger"}}">
+          <strong>{{ alert_head | default:"Something happened."}}</strong>
+          {{ alert_text | default:"An internal error occured." }}
+        </div>
+      </div>
+    </div><!-- row -->
+  {% endif %}
+
   <div class="row">
     <div class="col-sm-10">
       <h1>Vote <small>{{ vote.name }}</small></h1>
