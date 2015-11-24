@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from settings.models import VotingSystem
 
-from filters.filter_ops import clean_string, evaluate_json
+from filters.logic.operations import json_string, evaluate_tree
 
 # Create your models here.
 class UserFilter(models.Model):
@@ -23,12 +23,12 @@ class UserFilter(models.Model):
 		"""
 
 		# try to clean the value
-		newtree = clean_string(self.tree)
+		newtree = json_string(self.tree)
 
 		# if it didn't work, throw an error
 		if newtree == None:
 			raise ValidationError({
-				'tree': ValidationError('Tree object need to be a valid tree object. ', code='invalid')
+				'tree': ValidationError('Value for tree is not a valid logical tree. ', code='invalid')
 			})
 
 		# else set the property
@@ -38,7 +38,7 @@ class UserFilter(models.Model):
 		"""
 			Checks if this filter matches an object.
 		"""
-		return evaluate_json(self.tree, obj)
+		return evaluate_tree(self.tree, obj)
 
 
 admin.site.register(UserFilter)

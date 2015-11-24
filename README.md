@@ -11,6 +11,7 @@ Jay is powered by Django. It has the following folder structure:
   * templates/ -- django templates
   * static/ -- Static resources
 * django apps:
+  * core/ -- Core app
   * votes/ -- Votes implementation
   * settings/ -- Global and Voting Settings implementation
   * users/ -- User Model Implementation
