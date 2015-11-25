@@ -21,10 +21,11 @@ from django.views.generic import TemplateView
 
 from . import demo_urls
 from votes import urls as votes_urls
+from core.views import home
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', TemplateView.as_view(template_name="base/base.html")),
+    url(r'^$', home),
     url(r'^demo/', include(demo_urls)),
 
     url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),

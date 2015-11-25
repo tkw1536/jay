@@ -9,9 +9,9 @@
     <div class="col-sm-6">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Open votes</h3>
+          <h3 class="panel-title">{{ vote_list_title | default:"All votes" }}</h3>
         </div>
-        <div class="panel-body">
+        <div class="panel-body list-group">
           {% include "vote/vote_list.html" with votes=votes %}
         </div>
       </div>
