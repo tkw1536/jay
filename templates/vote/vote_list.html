@@ -1,0 +1,6 @@
+
+<div class="list-group">
+  {% for vote in votes %}
+  <a href="{% url "votes:vote" vote.system.machine_name vote.simple_name}">{{ vote.name }}</a>
+  {% endfor %}
+</div>
