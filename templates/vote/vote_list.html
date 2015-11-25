@@ -1,4 +1,14 @@
 
   {% for vote in votes %}
-  <a class="list-group-item" href="{% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name %}">{{ vote.name }}</a>
+  {% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name as vote_url %}
+
+    <div class="list-group-item">
+        <a href="{{ vote_url }}">
+          {{ vote.name }}
+          <a href="#">
+            <span class="pull-right glyphicon glyphicon-pencil"></span>
+          </a>
+        </a>
+    </div>
+
   {% endfor %}
