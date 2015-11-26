@@ -1,0 +1,71 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Home{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-8">
+      <h1>Home <small>is where you go at night</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    {% if eligible_alert %}
+    <div class="col-sm-4">
+      <div class="alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Eligibility </strong>Only votes you can vote in are shown.
+      </div>
+    </div>
+    {% endif %}
+
+    {% if not votes %}
+      <div class="col-sm-4">
+        <div class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>No votes </strong>There are currently no open votes.
+        </div>
+      </div>
+    {% endif %}
+
+    {% if not results %}
+      <div class="col-sm-4">
+        <div class="alert alert-info alert-dismissible" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>No results </strong>There are currently no results to show.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      {% if votes %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ vote_list_title | default:"All votes" }}</h3>
+        </div>
+        <div class="panel-body list-group">
+          {% include "vote/vote_list.html" with votes=votes %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-6">
+      {% if results %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ results_list_title | default:"Results" }}</h3>
+        </div>
+        <div class="panel-body list-group">
+          {% include "vote/vote_list.html" with votes=results %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div><!-- row -->
+
+{% endblock %}
