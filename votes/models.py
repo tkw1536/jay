@@ -6,6 +6,8 @@ from django.contrib import admin
 from settings.models import VotingSystem
 from filters.models import UserFilter
 
+from jay.restricted import is_restricted_word
+
 # Create your models here.
 class Vote(models.Model):
 	system = models.ForeignKey(VotingSystem)
@@ -25,6 +27,9 @@ class Vote(models.Model):
 
 	def __str__(self):
 		return u'[%s] %s' % (self.machine_name, self.name)
+
+	def clean(self):
+		is_restricted_word('machine_name', self.machine_name)
 
 
 class Option(models.Model):

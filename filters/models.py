@@ -6,33 +6,26 @@ from django.core.exceptions import ValidationError
 
 from settings.models import VotingSystem
 
-from filters.logic.operations import json_string, evaluate_tree
+from filters.logic.operations import string, evaluate_tree
 
 # Create your models here.
 class UserFilter(models.Model):
 	system = models.ForeignKey(VotingSystem)
+	name = models.CharField(max_length=255)
 	value = models.CharField(max_length=255)
-	tree = models.TextField()
+	tree = models.TextField(blank=True)
 
 	def __str__(self):
-		return u'%s: %s' % (self.system.machine_name, self.value)
+		return u'%s: %s' % (self.system.machine_name, self.name)
 
 	def clean(self):
-		"""
-			Cleans this model and maks sure the value if valid.
-		"""
+		# parse the tree into valid json. 
+		self.tree = string(self.value)
 
-		# try to clean the value
-		newtree = json_string(self.tree)
-
-		# if it didn't work, throw an error
-		if newtree == None:
+		if self.tree == None:
 			raise ValidationError({
-				'tree': ValidationError('Value for tree is not a valid logical tree. ', code='invalid')
-			})
-
-		# else set the property
-		self.tree = newtree
+	            'value': ValidationError('Value for \'value\' invalid: Can not parse into a valid logical tree. ', code='invalid')
+	        })
 
 	def matches(self, obj):
 		"""
