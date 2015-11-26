@@ -614,9 +614,12 @@
 	} else {
 		// In Node.JS environments
 		if (typeof module !== 'undefined' && module.exports) {
-			exports = module.exports = jsep;
+			exports.jsep = module.exports.jsep = jsep;
 		} else {
-			exports.parse = jsep;
+			exports.jsep = jsep;
 		}
+
+		// also put it into the global context
+		root.jsep = jsep;
 	}
 }(this));

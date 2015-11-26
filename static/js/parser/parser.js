@@ -108,7 +108,6 @@
   }
 
   // load jsep and set properties
-  jsep =
   jsep = clean_jsep(jsep);
   jsep = popu_jsep(jsep);
 
@@ -339,6 +338,8 @@
     } else {
       exports.parse = parse;
     }
+
+    global.parse = parse; 
   }
 
 })(this);

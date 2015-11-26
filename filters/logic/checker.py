@@ -120,8 +120,6 @@ def primitive(obj):
 
     # if it is not a string
     if isinstance(obj, str):
-        return unicode(obj)
-    if isinstance(obj, unicode):
         return obj
 
     # return the string itself

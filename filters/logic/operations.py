@@ -2,18 +2,20 @@ import json
 from . import checker
 from . import simplifier
 from . import evaluator
+from . import parser
 
-def from_json_string(obj):
+def from_string(obj):
     """
-        Parses a JSON string representing an object.
+        Parses a string representing an object.
 
         obj: Object String to parse
     """
 
     # try to parse the json
     try:
-        jobj = json.loads(obj)
+        jobj = parser.parse(obj)
     except Exception as e:
+        print(e)
         return None
 
     # clean it up
@@ -26,13 +28,13 @@ def from_json_string(obj):
     # simplify it
     return simplifier.simplify(pobj)
 
-def json_string(obj):
+def string(obj):
     """
-        Parses, cleans up and returns a json string operation.
+        Parses, cleans up and returns a string operation.
     """
 
-    # parse the json string
-    fjs = from_json_string(obj)
+    # parse the string
+    fjs = from_string(obj)
 
     # if that failed, return
     if fjs == None:
