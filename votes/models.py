@@ -16,6 +16,7 @@ class Vote(models.Model):
 	machine_name = models.SlugField(max_length = 64)
 
 	filter = models.ForeignKey(UserFilter, null=True)
+	status = models.OneToOneField('Status')
 
 	description = models.TextField()
 
@@ -64,11 +65,9 @@ class Status(models.Model):
 		(PUBLIC, 'Results public')
 	)
 
-	vote = models.ForeignKey(Vote)
-
-	open_time = models.DateTimeField(null = True)
-	close_time = models.DateTimeField(null = True)
-	public_time = models.DateTimeField(null = True)
+	open_time = models.DateTimeField(blank = True, null = True)
+	close_time = models.DateTimeField(blank = True, null = True)
+	public_time = models.DateTimeField(blank = True, null = True)
 	stage = models.CharField(max_length = 1, choices = STAGES, default = INIT)
 
 	def __str__(self):

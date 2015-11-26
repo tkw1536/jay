@@ -16,6 +16,17 @@ from filters.models import UserFilter
 from users.models import UserProfile
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
+VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
+
+def results(request, system_name, vote_name):
+    ctx = {}
+    vote = get_object_or_404(Vote, machine_name=vote_name)
+
+    ctx['vote'] = vote
+    ctx['options'] = vote.option_set.all()
+
+
+    return render(request, VOTE_RESULT_TEMPLATE, ctx)
 
 class VoteView(View):
     @method_decorator(login_required)

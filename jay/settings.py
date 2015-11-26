@@ -69,9 +69,10 @@ AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend',
                             'users.ojub_auth.OjubBackend')
 
 # Default after login redirect
-LOGIN_URL = "/login"
-LOGOUT_URL = "/logout"
-LOGIN_REDIRECT_URL = "/"
+# These are named URL routes
+LOGIN_URL = "login"
+LOGOUT_URL = "logout"
+LOGIN_REDIRECT_URL = "home"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
