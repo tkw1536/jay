@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 
 from settings.models import VotingSystem
-
+from filters.models import UserFilter
 
 # Create your models here.
 class Vote(models.Model):
@@ -13,12 +13,16 @@ class Vote(models.Model):
 	name = models.CharField(max_length = 64)
 	machine_name = models.SlugField(max_length = 64)
 
+	filter = models.ForeignKey(UserFilter, null=True)
+
+	description = models.TextField()
+
 	creator = models.ForeignKey(User)
 
 	min_votes = models.IntegerField()
 	max_votes = models.IntegerField()
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'[%s] %s' % (self.machine_name, self.name)
 
 
@@ -28,14 +32,16 @@ class Option(models.Model):
 	number = models.IntegerField()
 
 	name = models.CharField(max_length = 64)
-	description = models.TextField()
+	description = models.TextField(blank = True)
 
-	picture_url = models.URLField()
-	personal_link = models.URLField()
+	picture_url = models.URLField(blank = True)
 
-	count = models.IntegerField()
+	personal_link = models.URLField(blank = True)
+	link_name = models.CharField(blank = True, max_length = 16)
 
-	def __unicode__(self):
+	count = models.IntegerField(default = 0, blank = True)
+
+	def __str__(self):
 		return u'[%s] %s' % (self.number, self.name)
 
 class Status(models.Model):
@@ -60,7 +66,7 @@ class Status(models.Model):
 	public_time = models.DateTimeField(null = True)
 	stage = models.CharField(max_length = 1, choices = STAGES, default = INIT)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.stage
 
 class ActiveVote(models.Model):
@@ -68,7 +74,7 @@ class ActiveVote(models.Model):
 
 	user = models.ForeignKey(User)
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s voted for %s' % (self.user, self.vote)
 
 class PassiveVote(models.Model):
@@ -77,7 +83,7 @@ class PassiveVote(models.Model):
 	num_voters = models.IntegerField()
 	num_eligible = models.IntegerField()
 
-	def __unicode__(self):
+	def __str__(self):
 		return u'%s of %s voted' % (self.num_voters, self.num_eligible)
 
 admin.site.register(Vote)
