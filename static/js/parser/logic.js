@@ -2,6 +2,9 @@
   // =============================================================================
   // OPERATOR NAMES CONFIG
   // =============================================================================
+  var OP_TRUE             =  [ 'true' ];
+  var OP_FALSE            =  [ 'false' ];
+
   var OP_NOT              =  [ 'not', '!' ];
 
   var OP_EQUALS           =  [ 'equals', '=', '==', '===' ];
@@ -102,7 +105,7 @@
 
   // if jsep is not available, try to load it.
   if (typeof jsep === 'undefined' && typeof require === 'function') {
-    jsep = require('./jsep');
+    jsep = require('./jsep').jsep;
   } else if (typeof jsep === 'undefined') {
     throw new Error('jsep <http://jsep.from.so/> is needed for this parser to work. ');
   }
@@ -147,12 +150,12 @@
 
     // check for literals
     if (tree.type === 'Literal') {
-      if (tree.raw === 'true'){
-        return {'operation': 'true'};
-      } else if (tree.raw === 'false'){
-        return {'operation': 'false'};
+      if (tree.raw === OP_TRUE[0]){
+        return {'operation': OP_TRUE[0]};
+      } else if (tree.raw === OP_FALSE[0]){
+        return {'operation': OP_FALSE[0]};
       } else if (tree.raw === 'null'){
-        return {'operation': 'false'};
+        return {'operation': OP_FALSE[0]};
       }
     }
 
@@ -328,18 +331,375 @@
     return parse_binary(ast);
   };
 
+  // simplifies a boolean expression.
+  var simplify = function (obj) {
 
-  // attach to the global window object if available
-  if (typeof exports === 'undefined') {
-    global.parse = parse;
-  } else {
-    if (typeof module !== 'undefined' && module.exports) {
-      exports.parse = module.exports.parse = parse;
-    } else {
-      exports.parse = parse;
+    var left, left_op;
+    var right, right_op;
+
+    if (obj['operation'] == OP_AND[0]) {
+      // simplifiy on the left and on the right
+      left  = simplify(obj['left']);
+      right = simplify(obj['right']);
+
+      // find left and right operations
+      left_op = left['operation'];
+      right_op = right['operation'];
+
+      // if the right operation is a constant
+      if (right_op == OP_TRUE[0]){
+        return left;
+      }
+
+      if (right_op == OP_FALSE[0]){
+        return {'operation': OP_FALSE[0]};
+      }
+
+      if (left_op == OP_TRUE[0]){
+        return right;
+      }
+
+      if (left_op == OP_FALSE[0]){
+        return {'operation': OP_FALSE[0]};
+      }
+
+      // else return the cleaned operation
+      return {'operation': OP_AND[0], 'left': left, 'right': right}
     }
 
-    global.parse = parse; 
+    if(obj['operation'] == OP_NAND[0]){
+        // simplify on the left and on the right
+        left  = simplify(obj['left']);
+        right = simplify(obj['right']);
+
+        // find left and right operations
+        left_op = left['operation'];
+        right_op = right['operation'];
+
+        // if the right operation is a constant
+        if(right_op == OP_TRUE[0]){
+          return simplify({
+              operation: OP_NOT[0],
+              'right': left
+          });
+        }
+
+        if(right_op == OP_FALSE[0]){
+          return {'operation': OP_TRUE[0]};
+        }
+
+
+        // if the left operation is a constant
+        if (left_op == OP_TRUE[0]){
+          return simplify({
+              operation: OP_NOT[0],
+              'right': right
+          });
+        }
+
+        if(left_op == OP_FALSE[0]){
+          return {'operation': OP_TRUE[0]};
+        }
+
+        // else return the cleaned operation
+        return {'operation': OP_NAND[0], 'left': left, 'right': right}
+      }
+
+
+      if(obj['operation'] == OP_OR[0]){
+        // simplify on the left and on the right
+        left  = simplify(obj['left']);
+        right = simplify(obj['right']);
+
+        // find left and right operations
+        left_op = left['operation'];
+        right_op = right['operation'];
+
+        // if the right operation is a constant
+        if(right_op == OP_TRUE[0]){
+          return {'operation': OP_TRUE[0]};
+        }
+
+        if(right_op == OP_FALSE[0]){
+          return left;
+        }
+
+
+        // if the left operation is a constant
+        if(left_op == OP_TRUE[0]){
+          return {'operation': OP_TRUE[0]};
+        }
+
+        if(left_op == OP_FALSE[0]){
+          return right;
+        }
+
+
+        // else return the cleaned operation
+        return {'operation': OP_OR[0], 'left': left, 'right': right};
+      }
+
+      if(obj['operation'] == OP_XOR[0]){
+
+        // simplify on the left and on the right
+        left  = simplify(obj['left']);
+        right = simplify(obj['right']);
+
+        // find left and right operations
+        left_op = left['operation'];
+        right_op = right['operation'];
+
+        // if the right operation is a constant
+        if(right_op == OP_TRUE[0]){
+          return simplify({
+              'operation': OP_NOT[0],
+              'right': left
+          });
+        }
+
+        if(right_op == OP_FALSE[0]){
+          return left;
+        }
+
+
+        // if the left operation is a constant
+        if (left_op == OP_TRUE[0]) {
+          return simplify({
+              'operation': OP_NOT[0],
+              'right': right
+          });
+        }
+
+        if (left_op == OP_FALSE[0]) {
+          return right;
+        }
+
+        // else return the cleaned operation
+        return {'operation': OP_XOR[0], 'left': left, 'right': right};
+      }
+
+      if(obj['operation'] == OP_NOT[0]) {
+        // simplify the sub operation
+        right = simplify(obj['right']);
+
+        // find the operation on the right
+        right_op = right['operation'];
+
+        // remove true / false
+        if(right_op == OP_TRUE[0]) {
+          return {'operation': OP_FALSE[0]};
+        }
+
+        if(right_op == OP_FALSE[0]) {
+          return {'operation': OP_TRUE[0]};
+        }
+
+        // remove double nots
+        if(right_op == OP_NOT[0]){
+          return simplify(right['right']);
+        }
+
+        // ! nand => and
+        if( right_op == OP_NAND[0]){
+          return {
+              'operation': OP_AND[0],
+              'left': right['left'],
+              'right': right['right']
+          };
+        };
+
+        // ! and => nand
+        if(right_op == OP_AND[0]){
+          return {
+              'operation': OP_NAND[0],
+              'left': right['left'],
+              'right': right['right']
+          };
+        }
+
+        // ! or(a, b) = and(!a, !b)
+        if (right_op == OP_OR[0]){
+          return {
+            'operation': OP_AND[0],
+            'left': simplify({operation:OP_NOT[0], right: right['left']}),
+            'right': simplify({operation:OP_NOT[0], right: right['right']}),
+          }
+        }
+
+        return {'operation': OP_NOT[0], 'right': simplify(obj['right'])}
+      }
+      // otherwise it is a filter, so return as is.
+      return obj
+  };
+
+  var matches_logical = function (tree, obj) {
+
+    // operation of the tree
+    var op = tree['operation'];
+
+    // constants
+    if (op === OP_TRUE[0]) {
+      return true;
+    }
+
+    if (op === OP_FALSE[0]) {
+      return false;
+    }
+
+    // not
+    if (op === OP_NOT[0]) {
+      return ! matches_logical(tree['right'], obj);
+    }
+
+    // binary operations
+
+    if(op === OP_AND[0]) {
+      return matches_logical(tree['left'], obj) && matches_logical(tree['right'], obj);
+    }
+
+    if(op === OP_NAND[0]) {
+      return ! (matches_logical(tree['left'], obj) && matches_logical(tree['right'], obj));
+    }
+
+    if(op === OP_OR[0]) {
+      return matches_logical(tree['left'], obj) || matches_logical(tree['right'], obj);
+    }
+
+    if(op === OP_XOR[0]) {
+      return matches_logical(tree['left'], obj) != matches_logical(tree['right'], obj);
+    }
+
+    return matches_filter(tree, obj);
+  }
+
+  var match_toString = function (obj) {
+    return ''+obj;
+  }
+
+  var match_toFloat = function (obj) {
+    try {
+      return parseFloat(obj)
+    } catch(e){
+      return parseFloat(match_toString(obj));
+    }
+  }
+
+  // check if a tree matches a filter
+  var matches_filter = function (tree, obj) {
+
+    // find the operation.
+    var op = tree['operation'];
+
+    // find the key and value to check.
+    var key = tree['key'];
+    var value = tree['value'];
+
+    // if the object does not have the property, we can exit immediatly
+    if( !obj.hasOwnProperty(key) ) {
+      return false;
+    }
+
+    // read the key from the object
+    var obj_value = obj[key];
+
+    // equality: check if the objects are equal as strings.
+    if (op == OP_EQUALS[0]) {
+      return match_toString(obj_value) == match_toString(value);
+    }
+    
+    // numeric comparisions
+    if (op == OP_LESS[0]) {
+      try{
+        value = match_toFloat(value);
+        obj_value = match_toFloat(value);
+      } catch(e){
+        return false;
+      }
+
+      return obj_value < value;
+    }
+
+    if (op == OP_LESS_EQUAL[0]) {
+      try{
+        value = match_toFloat(value);
+        obj_value = match_toFloat(value);
+      } catch(e){
+        return false;
+      }
+
+      return obj_value <= value;
+    }
+
+    if (op == OP_GREATER[0]) {
+      try{
+        value = match_toFloat(value);
+        obj_value = match_toFloat(value);
+      } catch(e){
+        return false;
+      }
+
+      return obj_value > value;
+    }
+
+    if (op == OP_GREATER_EQUAL[0]) {
+      try{
+        value = match_toFloat(value);
+        obj_value = match_toFloat(value);
+      } catch(e){
+        return false;
+      }
+
+      return obj_value >= value;
+    }
+
+
+    // check if we match a regular expression
+    if (op == OP_MATCHES[0]) {
+      try {
+        value = new RegExp(value);
+      } catch(e) {
+        return false;
+      }
+
+      // check if it matches the regular expression
+      return !!match_toString(obj_value).match(value);
+    }
+
+    // check if a value is contained in this array
+    if (op == OP_CONTAINS[0] && Array.isArray(obj_value)) {
+      return obj_value.indexOf(value) != -1;
+    } else if (op == OP_CONTAINS[0]) {
+      return match_toString(obj_value).indexOf(value) != -1;
+    }
+
+    // ??? what is this?
+    return false;
+  }
+
+  // check if tree matches an object
+  var matches = function( tree, obj ){
+    return matches_logical(tree, obj);
+  }
+
+
+  // exports the entire thing in a namespace
+  var logic = {
+    'parse': parse,
+    'simplify': simplify,
+    'matches': matches
+  }
+
+
+
+  // attach to the global window object if available
+  global.logic = logic;
+
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports.logic = module.exports.logic = logic;
+    } else {
+      exports.logic = logic;
+    }
   }
 
 })(this);
