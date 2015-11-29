@@ -686,7 +686,39 @@
   var logic = {
     'parse': parse,
     'simplify': simplify,
-    'matches': matches
+    'matches': matches, 
+    
+    'op_list': {
+      'OP_TRUE': OP_TRUE, 
+      'OP_FALSE': OP_FALSE, 
+      
+      'OP_NOT': OP_NOT,
+      
+      'OP_EQUALS': OP_EQUALS, 
+      
+      'OP_LESS': OP_LESS, 
+      'OP_LESS_EQUAL': OP_LESS_EQUAL, 
+      
+      'OP_GREATER': OP_GREATER, 
+      'OP_GREATER_EQUAL': OP_GREATER_EQUAL, 
+      
+      'OP_CONTAINS': OP_CONTAINS, 
+      
+      'OP_MATCHES': OP_MATCHES, 
+      
+      'OP_AND': OP_AND, 
+      
+      'OP_OR': OP_OR, 
+      
+      'OP_NAND': OP_NAND, 
+      
+      'OP_XOR': OP_XOR, 
+      
+      
+      'OPS_UNARY': OPS_UNARY, 
+      'OPS_FILTERS': OPS_FILTERS, 
+      'OPS_BINARY': OPS_BINARY
+    }
   }
 
 
