@@ -8,7 +8,7 @@ var lineHeight = 20;
 var renderStatusNode = function(status){
   return $("<div>")
   .addClass("status_node")
-  .addClass(status?"status_node_true":"status_node_false"); 
+  .addClass(status?"status_node_true":"status_node_false");
 
   return statusNode;
 };
@@ -95,33 +95,65 @@ var renderXOR = function(inA, inB){
   return renderBox(box, [!!inA, !!inB], (!!inA ^ !!inB));
 };
 
+// ====================
+// RENDERING A GRID
+// ====================
+var renderGrid = function (layout) {
+  // the grid which contains the actual data
+  var grid = layout.grid;
 
-$(function(){/*
-  renderFALSE().appendTo("#node_false");
-  
-  renderTRUE().appendTo("#node_true");
-  
-  renderNOT(false).appendTo("#node_not_false"); 
-  renderNOT(true).appendTo("#node_not_true"); 
-  
-  renderAND(false, false).appendTo("#node_and_false_false"); 
-  renderAND(false, true).appendTo("#node_and_false_true"); 
-  renderAND(true, false).appendTo("#node_and_true_false"); 
-  renderAND(true, true).appendTo("#node_and_true_true"); 
-  
-  renderOR(false, false).appendTo("#node_or_false_false"); 
-  renderOR(false, true).appendTo("#node_or_false_true"); 
-  renderOR(true, false).appendTo("#node_or_true_false"); 
-  renderOR(true, true).appendTo("#node_or_true_true"); 
-  
-  renderNAND(false, false).appendTo("#node_nand_false_false"); 
-  renderNAND(false, true).appendTo("#node_nand_false_true"); 
-  renderNAND(true, false).appendTo("#node_nand_true_false"); 
-  renderNAND(true, true).appendTo("#node_nand_true_true"); 
-  
-  renderXOR(false, false).appendTo("#node_xor_false_false"); 
-  renderXOR(false, true).appendTo("#node_xor_false_true"); 
-  renderXOR(true, false).appendTo("#node_xor_true_false"); 
-  renderXOR(true, true).appendTo("#node_xor_true_true"); 
-  */
+  // dimensions
+  var height = layout.size[0];
+  var width = layout.size[1];
+
+  var $table = $("<table>");
+  var $tr, $td, node, box;
+
+  for(var i = 0; i < height; i++){
+    $tr = $("<tr>").appendTo($table);
+
+    for (var j = 0; j < width; j++){
+      node = grid[i][j];
+      $td = $("<td>").appendTo($tr);
+
+      // if the node is empty, do nothing.
+      if (node["type"] === 'empty'){
+        /* do nothing */
+
+      // if the node is a connection, draw the right arrows in the right direction
+      } else if (node["type"] === 'conn'){
+
+        // for a double connection we need to add two divs
+        if(node["prop"]["class"] === "tree_connect_top_lr") {
+          $td.append(
+            $("<div>").addClass("tree_connect_top_lr_left" + " " + (node["prop"]["active"][0] ? "tree_connect_true" : "tree_connect_false")),
+            $("<div>").addClass("tree_connect_top_lr_right" + " " + (node["prop"]["active"][1] ? "tree_connect_true" : "tree_connect_false"))
+          )
+
+        // for a single connection we need to add one div
+        } else /* if(node["prop"]["class"] === "tree_connect_ver" || node["prop"]["class"] === "tree_connect_hor" || node["prop"]["class"] === "tree_connect_bot_right" || || node["prop"]["class"] === "tree_connect_bot_left") */ {
+          $td.append(
+            $("<div>").addClass(node["prop"]["class"] + " " + (node["prop"]["active"][0] ? "tree_connect_true" : "tree_connect_false"))
+          )
+        }
+      } else /* if (node["type"] === "node") */ {
+        // TODO: Implement filters
+        box = $("<div>").addClass("content_box_logical content_box_"+node["prop"]["op"].toUpperCase());
+        $td.append(
+          renderBox(box, node["prop"]["input"], node["prop"]["output"])
+        )
+      }
+
+    }
+  }
+
+  return $table;
+}
+
+
+$(function(){
+  var tree = logic.parse("!(true && false) || false || (false || !(true))");
+  var layout = layouter(tree, {});
+  console.log(layout.grid);
+  renderGrid(layout).appendTo("#test");
 })
