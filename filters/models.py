@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from settings.models import VotingSystem
 
-import filters.logic_bridge as bridge
+import filters.forest
 
 # Create your models here.
 class UserFilter(models.Model):
@@ -20,8 +20,8 @@ class UserFilter(models.Model):
 
 	def clean(self):
 		try:
-			self.tree = bridge.parse(self.value)
-			self.tree = bridge.simplify(self.tree)
+			self.tree = forest.logic_parse(self.value)
+			self.tree = forest.logic_simplify(self.tree)
 		except Exception as e:
 			self.tree = None
 
@@ -36,7 +36,7 @@ class UserFilter(models.Model):
 		"""
 
 		try:
-			return bridge.matches(self.tree, obj)
+			return forest.logic_matches(self.tree, obj)
 		except Exception as e:
 			return False
 
