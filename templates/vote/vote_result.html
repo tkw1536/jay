@@ -34,7 +34,7 @@
       <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
-        <li role="presentation"><a href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Chart</a></li>
+        <li role="presentation"><a id="chartbtn" href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Chart</a></li>
         <li role="presentation"><a href="#table" aria-controls="messages" role="tab" data-toggle="tab">Table</a></li>
       </ul>
 
@@ -79,14 +79,17 @@
 <script src="//code.highcharts.com/highcharts.js" charset="utf-8"></script>
 
 <script type="text/javascript">
-  // Make tabbed nav work
-  $('#myTabs a').click(function (e) {
-    e.preventDefault()
-    $(this).tab('show')
-  })
-
   // Generate the bar chart
   $(function () {
+
+      $('#chartbtn').click(function() {
+        // Little hack here, to make chart fit container on pageload
+        var chart = $("#barchart").highcharts()
+        setTimeout(function() {
+          chart.reflow()
+        }, 0)
+      })
+
       $('#barchart').highcharts({
           chart: {
               type: 'column'
