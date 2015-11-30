@@ -1,0 +1,128 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load markdown %}
+
+{% block page_title %}Results{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  {% if alert_head %}
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="alert alert-{{ alert_type | default:"danger"}}">
+          <strong>{{ alert_head | default:"Something happened."}}</strong>
+          {{ alert_text | default:"An internal error occured." }}
+        </div>
+      </div>
+    </div><!-- row -->
+  {% endif %}
+
+  <div class="row">
+    <div class="col-sm-10">
+      <h1>Results <small>{{ vote.name }}</small></h1>
+      <p class="text-muted">{{ vote.passivevote.num_voters }} of {{ vote.passivevote.num_eligible }} voted</p>
+    </div>
+  </div><!-- row -->
+
+  <!-- Options start below -->
+  <div class="row">
+    <div class="col-sm-12">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+        <li role="presentation"><a href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Chart</a></li>
+        <li role="presentation"><a href="#table" aria-controls="messages" role="tab" data-toggle="tab">Table</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="overview">
+          <div class="row">
+            <div class="col-sm-10">
+            </div>
+          </div>
+
+          <div class="row">
+            {% for opt in options %}
+              <div class="col-sm-6">
+                {% include "vote/option_fragment.html" with option=opt num_votes=opt.count %}
+              </div>
+            {% empty %}
+              <div class="col-sm-6 col-sm-3-offset">
+                There are no options in this vote.
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="chart">
+          <div id="barchart" class="col-sm-12">
+          </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="table">
+
+        </div>
+      </div>
+
+    </div>
+  </div> <!-- row -->
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="//code.highcharts.com/highcharts.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+  // Make tabbed nav work
+  $('#myTabs a').click(function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+  })
+
+  // Generate the bar chart
+  $(function () {
+      $('#barchart').highcharts({
+          chart: {
+              type: 'column'
+          },
+          title: "",
+
+          xAxis: {
+              categories: [
+                {% for opt in options %}"{{ opt.name }}",{% endfor %}
+              ],
+              crosshair: true
+          },
+          yAxis: {
+              min: 0,
+              tickInterval: 1,
+              title: {
+                  text: 'Number of votes'
+              }
+          },
+          plotOptions: {
+              column: {
+                  pointPadding: 0.2,
+                  borderWidth: 0
+              }
+          },
+          series: [
+          {% for opt in options %}
+            {
+              name: "{{ opt.name }}",
+              data: [{{ opt.count }}]
+            },
+          {% endfor %}
+          ]
+      });
+  });
+
+
+</script>
+{% endblock %}
