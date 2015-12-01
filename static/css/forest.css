@@ -149,7 +149,7 @@
 /* actual status of the nodes */
 .status_node_true {
   color: black;
-  background-color: #c81010;
+  background-color: yellow;
 }
 
 .status_node_true::before {
@@ -209,7 +209,7 @@
 }
 
 .tree_connect_ver.tree_connect_true, .tree_connect_hor.tree_connect_true {
-    background-color: #c81010;
+    background-color: yellow;
 }
 
 .tree_connect_ver.tree_connect_false, .tree_connect_hor.tree_connect_false {
@@ -219,8 +219,8 @@
 /* bottom bent lines */
 
 .tree_connect_bot_right.tree_connect_true {
-    border-top: 10px solid #c81010;
-    border-left: 10px solid #c81010;
+    border-top: 10px solid yellow;
+    border-left: 10px solid yellow;
 }
 
 .tree_connect_bot_right.tree_connect_false {
@@ -229,8 +229,8 @@
 }
 
 .tree_connect_bot_left.tree_connect_true {
-    border-top: 10px solid #c81010;
-    border-right: 10px solid #c81010;
+    border-top: 10px solid yellow;
+    border-right: 10px solid yellow;
 }
 
 .tree_connect_bot_left.tree_connect_false {
@@ -256,8 +256,8 @@
 
 /* top bent lines */
 .tree_connect_top_right.tree_connect_true {
-    border-bottom: 10px solid #c81010;
-    border-left: 10px solid #c81010;
+    border-bottom: 10px solid yellow;
+    border-left: 10px solid yellow;
 }
 
 .tree_connect_top_right.tree_connect_false {
@@ -266,8 +266,8 @@
 }
 
 .tree_connect_top_left.tree_connect_true {
-    border-bottom: 10px solid #c81010;
-    border-right: 10px solid #c81010;
+    border-bottom: 10px solid yellow;
+    border-right: 10px solid yellow;
 }
 
 .tree_connect_top_left.tree_connect_false {
@@ -293,8 +293,8 @@
 
 /* top left dual */
 .tree_connect_top_lr_left.tree_connect_true {
-    border-bottom: 10px solid #c81010;
-    border-right: 10px solid #c81010;
+    border-bottom: 10px solid yellow;
+    border-right: 10px solid yellow;
 }
 
 .tree_connect_top_lr_left.tree_connect_false {
@@ -303,8 +303,8 @@
 }
 
 .tree_connect_top_lr_right.tree_connect_true {
-    border-bottom: 10px solid #c81010;
-    border-left: 10px solid #c81010;
+    border-bottom: 10px solid yellow;
+    border-left: 10px solid yellow;
 }
 
 .tree_connect_top_lr_right.tree_connect_false {

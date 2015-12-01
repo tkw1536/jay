@@ -56,7 +56,7 @@
             'class': 'const',
             'op': op,
 
-            'is_filter': is_filter, 
+            'is_filter': is_filter,
             'key': tree.key,
             'value': tree.value,
 

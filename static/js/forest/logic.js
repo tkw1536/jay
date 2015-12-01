@@ -611,7 +611,7 @@
     if (op == OP_LESS[0]) {
       try{
         value = match_toFloat(value);
-        obj_value = match_toFloat(value);
+        obj_value = match_toFloat(obj_value);
       } catch(e){
         return false;
       }
@@ -622,7 +622,7 @@
     if (op == OP_LESS_EQUAL[0]) {
       try{
         value = match_toFloat(value);
-        obj_value = match_toFloat(value);
+        obj_value = match_toFloat(obj_value);
       } catch(e){
         return false;
       }
@@ -633,7 +633,7 @@
     if (op == OP_GREATER[0]) {
       try{
         value = match_toFloat(value);
-        obj_value = match_toFloat(value);
+        obj_value = match_toFloat(obj_value);
       } catch(e){
         return false;
       }
@@ -644,7 +644,7 @@
     if (op == OP_GREATER_EQUAL[0]) {
       try{
         value = match_toFloat(value);
-        obj_value = match_toFloat(value);
+        obj_value = match_toFloat(obj_value);
       } catch(e){
         return false;
       }
