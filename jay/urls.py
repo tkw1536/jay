@@ -34,7 +34,8 @@ urlpatterns = [
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
 
-    url(r'^help/filters/$', TemplateView.as_view(template_name="filters/help.html"), name="filter_help"), 
+    # Help stuff
+    url(r'^help/filters/$', TemplateView.as_view(template_name="filters/help.html"), name="filter_help"),
 
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
