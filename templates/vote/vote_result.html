@@ -12,7 +12,7 @@
 {% block content %}
   {% if alert_head %}
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-8">
         <div class="alert alert-{{ alert_type | default:"danger"}}">
           <strong>{{ alert_head | default:"Something happened."}}</strong>
           {{ alert_text | default:"An internal error occured." }}
@@ -22,21 +22,28 @@
   {% endif %}
 
   <div class="row">
-    <div class="col-sm-10">
+    <div class="col-sm-8">
       <h1>Results <small>{{ vote.name }}</small></h1>
       <p class="text-muted">{{ vote.passivevote.num_voters }} of {{ vote.passivevote.num_eligible }} voted</p>
+    </div>
+
+    <div class="col-sm-4">
+      <!-- Nav tabs -->
+      <ul class="nav nav-pills nav-justified"  role="tablist">
+        <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+        <li role="presentation"><a id="chartbtn" href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Chart</a></li>
+        <li role="presentation"><a href="#table" aria-controls="messages" role="tab" data-toggle="tab">Table</a></li>
+      </ul>
     </div>
   </div><!-- row -->
 
   <!-- Options start below -->
   <div class="row">
+
+  </div>
+
+  <div class="row">
     <div class="col-sm-12">
-      <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
-        <li role="presentation"><a id="chartbtn" href="#chart" aria-controls="profile" role="tab" data-toggle="tab">Chart</a></li>
-        <li role="presentation"><a href="#table" aria-controls="messages" role="tab" data-toggle="tab">Table</a></li>
-      </ul>
 
       <!-- Tab panes -->
       <div class="tab-content">
@@ -65,7 +72,41 @@
         </div>
 
         <div role="tabpanel" class="tab-pane" id="table">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="alert alert-info">
+                <strong>Reordered</strong> In order of decreasing number of votes
+              </div>
+            </div>
+          </div>
 
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <td>#</td>
+                  <td>Name</td>
+                  <td>Votes</td>
+                  <td>Percentage</td>
+                </tr>
+              </thead>
+
+              <tbody>
+              {% for opt in options %}
+                <tr>
+                  <td>{{ opt.number }}</td>
+                  <td>{{ opt.name }}</td>
+                  <td>{{ opt.count }}</td>
+                  <td>{{ vote.passivevote.num_voters }}</td>
+                </tr>
+              {% empty %}
+                <div class="col-sm-6 col-sm-3-offset">
+                  There are no options in this vote.
+                </div>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -98,7 +139,7 @@
 
           xAxis: {
               categories: [
-                {% for opt in options %}"{{ opt.name }}",{% endfor %}
+                {% for opt in options %}"Options",{% endfor %}
               ],
               crosshair: true
           },
