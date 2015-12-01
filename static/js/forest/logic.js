@@ -9,11 +9,11 @@
 
   var OP_EQUALS           =  [ 'equals', '=', '==', '===' ];
 
-  var OP_LESS             =  [ 'less then', '<' ];
-  var OP_LESS_EQUAL       =  [ 'less then or equal', '<=', '=<', ];
+  var OP_LESS             =  [ 'less than', '<' ];
+  var OP_LESS_EQUAL       =  [ 'less than or equal', '<=', '=<', ];
 
-  var OP_GREATER          =  [ 'greater then', '>' ];
-  var OP_GREATER_EQUAL    =  [ 'greater then or equal', '>=', '=>' ];
+  var OP_GREATER          =  [ 'greater than', '>' ];
+  var OP_GREATER_EQUAL    =  [ 'greater than or equal', '>=', '=>' ];
 
   var OP_CONTAINS         =  [ 'contains' , '::' ];
 
@@ -135,7 +135,7 @@
         4b. a less filter
         4c. a less or equals filter
         4d. a greater filter
-        4e. a greater then filter
+        4e. a greater than filter
         4f. a contains filter
         4g. a matches filter
       5. A primitive expression ( ==> is the string false-ish ? )
@@ -606,7 +606,7 @@
     if (op == OP_EQUALS[0]) {
       return match_toString(obj_value) == match_toString(value);
     }
-    
+
     // numeric comparisions
     if (op == OP_LESS[0]) {
       try{
@@ -686,37 +686,37 @@
   var logic = {
     'parse': parse,
     'simplify': simplify,
-    'matches': matches, 
-    
+    'matches': matches,
+
     'op_list': {
-      'OP_TRUE': OP_TRUE, 
-      'OP_FALSE': OP_FALSE, 
-      
+      'OP_TRUE': OP_TRUE,
+      'OP_FALSE': OP_FALSE,
+
       'OP_NOT': OP_NOT,
-      
-      'OP_EQUALS': OP_EQUALS, 
-      
-      'OP_LESS': OP_LESS, 
-      'OP_LESS_EQUAL': OP_LESS_EQUAL, 
-      
-      'OP_GREATER': OP_GREATER, 
-      'OP_GREATER_EQUAL': OP_GREATER_EQUAL, 
-      
-      'OP_CONTAINS': OP_CONTAINS, 
-      
-      'OP_MATCHES': OP_MATCHES, 
-      
-      'OP_AND': OP_AND, 
-      
-      'OP_OR': OP_OR, 
-      
-      'OP_NAND': OP_NAND, 
-      
-      'OP_XOR': OP_XOR, 
-      
-      
-      'OPS_UNARY': OPS_UNARY, 
-      'OPS_FILTERS': OPS_FILTERS, 
+
+      'OP_EQUALS': OP_EQUALS,
+
+      'OP_LESS': OP_LESS,
+      'OP_LESS_EQUAL': OP_LESS_EQUAL,
+
+      'OP_GREATER': OP_GREATER,
+      'OP_GREATER_EQUAL': OP_GREATER_EQUAL,
+
+      'OP_CONTAINS': OP_CONTAINS,
+
+      'OP_MATCHES': OP_MATCHES,
+
+      'OP_AND': OP_AND,
+
+      'OP_OR': OP_OR,
+
+      'OP_NAND': OP_NAND,
+
+      'OP_XOR': OP_XOR,
+
+
+      'OPS_UNARY': OPS_UNARY,
+      'OPS_FILTERS': OPS_FILTERS,
       'OPS_BINARY': OPS_BINARY
     }
   }

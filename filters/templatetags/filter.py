@@ -11,7 +11,7 @@ def render_full(src, inp):
     obj = json.loads(inp)
 
     # parse the source code
-    tree = forest.logic_parse(src)
+    tree = forest.parse(src)
 
     # make a layout with the given object
     layout = forest.layouter(tree, obj)
@@ -23,8 +23,27 @@ def render_full(src, inp):
     return render
 
 @register.simple_tag(takes_context=False)
-def render_box(name, inp, out):
-    box = "<div class='content_box_logical content_box_"+name.upper()+"'></div>"
+def render_layout(src, inp):
+    # load some json
+    obj = json.loads(inp)
+
+    # parse the source code
+    tree = forest.parse(src)
+
+    # make a layout with the given object
+    layout = forest.layouter(tree, obj)
+
+    return str(layout)
+
+@register.simple_tag(takes_context=False)
+def render_tree(src):
+    # parse the source code
+    return str(forest.parse(src))
+
+
+@register.simple_tag(takes_context=False)
+def render_lbox(name, inp, out):
+    box = "<div class='content_box_logical content_box_"+name.upper()+"'><div class='content_box_logic_content'></div></div>"
 
     inp = list(map(lambda x:x=='1', str(inp)))
     out = (out == '1')

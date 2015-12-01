@@ -1,4 +1,12 @@
 (function(global){
+
+  var htmlescape = function(str){
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  var classescape = function(cls){
+    return cls.replace(/\s/, '_').toUpperCase();
+  }
+
   var renderer = function (layout) {
     // the grid which contains the actual data
     var grid = layout.grid;
@@ -8,7 +16,7 @@
     var width = layout.size[1];
 
     var $table = "<table>";
-    var $tr, $td, node, box;
+    var $tr, $td, node, box, key, value;
 
     for(var i = 0; i < height; i++){
       $tr = "<tr>";
@@ -33,8 +41,22 @@
             $td += "<div class='"+node["prop"]["class"] + " " + (node["prop"]["active"][0] ? "tree_connect_true" : "tree_connect_false")+"'></div>";
           }
         } else {
-          // TODO: Implement filters
-          box = "<div class='content_box_logical content_box_"+node["prop"]["op"].toUpperCase()+"'></div>";
+
+          if (node["prop"]["is_filter"]){
+            key = htmlescape(node["prop"]["key"])
+            value = htmlescape(node["prop"]["value"])
+
+            box = "<div class='content_box_filter content_box_"+classescape(node["prop"]["op"])+"'>" +
+            "<div class='content_box_filter_key'>" + key + "</div>" +
+            "<div class='content_box_filter_content'></div>" +
+            "<div class='content_box_filter_value'>" + value + "</div>" +
+            "</div>";
+          } else {
+            box = "<div class='content_box_logical content_box_"+classescape(node["prop"]["op"])+"'>" +
+            "<div class='content_box_logic_content'></div>" + 
+            "</div>";
+          }
+
           $td += renderBox(box, node["prop"]["input"], node["prop"]["output"]);
         }
 

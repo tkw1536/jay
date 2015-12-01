@@ -1,5 +1,8 @@
 from django.contrib.staticfiles import finders
+import os.path
 import execjs
+
+from jay.utils import memoize
 
 def init():
     """
@@ -21,26 +24,47 @@ def init():
         with open(finders.find(f)) as g:
             src += g.read()
 
+    with open(os.path.join(os.path.dirname(__file__), 'forest.js')) as g:
+        src += g.read()
+
     # and eval them.
     return execjs.compile(src)
 
 # initialise the context
 ctx = init()
 
-def logic_simplify(obj):
-    return ctx.call('logic.simplify', obj)
+@memoize
+def parse(treestr):
+    return ctx.call('parse', treestr)
 
-def logic_parse(obj):
-    return ctx.call('logic.parse', obj)
+@memoize
+def simplify(tree):
+    return ctx.call('simplify', tree)
 
-def logic_matches(tree, obj):
-    return ctx.call('logic.matches', tree, obj)
+def parse_and_simplify(treestr):
+    tree = parse(treestr)
+    return simplify(tree)
 
+@memoize
+def matches(tree, obj):
+    return ctx.call('matches', tree, obj)
+
+def map_match(tree, objs):
+    return ctx.call('map_match', tree, objs)
+
+@memoize
 def layouter(tree, obj):
     return ctx.call('layouter', tree, obj)
 
+@memoize
 def renderer(layout):
     return ctx.call('renderer', layout)
 
-def renderer_box(contentNode, input, output):
-    return ctx.call('renderer.box', contentNode, input, output)
+@memoize
+def renderer_box(contentNode, inp, out):
+    return ctx.call('renderer.box', contentNode, inp, out)
+
+def parse_and_render(treestr, obj):
+    tree = parse(treestr)
+    layout = layouter(tree, obj)
+    return renderer(layout)

@@ -3,7 +3,7 @@
   // take the global logic variable
   var logic = global.logic;
 
-  // if it is missing, return it. 
+  // if it is missing, return it.
   if (typeof logic === 'undefined' && typeof require === 'function') {
     logic = require('./logic').logic;
   } else if (typeof logic === 'undefined') {
@@ -38,7 +38,12 @@
   var layout_const = function(op, tree, obj) {
     var doesMatch = logic.matches(tree, obj);
 
-    // TODO: CHECK IF FILTER
+    var is_filter = false;
+
+    // if it is a filter, include key, value
+    if (op_list.OPS_FILTERS.indexOf(op) != -1) {
+      is_filter = true;
+    }
 
     return {
       'size': [1, 1], // height x width
@@ -50,6 +55,11 @@
           'prop': {
             'class': 'const',
             'op': op,
+
+            'is_filter': is_filter, 
+            'key': tree.key,
+            'value': tree.value,
+
             'input': [],
             'output': doesMatch
           }

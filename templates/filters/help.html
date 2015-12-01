@@ -2,7 +2,6 @@
 
 {% load staticfiles %}
 {% load filter %}
-{% load cache %}
 
 {% block head %}
  <link rel="stylesheet" type="text/css" href="{% static "css/forest.css" %}">
@@ -12,10 +11,11 @@
 
 {% block content %}
 
-{% cache 3600 filters_help %}
   <div class="row">
     <div class="col-sm-12">
       <div>
+        {% render_full '(college==Mercator) and (year > 14)' '{}' %}
+        {% render_layout 'key2==value' '{}' %}
           There are several logical operations you can use to join primitive filters. You can find find a list of them in the table below:
       </div>
       <table class="table">
@@ -40,7 +40,7 @@
               always returns false
             </td>
             <td colspan="2">
-              {% render_box 'false' '' '0' %}
+              {% render_lbox 'false' '' '0' %}
             </td>
           </tr>
 
@@ -52,7 +52,7 @@
               always returns true
             </td>
             <td colspan="2">
-              {% render_box 'true' '' '1' %}
+              {% render_lbox 'true' '' '1' %}
             </td>
           </tr>
 
@@ -64,10 +64,10 @@
               the inverse of the input
             </td>
             <td>
-              {% render_box 'not' '0' '1' %}
+              {% render_lbox 'not' '0' '1' %}
             </td>
             <td>
-              {% render_box 'not' '1' '0' %}
+              {% render_lbox 'not' '1' '0' %}
             </td>
           </tr>
 
@@ -79,18 +79,18 @@
               true if both inputs are true
             </td>
             <td>
-              {% render_box 'and' '00' '0' %}
+              {% render_lbox 'and' '00' '0' %}
             </td>
             <td>
-              {% render_box 'and' '01' '0' %}
+              {% render_lbox 'and' '01' '0' %}
             </td>
           </tr>
           <tr>
             <td>
-              {% render_box 'and' '10' '0' %}
+              {% render_lbox 'and' '10' '0' %}
             </td>
             <td>
-              {% render_box 'and' '11' '1' %}
+              {% render_lbox 'and' '11' '1' %}
             </td>
           </tr>
 
@@ -102,18 +102,18 @@
               true if at least one input is true
             </td>
             <td>
-              {% render_box 'or' '00' '0' %}
+              {% render_lbox 'or' '00' '0' %}
             </td>
             <td>
-              {% render_box 'or' '01' '1' %}
+              {% render_lbox 'or' '01' '1' %}
             </td>
           </tr>
           <tr>
             <td>
-              {% render_box 'or' '10' '1' %}
+              {% render_lbox 'or' '10' '1' %}
             </td>
             <td>
-              {% render_box 'or' '11' '1' %}
+              {% render_lbox 'or' '11' '1' %}
             </td>
           </tr>
 
@@ -125,18 +125,18 @@
               true if at most one input is true
             </td>
             <td>
-              {% render_box 'nand' '00' '1' %}
+              {% render_lbox 'nand' '00' '1' %}
             </td>
             <td>
-              {% render_box 'nand' '01' '1' %}
+              {% render_lbox 'nand' '01' '1' %}
             </td>
           </tr>
           <tr>
             <td>
-              {% render_box 'nand' '10' '1' %}
+              {% render_lbox 'nand' '10' '1' %}
             </td>
             <td>
-              {% render_box 'nand' '11' '0' %}
+              {% render_lbox 'nand' '11' '0' %}
             </td>
           </tr>
 
@@ -148,23 +148,22 @@
               true if exactly one input is true
             </td>
             <td>
-              {% render_box 'xor' '00' '0' %}
+              {% render_lbox 'xor' '00' '0' %}
             </td>
             <td>
-              {% render_box 'xor' '01' '1' %}
+              {% render_lbox 'xor' '01' '1' %}
             </td>
           </tr>
           <tr>
             <td>
-              {% render_box 'xor' '10' '1' %}
+              {% render_lbox 'xor' '10' '1' %}
             </td>
             <td>
-              {% render_box 'xor' '11' '0' %}
+              {% render_lbox 'xor' '11' '0' %}
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div><!-- row -->
-{% endcache %}
 {% endblock %}

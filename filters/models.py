@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from settings.models import VotingSystem
 
-import filters.forest
+import filters.forest as forest
 
 # Create your models here.
 class UserFilter(models.Model):
@@ -20,8 +20,7 @@ class UserFilter(models.Model):
 
 	def clean(self):
 		try:
-			self.tree = forest.logic_parse(self.value)
-			self.tree = forest.logic_simplify(self.tree)
+			self.tree = forest.parse_and_simplify(self.value)
 		except Exception as e:
 			self.tree = None
 
