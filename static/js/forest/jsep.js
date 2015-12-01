@@ -1,6 +1,7 @@
 //     JavaScript Expression Parser (JSEP) <%= version %>
 //     JSEP may be freely distributed under the MIT License
 //     http://jsep.from.so/
+//		 adapted by Tom Wiesing
 
 /*global module: true, exports: true, console: true */
 (function (root) {
@@ -612,14 +613,14 @@
 			return jsep;
 		};
 	} else {
+		// also put it into the global context
+		root.jsep = jsep;
+
 		// In Node.JS environments
 		if (typeof module !== 'undefined' && module.exports) {
 			exports.jsep = module.exports.jsep = jsep;
 		} else {
 			exports.jsep = jsep;
 		}
-
-		// also put it into the global context
-		root.jsep = jsep;
 	}
 }(this));

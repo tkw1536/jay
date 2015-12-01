@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from settings.models import VotingSystem
 
-from filters.logic.operations import string, evaluate_tree
+import filters.forest as forest
 
 # Create your models here.
 class UserFilter(models.Model):
@@ -19,8 +19,10 @@ class UserFilter(models.Model):
 		return u'%s: %s' % (self.system.machine_name, self.name)
 
 	def clean(self):
-		# parse the tree into valid json. 
-		self.tree = string(self.value)
+		try:
+			self.tree = forest.parse_and_simplify(self.value)
+		except Exception as e:
+			self.tree = None
 
 		if self.tree == None:
 			raise ValidationError({
@@ -31,7 +33,10 @@ class UserFilter(models.Model):
 		"""
 			Checks if this filter matches an object.
 		"""
-		return evaluate_tree(self.tree, obj)
 
+		try:
+			return forest.logic_matches(self.tree, obj)
+		except Exception as e:
+			return False
 
 admin.site.register(UserFilter)
