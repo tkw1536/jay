@@ -23,7 +23,7 @@ def results(request, system_name, vote_name):
     vote = get_object_or_404(Vote, machine_name=vote_name)
 
     ctx['vote'] = vote
-    ctx['options'] = vote.option_set.all()
+    ctx['options'] = vote.option_set.order_by('-count')
 
 
     return render(request, VOTE_RESULT_TEMPLATE, ctx)
