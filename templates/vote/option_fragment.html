@@ -19,4 +19,10 @@
       </div>
     {% endif %}
   </div>
+
+  {% if num_votes != None %}
+    <div class="panel-footer">
+      {{ num_votes }} vote{{ num_votes|pluralize }}
+    </div>
+  {% endif %}
 </div>
