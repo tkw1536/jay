@@ -39,4 +39,11 @@ class UserFilter(models.Model):
 		except Exception as e:
 			return False
 
+	def canEdit(self, user):
+		"""
+			Checks if a user can edit this UserFilter. 
+		"""
+
+		return self.system.isAdmin(user)
+
 admin.site.register(UserFilter)

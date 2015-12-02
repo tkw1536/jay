@@ -5,10 +5,26 @@
 {% block page_title %}Filters - Edit{% endblock %}
 
 {% block content %}
+<div>
+  <h2>Filters you can edit</h2>
+</div>
+
 {% for s in admin_systems %}
   <div>
     <!-- TODO: Make a form where the user can create a new thing -->
     {{ s.machine_name }}
   </div>
 {% endfor %}
+
+<div>
+  <h2>Filters you can view but not edit</h2>
+</div>
+
+{% for s in other_systems %}
+  <div>
+    <!-- TODO: Make a form where the user can create a new thing -->
+    <h3>{{ s.machine_name }}</h3>
+  </div>
+{% endfor %}
+
 {% endblock %}
