@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 
     # Filters
-    url(r'^filters/', include(filter_urls)),
+    url(r'^filters/', include(filter_urls, namespace='filters')),
 
     # Legal things
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),

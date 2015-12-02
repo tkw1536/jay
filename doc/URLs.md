@@ -17,3 +17,4 @@ All URLs in the list below are relative to the hostname of Jay's instance
 
   * `<tree_id>` - Runs the filter against the user database to give an example for who you can vote
     * `/edit` - Edit a filter tree.
+    * `/delete` - Delete a filter tree. 
