@@ -31,6 +31,11 @@ class Vote(models.Model):
 	def clean(self):
 		is_restricted_word('machine_name', self.machine_name)
 
+	def canEdit(self, user):
+		"""
+			Checks if a user can edit this vote.
+		"""
+		return self.system.canEdit(user)
 
 class Option(models.Model):
 	vote = models.ForeignKey(Vote)
@@ -49,6 +54,12 @@ class Option(models.Model):
 
 	def __str__(self):
 		return u'[%s] %s' % (self.number, self.name)
+
+	def canEdit(self, user):
+		"""
+			Checks if a user can edit this option.
+		"""
+		return self.vote.canEdit(user)
 
 class Status(models.Model):
 	INIT = 'I'

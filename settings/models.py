@@ -16,4 +16,16 @@ class VotingSystem(models.Model):
 	def clean(self):
 		is_restricted_word('machine_name', self.machine_name)
 
+	def canEdit(self, user):
+		"""
+			Checks if a user can edit this voting system.
+		"""
+		return user.isSuperAdmin()
+
+	def isAdmin(self, user):
+		"""
+			Checks if a user is an administrator for this voting system.
+		"""
+		return user.isAdminFor(self)
+
 admin.site.register(VotingSystem)

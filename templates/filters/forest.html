@@ -1,0 +1,95 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Filters - Overview{% endblock %}
+
+{% block content %}
+<div>
+  <h2>Filters you can edit</h2>
+</div>
+
+{% for s in admin_systems %}
+  <div>
+    <h3>{{ s.machine_name }}</h3>
+    <table class="table">
+      <tr>
+          <th>Name</th>
+          <th>Filter</th>
+          <th>Actions</th>
+      </tr>
+
+      {% for f in s.userfilter_set.all %}
+        <tr>
+          <td>
+            {{ f.name }}
+          </td>
+          <td>
+            {% autoescape on %}
+              {{ f.value }}
+            {% endautoescape %}
+          </td>
+          <td>
+            <form action="/filters/edit" method="post" class="form-inline" style="display:inline; ">
+              {% csrf_token %}
+              <input type="hidden" value="id" value="{{ f.id }}" />
+              <input type="submit" class="btn btn-danger" value="Edit" />
+            </form>
+
+            <form action="/filters/test" method="post" class="form-inline" style="display:inline; ">
+              <input type="hidden" value="id" value="{{ f.id }}" />
+              <input type="submit" class="btn btn-danger" value="Edit" />
+            </form>
+
+            <form action="/filters/delete" method="post" class="form-inline" style="display:inline; ">
+              {% csrf_token %}
+              <input type="hidden" value="id" value="{{ f.id }}" />
+              <input type="submit" class="btn btn-primary" value="Delete" />
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+        <tr>
+          <td colspan="2"></td>
+          <td>
+            <form action="/filters/new" method="post" class="form-inline" style="display:inline; ">
+              {% csrf_token %}
+              <input type="hidden" value="id" value="{{ s.id }}" />
+              <input type="submit" class="btn btn-danger" value="Add new filter" />
+            </form>
+          </td>
+        </tr>
+    </table>
+  </div>
+{% endfor %}
+
+<div>
+  <h2>Filters you can only view</h2>
+</div>
+
+{% for s in other_systems %}
+  <div>
+    <h3>{{ s.machine_name }}</h3>
+    <table class="table">
+      <tr>
+          <th>Name</th>
+          <th>Filter</th>
+      </tr>
+
+      {% for f in s.userfilter_set.all %}
+        <tr>
+          <td>
+            {{ f.name }}
+          </td>
+          <td>
+            {% autoescape on %}
+              {{ f.value }}
+            {% endautoescape %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endfor %}
+
+{% endblock %}

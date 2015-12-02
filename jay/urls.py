@@ -21,22 +21,32 @@ from django.views.generic import TemplateView
 
 from . import demo_urls
 from votes import urls as votes_urls
+from filters import urls as filter_urls
 from core.views import home
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+
+    # Home page
     url(r'^$', home, name="home"),
+
+    # Admin Page TODO: Do we really need this?
+    url(r'^admin/', include(admin.site.urls)),
+
+    # Dummy TODO: Remove this
     url(r'^demo/', include(demo_urls)),
 
     # Legal things
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
 
-    # Help stuff
+    # Help
+    # TODO: Add help pages for all sorts of stuff
     url(r'^help/filters/$', TemplateView.as_view(template_name="filters/help.html"), name="filter_help"),
 
+    # authentication.
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
 
     url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
+    url(r'^filters/', include(filter_urls, namespace='filters')),
 ]
