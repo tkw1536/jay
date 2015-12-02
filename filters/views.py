@@ -1,20 +1,24 @@
-from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
+from django.http import Http404
 
 from filters.models import UserFilter
+from filters.forms import NewFilterForm
+
 from votes.models import VotingSystem
 
 from jay.utils import priviliged
 
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-
-FILTER_MAIN_VIEW = "filters/forest.html"
+FILTER_FOREST_TEMPLATE = "filters/forest.html"
+FILTER_EDIT_TEMPLATE = "filters/edit.html"
 
 @login_required
 @priviliged
 def Forest(request, alert_head=None, alert_text=None):
+    
     # if the user does not have enough priviliges, throw an exception
     if not request.user.profile.isElevated():
         raise PermissionDenied
@@ -37,10 +41,22 @@ def Forest(request, alert_head=None, alert_text=None):
         ctx['alert_head'] = alert_head
         ctx['alert_text'] = alert_text
     
-    return render(request, FILTER_MAIN_VIEW, ctx)
+    return render(request, FILTER_FOREST_TEMPLATE, ctx)
 
 @login_required
-def FilterNew(request, system_name):
+def FilterNew(request):
+    print("IN_FILTER_NEW")
+    
+    # we need some post data, otherwise it wont work. 
+    if request.method != "POST":
+        raise Http404
+    
+    # try to parse the form
+    try:
+        system_name = NewFilterForm(request.POST).machine_name
+    except:
+        return Forest(request, alert_head="Creation failed", alert_text="Invalid data submitted. ")
+        
     # get the votingsystem
     system = get_object_or_404(VotingSystem, machine_name=system_name)
     
@@ -50,6 +66,7 @@ def FilterNew(request, system_name):
         return Forest(request, alert_head="Creation failed", alert_text="Nice try. You are not allowed to edit this VotingSystem. ")
     
     # create a new filter
+    # TODO: Make a better default name
     newFilter = UserFilter(system=system, name="Unnamed User Filter", value="true")
     
     # save the filter in the database
@@ -89,14 +106,30 @@ def FilterDelete(request, filter_id):
 
 @login_required
 @priviliged
+def FilterEdit(request, filter_id):
+    # make a context
+    ctx = {}
+    
+    # try and grab the user filter
+    filter = get_object_or_404(UserFilter, id=filter_id)
+    ctx["filter"] = filter
+    
+    # check if the user can edit it
+    canEdit = filter.canEdit(request.user.profile)
+    ctx["canEdit"] = canEdit
+    
+    if request.method == "POST":
+        # TODO: parse the form
+        pass
+        
+    return Forest(request, alert_head="Unimplemented")
+
+@login_required
+@priviliged
 def FilterTest(request, filter_id):
     # try and grab the user filter
     filter = get_object_or_404(UserFilter, id=filter_id)
     return Forest(request, alert_head="Unimplemented")
     
 
-@login_required
-def FilterEdit(request, filter_id):
-    # try and grab the user filter
-    filter = get_object_or_404(UserFilter, id=filter_id)
-    return Forest(request, alert_head="Unimplemented")
+

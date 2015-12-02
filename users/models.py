@@ -47,7 +47,7 @@ class UserProfile(models.Model):
 		"""
 			Checks if this user can administer a certain voting system.
 		"""
-		return self.getAdministratedSystems().filter(system).count() == 1
+		return system in self.getAdministratedSystems()
 	def getAdministratedSystems(self):
 		"""
 			Returns all voting systems this user can administer.

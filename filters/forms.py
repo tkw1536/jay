@@ -1,3 +1,4 @@
 from django import forms
 
-pass
+class NewFilterForm(forms.Form):
+    machine_name = forms.SlugField(max_length = 50)
