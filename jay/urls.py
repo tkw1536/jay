@@ -47,6 +47,6 @@ urlpatterns = [
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
 
-    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
     url(r'^filters/', include(filter_urls, namespace='filters')),
+    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 ]
