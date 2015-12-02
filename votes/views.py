@@ -14,9 +14,20 @@ from django.utils.decorators import method_decorator
 from votes.models import Vote, Option, Status, ActiveVote
 from filters.models import UserFilter
 from users.models import UserProfile
+from settings.models import VotingSystem
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
+
+def system_home(request, system_name):
+    ctx = {}
+    ctx['vs'] = get_object_or_404(VotingSystem, machine_name=system_name)
+
+    ctx['votes'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.OPEN)
+
+    ctx['results'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.PUBLIC)
+
+    return render(request, "vote/vote_system_overview.html", ctx)
 
 def results(request, system_name, vote_name):
     ctx = {}
