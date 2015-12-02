@@ -59,6 +59,19 @@ class UserProfile(models.Model):
 		# else return only the systems we are an admin for.
 		else:
 			return self.user.admin_set.values_list('system', flat=True).distinct()
+	def isElevated(self):
+		"""
+			Checks if this user is an elevated user. 
+			
+			(i. e. if they are a superadmin or admin for some voting system)
+		"""
+		
+		# thy are a superadmin
+		if self.isSuperAdmin():
+			return True
+		
+		# they administer some voting system
+		return self.user.admin_set.count() > 0
 
 admin.site.register(Admin)
 admin.site.register(SuperAdmin)
