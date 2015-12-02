@@ -38,6 +38,16 @@ class UserProfile(models.Model):
 			raise ValidationError({
 				'details': ValidationError('Details needs to be a valid JSON object', code='invalid')
 			})
+	def isSuperAdmin(self):
+		return self.user.superadmin_set.count() > 0
+	def getAdministratedSystems(self):
+		# if we are a superadmin we can manage all systems
+		if self.isSuperAdmin():
+			return VotingSystem.objects.all()
+		
+		# else return only the systems we are an admin for. 
+		else:
+			return self.user.admin_set.values_list('system', flat=True).distinct()
 
 admin.site.register(Admin)
 admin.site.register(SuperAdmin)

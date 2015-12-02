@@ -5,5 +5,10 @@
 {% block page_title %}Filters - Edit{% endblock %}
 
 {% block content %}
-
+{% for s in admin_systems %}
+  <div>
+    <!-- TODO: Make a form where the user can create a new thing -->
+    {{ s.machine_name }}
+  </div>
+{% endfor %}
 {% endblock %}
