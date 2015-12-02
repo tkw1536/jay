@@ -22,18 +22,21 @@ from django.views.generic import TemplateView
 from . import demo_urls
 from votes import urls as votes_urls
 from core.views import home
+from settings import urls as vs_urls
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', home),
     url(r'^demo/', include(demo_urls)),
+    url(r'^vs/', include(vs_urls)),
 
-    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
+
+    # url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 
     # Legal things
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
 
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}),
-    url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html'}),
+    url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html'})
 ]

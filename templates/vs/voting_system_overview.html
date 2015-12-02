@@ -1,0 +1,44 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Voting System Overview{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <legend>Voting System Overview &nbsp;<a href="#"><i class="fa fa-plus"></i></a></legend>
+  <div class="row">
+    <div class="col-sm-12">
+      {% if voting_system_list %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Simple Name</th>
+              <th>Machine Name</th>
+              <th>Subdomain Name</th>
+              <th class="text-right">Options</th> 
+            </tr>
+          </thead>
+          <tbody>
+            {% for vs in voting_system_list %}
+              <tr>
+                <td>{{ vs.simple_name }}</td>
+                <td>{{ vs.machine_name }}</td>
+                <td>{{ vs.subdomain_name }}</td>
+                <td class="text-right">
+                  <a href="#" class="btn btn-default" role="button"><i class="fa fa-eye"></i>&nbsp;View</a>
+                  <a href="#" class="btn btn-default" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp;Edit</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}
