@@ -90,3 +90,12 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.centertable {
+  max-height: 500px; 
+  overflow: auto; 
+}
+.centertable > table {
+  margin: 0 auto !important;
+  float: none !important;
+}

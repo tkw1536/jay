@@ -35,7 +35,7 @@
           // for a double connection we need to add two divs
           if(node["prop"]["class"] === "tree_connect_top_lr") {
             $td += "<div class='tree_connect_top_lr_left " + (node["prop"]["active"][0] ? "tree_connect_true" : "tree_connect_false")+"'></div>";
-            $td += "<div class='tree_connect_top_lr_right " + (node["prop"]["active"][0] ? "tree_connect_true" : "tree_connect_false")+"'></div>";
+            $td += "<div class='tree_connect_top_lr_right " + (node["prop"]["active"][1] ? "tree_connect_true" : "tree_connect_false")+"'></div>";
           // for a single connection we need to add one div
           } else {
             $td += "<div class='"+node["prop"]["class"] + " " + (node["prop"]["active"][0] ? "tree_connect_true" : "tree_connect_false")+"'></div>";

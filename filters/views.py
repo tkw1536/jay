@@ -1,4 +1,5 @@
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -6,7 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
 from filters.models import UserFilter
-from filters.forms import NewFilterForm
+from filters.forms import NewFilterForm, EditFilterForm
+import filters.forest as forest
+
 
 from votes.models import VotingSystem
 
@@ -17,7 +20,7 @@ FILTER_EDIT_TEMPLATE = "filters/edit.html"
 
 @login_required
 @priviliged
-def Forest(request, alert_head=None, alert_text=None):
+def Forest(request, alert_type=None, alert_head=None, alert_text=None):
     
     # if the user does not have enough priviliges, throw an exception
     if not request.user.profile.isElevated():
@@ -37,7 +40,8 @@ def Forest(request, alert_head=None, alert_text=None):
     ctx['other_systems'] = other_systems
     
     # add an alert state if needed
-    if alert_head or alert_text:
+    if alert_head or alert_text or alert_type:
+        ctx['alert_type'] = alert_type
         ctx['alert_head'] = alert_head
         ctx['alert_text'] = alert_text
     
@@ -45,15 +49,19 @@ def Forest(request, alert_head=None, alert_text=None):
 
 @login_required
 def FilterNew(request):
-    print("IN_FILTER_NEW")
-    
     # we need some post data, otherwise it wont work. 
     if request.method != "POST":
         raise Http404
     
     # try to parse the form
     try:
-        system_name = NewFilterForm(request.POST).machine_name
+        form = NewFilterForm(request.POST)
+        
+        # Woopsie
+        if not form.is_valid():
+            raise Exception
+        
+        system_name = form.cleaned_data['system_name']
     except:
         return Forest(request, alert_head="Creation failed", alert_text="Invalid data submitted. ")
         
@@ -80,6 +88,11 @@ def FilterNew(request):
 
 @login_required
 def FilterDelete(request, filter_id):
+    
+    # we need some post data, otherwise it wont work. 
+    if request.method != "POST":
+        raise Http404
+        
     #  try and grab the user filter
     filter = get_object_or_404(UserFilter, id=filter_id)
     
@@ -101,8 +114,8 @@ def FilterDelete(request, filter_id):
     except:
         return Forest(request, alert_head="Deletion failed")
     
-    # redirect back to the forest page. 
-    return redirect(reverse('filters:forest'))
+    # show the forest page
+    return Forest(request, alert_type="success", alert_head="Deletion successful", alert_text="The filter has been deleted. ")
 
 @login_required
 @priviliged
@@ -110,19 +123,56 @@ def FilterEdit(request, filter_id):
     # make a context
     ctx = {}
     
-    # try and grab the user filter
+    # try and grab the user filter and put it in the filter
     filter = get_object_or_404(UserFilter, id=filter_id)
     ctx["filter"] = filter
     
     # check if the user can edit it
-    canEdit = filter.canEdit(request.user.profile)
-    ctx["canEdit"] = canEdit
+    if not filter.canEdit(request.user.profile):
+        raise PermissionDenied
     
     if request.method == "POST":
-        # TODO: parse the form
-        pass
-        
-    return Forest(request, alert_head="Unimplemented")
+        # parse the post data from the form
+        try:
+            form = EditFilterForm(request.POST)
+            
+            if not form.is_valid():
+                raise Exception
+        except:
+            ctx['alert_head'] = 'Saving failed'
+            ctx['alert_text'] = 'Invalid data submitted'
+            return render(request, FILTER_EDIT_TEMPLATE, ctx)
+            
+        # check if we have a valid tree manually
+        try:
+            tree = forest.parse(form.cleaned_data['value'])
+            if not tree:
+                raise Exception
+        except Exception as e:
+            ctx['alert_head'] = 'Saving failed'
+            ctx['alert_text'] = str(e)
+            return render(request, FILTER_EDIT_TEMPLATE, ctx)
+            
+        # write the name and value, then save it in the database
+        try:
+            # store the name and value
+            filter.name = form.cleaned_data['name']
+            filter.value = form.cleaned_data['value']
+            
+            # and try to save
+            filter.save()
+        except Exception as e:
+            ctx['alert_head'] = 'Saving failed'
+            ctx['alert_text'] = e.message
+            return render(request, FILTER_EDIT_TEMPLATE, ctx)
+            
+        # be done
+        ctx['alert_type'] = 'success'
+        ctx['alert_head'] = 'Saving suceeded'
+        ctx['alert_text'] = 'Filter saved'
+    
+    # render all the stuff
+    return render(request, FILTER_EDIT_TEMPLATE, ctx)
 
 @login_required
 @priviliged
@@ -130,6 +180,3 @@ def FilterTest(request, filter_id):
     # try and grab the user filter
     filter = get_object_or_404(UserFilter, id=filter_id)
     return Forest(request, alert_head="Unimplemented")
-    
-
-

@@ -1,22 +1,75 @@
 {% extends "base/base.html" %}
 
 {% load staticfiles %}
+{% load filter %}
+
+{% block head %}
+ <link rel="stylesheet" type="text/css" href="{% static "css/forest.css" %}">
+{% endblock %}
 
 {% block page_title %}Filters - Edit - {{filter.name}} {% endblock %}
 
 {% block content %}
 
-  {% if alert_head %}
+  
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-12" id="error">
+        {% if alert_head %}
         <div class="alert alert-{{ alert_type | default:"danger"}}">
-          <strong>{{ alert_head | default:"Something happened."}}</strong>
-          {{ alert_text | default:"An internal error occured." }}
+          <strong>{{ alert_head | default:"Something happened." | escape}}</strong>
+          {{ alert_text | default:"An internal error occured." | escape}}
         </div>
+        {% endif %}
       </div>
     </div><!-- row -->
-  {% endif %}
-  
-  {{filter}}
 
+  
+  <div class="row">
+    <div class="col-sm-6">
+      <h2 style="display:inline; "> Edit Filter </h2>
+      
+      <a href="{% url 'filters:test' filter_id=filter.id %}" class="btn btn-xs btn-default">Test</a>
+      <a href="{% url 'filters:forest' %}" class="btn btn-xs btn-danger">Back to overview</a>
+      
+      <br />
+      
+      <form class="form" method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{filter.name | escape}}">
+        </div>
+        
+        <div class="form-group">
+          <label>Voting System</label>
+          {{filter.system.simple_name | escape}}
+        </div>
+        
+        <div class="form-group">
+          <label for="name">Filter</label>
+          <input type="text" class="form-control" name="value" id="value" placeholder="Filter" value="{{filter.value | escape}}">
+        </div>
+        
+        <button type="submit" class="btn btn-danger" id="submit">Save</button>
+      </form>
+    </div>
+    <div class="col-sm-6 centertable" id="preview">
+       {% render_full filter.value '{}' %}
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript" src="{% static 'js/jquery/jquery-2.1.4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap/bootstrap.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/forest/jsep.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/logic.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/layouter.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/renderer.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/forest/edit_preview.js' %}"></script>
 {% endblock %}

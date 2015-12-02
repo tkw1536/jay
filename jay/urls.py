@@ -35,9 +35,6 @@ urlpatterns = [
     # Dummy TODO: Remove this
     url(r'^demo/', include(demo_urls)),
 
-    # Voting Systems
-    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
-
     # Filters
     url(r'^filters/', include(filter_urls, namespace='filters')),
 
@@ -52,4 +49,7 @@ urlpatterns = [
     # authentication.
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
+    
+    # Voting Systems
+    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 ]
