@@ -13,7 +13,7 @@ All URLs in the list below are relative to the hostname of Jay's instance
   	* `/admin` - Settings for this vote
 
 * `/filters` - List of all filter trees on this voting instance (aka "The Forest")
-  * `/new` - Creates a new filter tree and redirects to edit page
+  * `/new/<vote_sys_name>/` - Creates a new filter tree and redirects to edit page
 
   * `<tree_id>` - Runs the filter against the user database to give an example for who you can vote
     * `/edit` - Edit a filter tree.

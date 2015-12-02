@@ -1,39 +1,135 @@
-from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
+from django.http import Http404
 
 from filters.models import UserFilter
+from filters.forms import NewFilterForm
+
 from votes.models import VotingSystem
 
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
+from jay.utils import priviliged
 
-FILTER_MAIN_VIEW = "filters/forest.html"
+FILTER_FOREST_TEMPLATE = "filters/forest.html"
+FILTER_EDIT_TEMPLATE = "filters/edit.html"
 
 @login_required
-def Forest(request):
+@priviliged
+def Forest(request, alert_head=None, alert_text=None):
+    
+    # if the user does not have enough priviliges, throw an exception
+    if not request.user.profile.isElevated():
+        raise PermissionDenied
+    
+    # build a new context
     ctx = {}
 
     # get all the voting systems for this user
     admin_systems = request.user.profile.getAdministratedSystems()
 
-    print(*admin_systems)
-
     # and all the other ones also
     other_systems = list(filter(lambda a: not a in admin_systems, VotingSystem.objects.all()))
-
+        
     # give those to the view
     ctx['admin_systems'] = admin_systems
     ctx['other_systems'] = other_systems
+    
+    # add an alert state if needed
+    if alert_head or alert_text:
+        ctx['alert_head'] = alert_head
+        ctx['alert_text'] = alert_text
+    
+    return render(request, FILTER_FOREST_TEMPLATE, ctx)
 
-    return render(request, FILTER_MAIN_VIEW, ctx)
+@login_required
+def FilterNew(request):
+    print("IN_FILTER_NEW")
+    
+    # we need some post data, otherwise it wont work. 
+    if request.method != "POST":
+        raise Http404
+    
+    # try to parse the form
+    try:
+        system_name = NewFilterForm(request.POST).machine_name
+    except:
+        return Forest(request, alert_head="Creation failed", alert_text="Invalid data submitted. ")
+        
+    # get the votingsystem
+    system = get_object_or_404(VotingSystem, machine_name=system_name)
+    
+    # check if the user can edit it. 
+    # if not, go back to the overview
+    if not system.canEdit(request.user.profile):
+        return Forest(request, alert_head="Creation failed", alert_text="Nice try. You are not allowed to edit this VotingSystem. ")
+    
+    # create a new filter
+    # TODO: Make a better default name
+    newFilter = UserFilter(system=system, name="Unnamed User Filter", value="true")
+    
+    # save the filter in the database
+    try:
+        newFilter.save()
+    except:
+        return Forest(request, alert_head="Unable to store new user object. ")
+    
+    # and redirect to the edit page
+    return redirect(reverse('filters:edit', kwargs={'filter_id': newFilter.id}))
 
-def FilterNew(request, filter_id):
-    pass
-
-def FilterTest(request, filter_id):
-    pass
-
-def FilterEdit(request, filter_id):
-    pass
-
+@login_required
 def FilterDelete(request, filter_id):
-    pass
+    #  try and grab the user filter
+    filter = get_object_or_404(UserFilter, id=filter_id)
+    
+    # find the corresponding voting system. 
+    system = filter.system
+    
+    # check if the user can edit it. 
+    # if not, go back to the overview
+    if not system.canEdit(request.user.profile):
+        return Forest(request, alert_head="Deletion failed", alert_text="Nice try. You don't have permissions to delete this voting system. ")
+    
+    # check that no voting system is using this filter before deleting. 
+    if filter.vote_set.count() > 0:
+        return Forest(request, alert_head="Deletion failed", alert_text="There is still a vote using this filter. You can not delete it right now. ")
+    
+    # Delete the item
+    try:
+        filter.delete()
+    except:
+        return Forest(request, alert_head="Deletion failed")
+    
+    # redirect back to the forest page. 
+    return redirect(reverse('filters:forest'))
+
+@login_required
+@priviliged
+def FilterEdit(request, filter_id):
+    # make a context
+    ctx = {}
+    
+    # try and grab the user filter
+    filter = get_object_or_404(UserFilter, id=filter_id)
+    ctx["filter"] = filter
+    
+    # check if the user can edit it
+    canEdit = filter.canEdit(request.user.profile)
+    ctx["canEdit"] = canEdit
+    
+    if request.method == "POST":
+        # TODO: parse the form
+        pass
+        
+    return Forest(request, alert_head="Unimplemented")
+
+@login_required
+@priviliged
+def FilterTest(request, filter_id):
+    # try and grab the user filter
+    filter = get_object_or_404(UserFilter, id=filter_id)
+    return Forest(request, alert_head="Unimplemented")
+    
+
+

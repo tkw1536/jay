@@ -9,7 +9,8 @@ RESTRICTED_WORDS = [
     'filters',
     'login',
     'logout',
-    'edit'
+    'edit',
+    'new'
 ]
 
 def is_restricted_word(name, value):
