@@ -1,6 +1,11 @@
 
   {% for vote in votes %}
-  {% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name as vote_url %}
+
+  {% if results == True %}
+    {% url 'votes:results' system_name=vote.system.machine_name vote_name=vote.machine_name as vote_url %}
+  {% else %}
+    {% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name as vote_url %}
+  {% endif %}
 
     <div class="list-group-item">
         <a href="{{ vote_url }}">
