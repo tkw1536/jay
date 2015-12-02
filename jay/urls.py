@@ -28,8 +28,6 @@ urlpatterns = [
     url(r'^$', home, name="home"),
     url(r'^demo/', include(demo_urls)),
 
-    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
-
     # Legal things
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
@@ -39,4 +37,6 @@ urlpatterns = [
 
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
+
+    url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 ]
