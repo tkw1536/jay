@@ -14,8 +14,13 @@ All URLs in the list below are relative to the hostname of Jay's instance
 
   * `<vote_name>` - Where you actually vote. Redirect to results after close
   	* `/results` - The results of this vote
-  	* `/admin` - Settings for this vote
-
+  	* `/settings` - Settings for this vote
+      * `/options` - Options
+        * `/add` - Adding a new option
+        * `/edit` - Editing an option
+        * `/delete` - Removing an option
+      * `/delete` - Deleting a vote
+      
 * `/filters` - List of all filter trees on this voting instance (aka "The Forest")
   * `/new/<vote_sys_name>/` - Creates a new filter tree and redirects to edit page
 
