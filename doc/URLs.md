@@ -3,10 +3,10 @@
 All URLs in the list below are relative to the hostname of Jay's instance
 
 * `/settings` - global settings management
-
-* `/systems` - Voting System management
-  * `/new` - Create a new voting system
-  * `/<vote_sys_id>` - Edit voting system
+  * `/systems` - Voting System management
+    * `/new` - Create a new voting system
+    * `/<vote_sys_id>` - Edit voting system
+      * `/delete` - Delete a voting system
 
 * `/<vote_sys_name>` - overview of all votes in a voting system
   * `/admin` - Voting system, local settings

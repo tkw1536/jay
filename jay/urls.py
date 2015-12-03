@@ -21,37 +21,30 @@ from django.views.generic import TemplateView
 
 from core.views import home
 
-from . import demo_urls
 from votes import urls as votes_urls
-from filters import urls as filter_urls
-from settings import urls as vs_urls
+from filters import urls as filters_urls
+from settings import urls as settings_urls
 
 urlpatterns = [
-
     # Home page
     url(r'^$', home, name="home"),
 
     # TODO: Remove these?
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^demo/', include(demo_urls)),
 
-    # Legal things
+    # Static stuff
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
 
     # Help
-    # TODO: Add help pages for all sorts of stuff
     url(r'^help/filters/$', TemplateView.as_view(template_name="filters/help.html"), name="filter_help"),
 
-    # authentication.
+    # Authentication
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
 
-    # filters
-    url(r'^filters/', include(filter_urls, namespace='filters')),
-
-    # voting systems
-    url(r'^vs/', include(vs_urls, namespace='vs')),
-
+    # Sub-projects
+    url(r'^filters/', include(filters_urls, namespace='filters')),
+    url(r'^settings/', include(settings_urls, namespace='settings')),
     url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 ]

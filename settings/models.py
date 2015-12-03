@@ -6,7 +6,6 @@ from jay.restricted import is_restricted_word
 
 
 class VotingSystem(models.Model):
-	subdomain_name = models.SlugField(max_length = 30, unique = True, null = True)
 	machine_name = models.SlugField(max_length = 50, unique = True)
 	simple_name = models.CharField(max_length = 80)
 
