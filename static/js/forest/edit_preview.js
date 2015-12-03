@@ -1,33 +1,33 @@
 $(function(){
   // find all the fields
-  var value = $("#value"); 
-  var submit = $("#submit"); 
-  var preview = $("#preview"); 
-  var error = $("#error"); 
-  
+  var value = $("#value");
+  var submit = $("#submit");
+  var preview = $("#preview");
+  var error = $("#error");
+
   // do something whenever it changes
   value.on("keyup", function(){
-    
+
     // get the value
     var val = value.val();
-    
+
     try{
-      
+
       // render the previewed tree
-      var tree = logic.parse(val); 
-      var layout = layouter(tree, {}); 
+      var tree = logic.parse(val);
+      var layout = layouter(tree, {});
       var render = renderer(layout);
-      
+
       // and show it as html
       preview.html(render);
-      
+
       // remove the disabled attribute if that worked
-      submit.removeAttr("disabled"); 
-      
+      submit.removeAttr("disabled");
+
       // and clear the error message
-      error.empty(); 
+      error.empty();
     } catch(e){
-      
+
       // show the error message
       error.empty().append(
         $("<div>")
@@ -36,10 +36,10 @@ $(function(){
         .prepend(
           $("<strong>").text("Error parsing filter")
         )
-      ); 
-      
+      );
+
       // if this failed, do not submit
-      submit.attr("disabled", "disabled"); 
+      submit.attr("disabled", "disabled");
     }
-  }); 
-}); 
+  });
+});

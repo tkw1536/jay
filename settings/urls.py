@@ -5,7 +5,9 @@ from . import views
 
 
 urlpatterns = [
-	url(r'^overview', views.overview, name='overview'),
-	url(r'^create', TemplateView.as_view(template_name="vs/create_voting_system.html"), name="create"),
-	url(r'^createForm', views.createForm, name='createForm'),
+	# TODO: Gloabl settings view
+	url(r'^systems$', views.systems, name='systems'),
+	url(r'^systems/new$', views.system_new, name="new"),
+	url(r'^systems/(?P<system_id>[\w-]+)/delete$', views.system_delete, name="delete"),
+	url(r'^systems/(?P<system_id>[\w-]+)$', views.system_edit, name="edit"),
 ]

@@ -2,38 +2,35 @@
 
 {% load staticfiles %}
 
-{% block page_title %}Voting System Overview{% endblock %}
+{% block page_title %}Edit VS{% endblock %}
 
 {% block head %}
 <link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-  <legend>Create A New Voting System</legend>
+  <legend>Edit Voting System</legend>
+
+  {% include "error.html" %}
+
   <div class="row">
-    <form class="form-horizontal" action="/vs/createForm/" method="post" role="form">
+    <form class="form-horizontal"  method="post" role="form">
     {% csrf_token %}
       <div class="form-group">
         <label class="control-label col-sm-3" for="simple_name">Simple Name:</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" id="simple_name">
+          <input type="text" class="form-control" name="simple_name" value="{{vs.simple_name | escape}}">
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-sm-3" for="machine_name">Machine Name:</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" id="machine_name">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-3" for="subdomain_name">Subdomain Name:</label>
-        <div class="col-sm-9">
-          <input type="text" class="form-control" id="subdomain_name">
+          <input type="text" class="form-control" name="machine_name" value="{{vs.machine_name | escape}}">
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
-          <button type="submit" class="btn btn-default">Submit</button>
+          <button type="submit" class="btn btn-primary">Save</button>
         </div>
       </div>
     </form>

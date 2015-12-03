@@ -9,7 +9,15 @@
 {% endblock %}
 
 {% block content %}
-  <legend>Voting System Overview &nbsp;<a href="/vs/create"><i class="fa fa-plus"></i></a></legend>
+  <legend>Voting System Overview &nbsp;
+    <form class="form" method="POST" action="{% url 'settings:new' %}">
+      {% csrf_token %}
+      <button type="submit"><i class="fa fa-plus"></i></button>
+    </form>
+  </legend>
+
+  {% include "error.html" %}
+
   <div class="row">
     <div class="col-sm-12">
       {% if voting_system_list %}
@@ -18,7 +26,6 @@
             <tr>
               <th>Simple Name</th>
               <th>Machine Name</th>
-              <th>Subdomain Name</th>
               <th class="text-right">Options</th>
             </tr>
           </thead>
@@ -27,10 +34,14 @@
               <tr>
                 <td>{{ vs.simple_name }}</td>
                 <td>{{ vs.machine_name }}</td>
-                <td>{{ vs.subdomain_name }}</td>
                 <td class="text-right">
                   <a href="#" class="btn btn-default" role="button"><i class="fa fa-eye"></i>&nbsp;View</a>
-                  <a href="#" class="btn btn-default" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp;Edit</a>
+                  <a href="{% url 'settings:edit' system_id=vs.id %}" class="btn btn-default" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp;Edit</a>
+
+                  <form action="{% url 'settings:delete' system_id=vs.id %}" method="post" class="form-inline" style="display:inline; ">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-primary" value="Delete" />
+                  </form>
                 </td>
               </tr>
             {% endfor %}
