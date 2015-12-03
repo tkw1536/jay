@@ -49,7 +49,6 @@ def system_edit(request, system_id):
 			form = EditSystemForm(request.POST)
 
 			if not form.is_valid():
-				print(form.errors)
 				raise Exception
 		except Exception as e:
 			ctx['alert_head'] = 'Saving failed'
@@ -68,7 +67,7 @@ def system_edit(request, system_id):
 			vs.save()
 		except Exception as e:
 			ctx['alert_head'] = 'Saving failed'
-			ctx['alert_text'] = e.message
+			ctx['alert_text'] = str(e)
 			return render(request, SETTINGS_SYSTEMS_EDIT_TEMPLATE, ctx)
 
 		ctx['alert_type'] = 'success'

@@ -29,11 +29,7 @@ def Forest(request, alert_type=None, alert_head=None, alert_text=None):
     # build a new context
     ctx = {}
 
-    # get all the voting systems for this user
-    admin_systems = request.user.profile.getAdministratedSystems()
-
-    # and all the other ones also
-    other_systems = list(filter(lambda a: not a in admin_systems, VotingSystem.objects.all()))
+    (admin_systems, other_systems) = request.user.profile.getSystems()
 
     # give those to the view
     ctx['admin_systems'] = admin_systems
@@ -165,7 +161,7 @@ def FilterEdit(request, filter_id):
             filter.save()
         except Exception as e:
             ctx['alert_head'] = 'Saving failed'
-            ctx['alert_text'] = e.message
+            ctx['alert_text'] = str(e)
             return render(request, FILTER_EDIT_TEMPLATE, ctx)
 
         # be done

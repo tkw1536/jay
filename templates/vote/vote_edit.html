@@ -1,0 +1,77 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load markdown %}
+
+{% block page_title %}Vote{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  {% include "error.html" %}
+
+  <h1>Vote</h1>
+
+  <form method="POST" action="{% url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-sm-12">
+
+        <!-- Generic static stuff -->
+        <div class="form-group">
+          <label>Voting System</label>
+          {{vote.system.simple_name | escape}}
+        </div>
+
+        <div class="form-group">
+          <label>Created by</label>
+          {{vote.creator.username | escape}}
+        </div>
+
+        <!-- Generic (simple) options -->
+        <div class="form-group">
+          <label for="machine_name">Name</label>
+          <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{vote.name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
+        </div>
+
+        <div class="form-group">
+          <label for="machine_name">Machine Name</label>
+          <input type="text" class="form-control" id="machine_name" name="machine_name" placeholder="Machine Name" value="{{vote.machine_name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <textarea class="form-control" rows="10" name="description" id="description" {% if vote_readonly %} readonly="readonly" {% endif %}>{{vote.description | escape }}</textarea>
+        </div>
+      </div>
+      <div class="col-sm-6" id="preview">
+        {{vote.description | markdown | safe }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save description</button>
+      </div>
+    </div>
+  </form>
+
+      <!-- TODO: Filter -->
+
+      <!-- TODO: Options -->
+
+      <!-- TODO: Staging -->
+    </div>
+  </div><!-- row -->
+
+
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script type="text/javascript" src="{% static 'js/votes/markdown.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/votes/edit_preview.js' %}"></script>
+{% endblock %}

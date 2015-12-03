@@ -20,10 +20,10 @@ urlpatterns = [
     url(r'^(?P<vote_name>[\w-]+)/results$', results, name="results"),
 
     # settings for a vote
-    url(r'^(?P<vote_name>[\w-]+)/edit$', vote_edit, name="vote_edit"),
+    url(r'^(?P<vote_name>[\w-]+)/edit$', vote_edit, name="edit"),
 
     # Options for a vote
-    url(r'^(?P<vote_name>[\w-]+)/edit/options/add$', vote_options_add, name="vote_options_add"),
-    url(r'^(?P<vote_name>[\w-]+)/edit/options/edit$', vote_options_edit, name="vote_options_edit"),
-    url(r'^(?P<vote_name>[\w-]+)/edit/options/delete$', vote_options_remove, name="vote_options_delete")
+    url(r'^(?P<vote_name>[\w-]+)/edit/options/add$', vote_options_add, name="options_add"),
+    url(r'^(?P<vote_name>[\w-]+)/edit/options/edit$', vote_options_edit, name="options_edit"),
+    url(r'^(?P<vote_name>[\w-]+)/edit/options/delete$', vote_options_remove, name="options_delete")
 ]

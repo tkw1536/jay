@@ -19,9 +19,11 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
+from votes.forms import EditVoteForm
+
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
-
+VOTE_EDIT_TEMPLATE = "vote/vote_edit.html"
 
 def get_vote_and_system_or_404(system_name, vote_name):
     """
@@ -31,6 +33,7 @@ def get_vote_and_system_or_404(system_name, vote_name):
     vote = get_object_or_404(Vote, machine_name=vote_name, system=system)
 
     return (system, vote)
+
 
 def system_home(request, system_name):
     ctx = {}
@@ -42,6 +45,7 @@ def system_home(request, system_name):
 
     return render(request, "vote/vote_system_overview.html", ctx)
 
+@login_required
 def system_settings(request, system_name):
 
     # get the voting system
@@ -56,6 +60,7 @@ def system_settings(request, system_name):
     # should have an add admin, remove admin, add vote, delete vote button
     pass
 
+@login_required
 def admin_add(request, system_name):
 
     # you may only use POST
@@ -73,6 +78,7 @@ def admin_add(request, system_name):
     # TODO: @leonhard implement adding a an admin to a voting system
     pass
 
+@login_required
 def admin_remove(request, system_name):
 
     # you may only use POST
@@ -90,30 +96,81 @@ def admin_remove(request, system_name):
     # TODO: @leonhard implement removing an admin from a voting system
     pass
 
-def vote_edit(request, system_name, vote_name):
+@login_required
+def vote_edit(request, system_name, vote_name, alert_head=None, alert_text=None, alert_type=None):
     (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
 
     # raise an error if the user trying to access is not an admin
     if not system.isAdmin(request.user.profile):
         raise PermissionDenied
 
-    # TODO: @tom Implement vote edit page.
-    pass
+    # make a context
+    ctx = {}
 
-def vote_edit(request, system_name, vote_name):
-    # you may only use POST
-    if request.method != "POST":
-        raise Http404
+    # add an alert state if needed
+    if alert_head or alert_text or alert_type:
+        ctx['alert_type'] = alert_type
+        ctx['alert_head'] = alert_head
+        ctx['alert_text'] = alert_text
 
-    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+    # get all the systems this user can edit
+    (admin_systems, other_systems) = request.user.profile.getSystems()
 
-    # raise an error if the user trying to access is not an admin
-    if not system.isAdmin(request.user.profile):
-        raise PermissionDenied
+    # add the vote to the system
+    ctx['vote'] = vote
 
-    # TODO: @tom Implement vote edit page.
-    pass
+    # and the filters
+    ctx['systems'] = {
+        'editable': admin_systems,
+        'viewable': other_systems
+    }
 
+    ctx["vote_readonly"] = (vote.status.stage != "I")
+
+    if request.method == "POST":
+
+        # if the vote is read-only, do not save
+        if ctx["vote_readonly"]:
+            ctx['alert_head'] = 'Saving failed'
+            ctx['alert_text'] = 'Nice try. A non open vote can not be edited. '
+            return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+        # try to parse the form
+        try:
+            form = EditVoteForm(request.POST)
+
+            if not form.is_valid():
+                raise Exception
+        except:
+            ctx['alert_head'] = 'Saving failed'
+            ctx['alert_text'] = 'Invalid data submitted'
+            return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+        # write the name and value, then save it in the database
+        try:
+            # store the name and value
+            vote.name = form.cleaned_data['name']
+            vote.machine_name = form.cleaned_data['machine_name']
+            vote.description = form.cleaned_data['description']
+
+            # and try to clean + save
+            vote.clean()
+            vote.save()
+        except Exception as e:
+            vote.machine_name = vote_name
+            ctx['alert_head'] = 'Saving failed'
+            ctx['alert_text'] = str(e)
+            return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+        # we did it, we saved
+        ctx['alert_type'] = 'success'
+        ctx['alert_head'] = 'Saving suceeded'
+        ctx['alert_text'] = 'Form saved'
+
+    # render the template
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
 def vote_options_add(request, system_name, vote_name):
     # you may only use POST
     if request.method != "POST":
@@ -128,6 +185,7 @@ def vote_options_add(request, system_name, vote_name):
     # TODO: @tom Implement adding an option
     pass
 
+@login_required
 def vote_options_edit(request, system_name, vote_name):
     # you may only use POST
     if request.method != "POST":
@@ -142,6 +200,7 @@ def vote_options_edit(request, system_name, vote_name):
     # TODO: @tom Implement editing an option
     pass
 
+@login_required
 def vote_options_remove(request, system_name, vote_name):
     # you may only use POST
     if request.method != "POST":

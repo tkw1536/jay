@@ -24,7 +24,8 @@ All URLs in the list below are relative to the hostname of Jay's instance
         * `/add` - Adding a new option
         * `/edit` - Editing an option
         * `/delete` - Removing an option
-      * `/stage` - Stage a vote
+      * `/filter` - Edit vote filter
+      * `/stage` - Edit vote staging
       * `/delete` - Deleting a vote
 
 * `/filters` - List of all filter trees on this voting instance (aka "The Forest")
