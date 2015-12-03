@@ -23,6 +23,7 @@ from . import demo_urls
 from votes import urls as votes_urls
 from filters import urls as filter_urls
 from core.views import home
+from settings import urls as vs_urls
 
 urlpatterns = [
 
@@ -32,7 +33,7 @@ urlpatterns = [
     # Admin Page TODO: Do we really need this?
     url(r'^admin/', include(admin.site.urls)),
 
-    # Dummy TODO: Remove this
+    # Demo TODO: remove this
     url(r'^demo/', include(demo_urls)),
 
     # Legal things
@@ -47,6 +48,11 @@ urlpatterns = [
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
 
+    # filters
     url(r'^filters/', include(filter_urls, namespace='filters')),
+
+    # voting systems
+    url(r'^vs/', include(vs_urls, namespace='vs')),
+
     url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 ]
