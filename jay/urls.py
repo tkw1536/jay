@@ -31,10 +31,8 @@ urlpatterns = [
     # Home page
     url(r'^$', home, name="home"),
 
-    # Admin Page TODO: Do we really need this?
+    # TODO: Remove these?
     url(r'^admin/', include(admin.site.urls)),
-
-    # Demo TODO: remove this
     url(r'^demo/', include(demo_urls)),
 
     # Legal things
