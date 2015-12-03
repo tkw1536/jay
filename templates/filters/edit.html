@@ -4,14 +4,14 @@
 {% load filter %}
 
 {% block head %}
- <link rel="stylesheet" type="text/css" href="{% static "css/forest.css" %}">
+ <link rel="stylesheet" type="text/css" href="{% static "css/forest/forest.css" %}">
 {% endblock %}
 
 {% block page_title %}Filters - Edit - {{filter.name}} {% endblock %}
 
 {% block content %}
 
-  
+
     <div class="row">
       <div class="col-sm-12" id="error">
         {% if alert_head %}
@@ -23,34 +23,34 @@
       </div>
     </div><!-- row -->
 
-  
+
   <div class="row">
     <div class="col-sm-6">
       <h2 style="display:inline; "> Edit Filter </h2>
-      
+
       <a href="{% url 'filters:test' filter_id=filter.id %}" class="btn btn-xs btn-default">Test</a>
       <a href="{% url 'filters:forest' %}" class="btn btn-xs btn-danger">Back to overview</a>
-      
+
       <br />
-      
+
       <form class="form" method="POST">
         {% csrf_token %}
-        
+
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{filter.name | escape}}">
         </div>
-        
+
         <div class="form-group">
           <label>Voting System</label>
           {{filter.system.simple_name | escape}}
         </div>
-        
+
         <div class="form-group">
           <label for="name">Filter</label>
           <input type="text" class="form-control" name="value" id="value" placeholder="Filter" value="{{filter.value | escape}}">
         </div>
-        
+
         <button type="submit" class="btn btn-danger" id="submit">Save</button>
       </form>
     </div>
