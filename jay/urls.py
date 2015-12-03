@@ -19,10 +19,11 @@ from django.contrib.auth import views as auth_views
 
 from django.views.generic import TemplateView
 
+from core.views import home
+
 from . import demo_urls
 from votes import urls as votes_urls
 from filters import urls as filter_urls
-from core.views import home
 from settings import urls as vs_urls
 
 urlpatterns = [

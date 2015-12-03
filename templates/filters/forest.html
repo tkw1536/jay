@@ -24,7 +24,7 @@
   {% for s in admin_systems %}
     <div>
       <h3>{{ s.machine_name }}</h3>
-      <table class="table">
+      <table class="table table-striped">
         <tr>
             <th>Name</th>
             <th>Filter</th>
@@ -71,24 +71,27 @@
   {% for s in other_systems %}
     <div>
       <h3>{{ s.machine_name }}</h3>
-      <table class="table">
-        <tr>
-            <th>Name</th>
-            <th>Filter</th>
-        </tr>
-
-        {% for f in s.userfilter_set.all %}
+      <table class="table table-striped">
+        <thead>
           <tr>
-            <td>
-              {{ f.name }}
-            </td>
-            <td>
-              {% autoescape on %}
-                {{ f.value }}
-              {% endautoescape %}
-            </td>
+              <th>Name</th>
+              <th>Filter</th>
           </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+          {% for f in s.userfilter_set.all %}
+            <tr>
+              <td>
+                {{ f.name }}
+              </td>
+              <td>
+                {% autoescape on %}
+                  {{ f.value }}
+                {% endautoescape %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
   {% endfor %}
