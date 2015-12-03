@@ -5,8 +5,11 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.db import transaction
 from django.db.models import F
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+
 from django.views.generic import View
+
+from django.core.exceptions import PermissionDenied,
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -19,6 +22,16 @@ from settings.models import VotingSystem
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
 
+
+def get_vote_and_system_or_404(system_name, vote_name):
+    """
+        Gets a voting system and the corresponding vote or returns a 404.
+    """
+    system = get_object_or_404(VotingSystem, machine_name=system_name)
+    vote = get_object_or_404(Vote, machine_name=vote_name, system=system)
+
+    return (system, vote)
+
 def system_home(request, system_name):
     ctx = {}
     ctx['vs'] = get_object_or_404(VotingSystem, machine_name=system_name)
@@ -29,20 +42,139 @@ def system_home(request, system_name):
 
     return render(request, "vote/vote_system_overview.html", ctx)
 
+def system_settings(request, system_name):
+
+    # get the voting system
+    ctx = {}
+    vs = get_object_or_404(VotingSystem, machine_name=system_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not vs.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @leonhard implement generic overview page for settings
+    # should have an add admin, remove admin, add vote, delete vote button
+    pass
+
+def admin_add(request, system_name):
+
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    # get the voting system
+    ctx = {}
+    vs = get_object_or_404(VotingSystem, machine_name=system_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not vs.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @leonhard implement adding a an admin to a voting system
+    pass
+
+def admin_remove(request, system_name):
+
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    # get the voting system
+    ctx = {}
+    vs = get_object_or_404(VotingSystem, machine_name=system_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not vs.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @leonhard implement removing an admin from a voting system
+    pass
+
+def vote_edit(request, system_name, vote_name):
+    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not system.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @tom Implement vote edit page.
+    pass
+
+def vote_edit(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not system.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @tom Implement vote edit page.
+    pass
+
+def vote_options_add(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not system.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @tom Implement adding an option
+    pass
+
+def vote_options_edit(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not system.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @tom Implement editing an option
+    pass
+
+def vote_options_remove(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not system.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    # TODO: @tom Implement removing an option
+    pass
+
+
+
 def results(request, system_name, vote_name):
     ctx = {}
-    vote = get_object_or_404(Vote, machine_name=vote_name)
 
+    # grab vote and system
+    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # set options and the vote
     ctx['vote'] = vote
     ctx['options'] = vote.option_set.order_by('-count')
 
-
+    # render the stuff
     return render(request, VOTE_RESULT_TEMPLATE, ctx)
 
 class VoteView(View):
     @method_decorator(login_required)
     def get(self, request, system_name, vote_name):
-        vote = get_object_or_404(Vote, machine_name=vote_name)
+        (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
         filter = vote.filter
 
         error = False
@@ -98,17 +230,17 @@ class VoteView(View):
         if not 'vote_id' in request.POST:
             ctx['alert_head'] = "Something happened."
             ctx['alert_text'] = "Go back to the start and try again."
-            return render_error_response(ctx)
+            return self.render_error_response(ctx)
 
         if not 'options_selected' in request.POST:
             ctx['alert_head'] = "Something happened."
             ctx['alert_text'] = "Go back and start over."
-            return render_error_response(ctx)
+            return self.render_error_response(ctx)
 
 
         options = json.loads(request.POST['options_selected'])
 
-        vote = get_object_or_404(Vote, machine_name=vote_name)
+        (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
         filter = vote.filter
 
         error = False
