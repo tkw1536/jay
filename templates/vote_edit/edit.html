@@ -1,0 +1,55 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load markdown %}
+
+{% block page_title %}Vote{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  {% include "error.html" %}
+
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Vote</h1>
+      <form method="POST" action="{% url 'vote:edit' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+
+        <div class="form-group">
+          <label for="machine_name">Name</label>
+          <input type="text" class="form-control" id="name" name="name" placeholder="Machine Name" value="{{vote.name | escape }}">
+        </div>
+
+
+        <div class="form-group">
+          <label for="machine_name">Machine Name</label>
+          <input type="text" class="form-control" id="machine_name" name="machine_name" placeholder="Machine Name" value="{{vote.machine_name | escape }}">
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea name="description" value="description">
+                {{vote.description | escape }}
+              </textarea>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <!-- TODO: Render markdown -->
+          </div>
+        </div>
+
+
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+
+      <!-- TODO: Options -->
+
+    </div>
+  </div><!-- row -->
+
+
+{% block scripts %}
