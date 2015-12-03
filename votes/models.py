@@ -26,7 +26,7 @@ class Vote(models.Model):
 	max_votes = models.IntegerField()
 
 	class Meta():
-		unique_together = ((system, machine_name))
+		unique_together = (("system", "machine_name"))
 
 	def __str__(self):
 		return u'[%s] %s' % (self.machine_name, self.name)
