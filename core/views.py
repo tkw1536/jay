@@ -9,7 +9,7 @@ from users.models import UserProfile
 # Create your views here.
 def home(request):
     ctx = {}
-    votes = Vote.objects.all()
+    votes = Vote.objects.filter(status__stage=Status.OPEN)
     results = Vote.objects.filter(status__stage=Status.PUBLIC)
 
     if request.user.is_authenticated():
