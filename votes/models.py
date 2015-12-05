@@ -59,6 +59,9 @@ class Option(models.Model):
 	link_name = models.CharField(blank = True, max_length = 16)
 
 	count = models.IntegerField(default = 0, blank = True)
+	
+	class Meta():
+		unique_together = (("vote", "number"))
 
 	def __str__(self):
 		return u'[%s] %s' % (self.number, self.name)
