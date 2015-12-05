@@ -291,14 +291,16 @@ def vote_options_add(request, system_name, vote_name):
     if request.method != "POST":
         raise Http404
 
-    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
-
-    # raise an error if the user trying to access is not an admin
-    if not system.isAdmin(request.user.profile):
-        raise PermissionDenied
-
-    # TODO: @tom Implement adding an option
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
     pass
+    
 
 @login_required
 def vote_options_edit(request, system_name, vote_name):
@@ -306,13 +308,14 @@ def vote_options_edit(request, system_name, vote_name):
     if request.method != "POST":
         raise Http404
 
-    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
-
-    # raise an error if the user trying to access is not an admin
-    if not system.isAdmin(request.user.profile):
-        raise PermissionDenied
-
-    # TODO: @tom Implement editing an option
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
     pass
 
 @login_required
@@ -321,13 +324,14 @@ def vote_options_remove(request, system_name, vote_name):
     if request.method != "POST":
         raise Http404
 
-    (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
-
-    # raise an error if the user trying to access is not an admin
-    if not system.isAdmin(request.user.profile):
-        raise PermissionDenied
-
-    # TODO: @tom Implement removing an option
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
     pass
 
 
