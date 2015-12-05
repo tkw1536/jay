@@ -10,6 +10,7 @@ from django.http import HttpResponse, Http404
 from django.views.generic import View
 
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -115,6 +116,9 @@ def vote_edit_context(request, system_name, vote_name):
 
     # add the vote to the system
     ctx['vote'] = vote
+    
+    ctx['vote_uri'] = request.build_absolute_uri(reverse('votes:vote', kwargs={"system_name": system.machine_name, "vote_name":vote.machine_name}))
+    ctx['results_uri'] = request.build_absolute_uri(reverse('votes:results', kwargs={"system_name": system.machine_name, "vote_name":vote.machine_name}))
 
     # and the filters
     ctx['admin_systems'] = admin_systems
