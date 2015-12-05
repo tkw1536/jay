@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^(?P<vote_name>[\w-]+)/edit/options/add$', vote_options_add, name="option_add"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options/edit$', vote_options_edit, name="option_edit"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options/delete$', vote_options_remove, name="option_delete")
+    url(r'^(?P<vote_name>[\w-]+)/edit/options/delete$', vote_options_remove, name="option_delete")
 ]

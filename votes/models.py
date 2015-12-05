@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 
 from django.contrib import admin
@@ -45,6 +45,110 @@ class Vote(models.Model):
 			Checks if this vote can still be modified.
 		"""
 		return self.status.stage == "I"
+	
+	@transaction.atomic
+	def renumberOptions(self):
+		"""
+			Renumbers the options in this vote. 
+		"""
+		
+		# give all of them a sequential number. 
+		for i, v in self.option_set.order_by("number"):
+			v.number = i
+			v.save()
+	
+	def removeOption(self, option):
+		"""
+			Removes an option from this vote. 
+		"""
+		
+		# if the option is not in our options, something weird happened. 
+		if not option in self.option_set:
+			raise ValueError
+		
+		# remove the option
+		option.remove()
+		
+		# and renumber
+		self.renumberOptions()
+	
+	@transaction.atomic
+	def addOption(self):
+		"""
+			Adds a new option.
+		"""
+		
+		# renumber the options to make sure we are in order
+		self.renumberOptions()
+		
+		# find a number for the new option
+		num = self.option_set.count
+		
+		# create a new option
+		opt = Option(vote=self, number = num, name = "Option #"+str(num + 1))
+		
+		# and save it
+		opt.save()
+		
+	
+	@transaction.atomic
+	def moveDownOption(self, option):
+		"""
+			move an option down in the indexing. 
+		"""
+		
+		# if the option is not in our options, something weird happened. 
+		if not option in self.option_set:
+			raise ValueError
+		
+		# renumber options to make sure we are in a valid order
+		self.renumberOptions()
+		
+		# if we are already at the bottom there is nothing to do. 
+		if option.number == 0:
+			return
+		
+		# find the option right below our option
+		below = self.option_set.filter(number=option.number - 1)[0]
+		
+		# switch our two number
+		below.number = option.number
+		option.number = option.number - 1
+		
+		# and save the options
+		below.save()
+		option.save()
+		
+	@transaction.atomic
+	def moveUpOption(self, option):
+		"""
+			move an option up in the indexing. 
+		"""
+		
+		# if the option is not in our options, something weird happened. 
+		if not option in self.option_set:
+			raise ValueError
+		
+		# renumber options to make sure we are in a valid order
+		self.renumberOptions()
+		
+		# if we are already at the top there is nothing to do. 
+		if option.number == self.option_set.count() - 1:
+			return
+		
+		# find the option right above our option
+		above = self.option_set.filter(number=option.number + 1)[0]
+		
+		# switch our two number
+		above.number = option.number
+		option.number = option.number + 1
+		
+		# and save the options
+		above.save()
+		option.save()
+	
+		
+		
 class Option(models.Model):
 	vote = models.ForeignKey(Vote)
 

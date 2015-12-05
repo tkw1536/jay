@@ -20,9 +20,11 @@ All URLs in the list below are relative to the hostname of Jay's instance
   * `<vote_name>` - Where you actually vote. Redirect to results after close
   	* `/results` - The results of this vote
   	* `/edit` - Edit this vote
-      * `/options` - Options (page itself unused)
+      * `/options` - Edit number of options
         * `/add` - Adding a new option
         * `/edit` - Editing an option
+        * `/up` - Move option up
+        * `/down` - Move option down
         * `/delete` - Removing an option
       * `/filter` - Edit vote filter
       * `/stage` - Edit vote staging
