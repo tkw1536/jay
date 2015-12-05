@@ -19,7 +19,7 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm, EditVoteFilterForm
+from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
@@ -134,7 +134,7 @@ def vote_edit(request, system_name, vote_name):
         # if the vote is read-only, do not save
         if ctx["vote_readonly"]:
             ctx['alert_head'] = 'Saving failed'
-            ctx['alert_text'] = 'Nice try. A non open vote can not be edited. '
+            ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
             return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
         # try to parse the form
@@ -183,7 +183,7 @@ def vote_filter(request, system_name, vote_name):
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
-        ctx['alert_text'] = 'Nice try. A non open vote can not be edited. '
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
     
     # now try and parse the form
@@ -215,6 +215,71 @@ def vote_filter(request, system_name, vote_name):
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Saving suceeded'
     ctx['alert_text'] = 'Associated filter has been updated. '
+    
+    # so render the basic template
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_option(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # now try and parse the form
+    try:
+        form = EditVoteOptionsForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+    except:
+        
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    min_votes = form.cleaned_data["min_votes"]
+    max_votes = form.cleaned_data["max_votes"]
+    count = vote.option_set.count()
+    
+    # read min and max votes, then store them
+    try:
+        
+        # check range for min votes
+        if min_votes < 0 or min_votes > count:
+            raise Exception("Minimum number of votes must be between 0 and the number of available options. ")
+        
+        # check range for max votes
+        if max_votes < 0 or max_votes > count:
+            raise Exception("Maximum number of votes must be between 0 and the number of available options. ")
+        
+        if min_votes > max_votes:
+            raise Exception("The maximum number of votes may not be smaller than the minimum number of votes. ")
+        
+        
+        vote.min_votes = min_votes
+        vote.max_votes = max_votes
+
+        # and try to clean + save
+        vote.clean()
+        vote.save()
+    except Exception as e:
+        vote.machine_name = vote_name
+        ctx['alert_head'] = 'Saving vote failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # Woo, we made it
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Saving suceeded'
+    ctx['alert_text'] = 'Number of vote options updated. '
     
     # so render the basic template
     return render(request, VOTE_EDIT_TEMPLATE, ctx)

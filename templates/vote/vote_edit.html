@@ -13,13 +13,13 @@
   {% include "error.html" %}
 
   <h1>Vote</h1>
-
+  
+  <!-- General vote description -->
   <form method="POST" action="{% url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
     {% csrf_token %}
     <div class="row">
       <div class="col-sm-12">
 
-        <!-- Generic static stuff -->
         <div class="form-group">
           <label>Voting System</label>
           {{vote.system.simple_name | escape}}
@@ -30,7 +30,6 @@
           {{vote.creator.username | escape}}
         </div>
 
-        <!-- Generic (simple) options -->
         <div class="form-group">
           <label for="machine_name">Name</label>
           <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{vote.name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
@@ -58,13 +57,14 @@
       </div>
     </div>
   </form>
-
+  
+  <!-- Filter -->
   <form method="POST" action="{% url 'votes:edit_filter' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
     {% csrf_token %}
     <div class="row">
-      <div class="col-sm-12" {% if vote_readonly %} disabled="disabled" {% endif %}>
+      <div class="col-sm-12">
         <label for="filter_id">Elgibility Determined by</label>
-          <select name="filter_id" class="form-control">
+          <select name="filter_id" class="form-control" {% if vote_readonly %} disabled="disabled" {% endif %}>
             {% for s in admin_systems %}
               {% for f in s.userfilter_set.all %}
                 <option value="{{ f.id | escape }}" {% if vote.filter.id == f.id %} selected="selected" {% endif %}>{{ f | escape }}</option>
@@ -77,8 +77,6 @@
               {% endfor %}
             {% endfor %}
           </select>
-          
-          
       </div>
     </div>
     <div class="row">
@@ -90,8 +88,35 @@
   </form>
 
       <!-- TODO: Options -->
+      
+      <!-- Maximal number of selectable options -->
+      <form method="POST" action="{% url 'votes:edit_options' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group">
+              <label for="min_votes">Minimal number of votes</label>
+              <input type="number" name="min_votes" id="min_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.min_votes}}">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="form-group">
+              <label for="max_votes">Minimal number of votes</label>
+              <input type="number" name="max_votes" id="max_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.max_votes}}">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+              <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
+          </div>
+        </div>
+      </form>
 
-      <!-- TODO: Staging -->
+      <!-- TODO: Staging (@leonhard) -->
+      
     </div>
   </div><!-- row -->
 
