@@ -19,7 +19,7 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm
+from votes.forms import EditVoteForm, EditVoteFilterForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
@@ -96,8 +96,11 @@ def admin_remove(request, system_name):
     # TODO: @leonhard implement removing an admin from a voting system
     pass
 
-@login_required
-def vote_edit(request, system_name, vote_name, alert_head=None, alert_text=None, alert_type=None):
+
+def vote_edit_context(request, system_name, vote_name):
+    """
+        Returns context and basic parameters for vote editing. 
+    """
     (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
 
     # raise an error if the user trying to access is not an admin
@@ -106,13 +109,7 @@ def vote_edit(request, system_name, vote_name, alert_head=None, alert_text=None,
 
     # make a context
     ctx = {}
-
-    # add an alert state if needed
-    if alert_head or alert_text or alert_type:
-        ctx['alert_type'] = alert_type
-        ctx['alert_head'] = alert_head
-        ctx['alert_text'] = alert_text
-
+    
     # get all the systems this user can edit
     (admin_systems, other_systems) = request.user.profile.getSystems()
 
@@ -120,12 +117,17 @@ def vote_edit(request, system_name, vote_name, alert_head=None, alert_text=None,
     ctx['vote'] = vote
 
     # and the filters
-    ctx['systems'] = {
-        'editable': admin_systems,
-        'viewable': other_systems
-    }
+    ctx['admin_systems'] = admin_systems
+    ctx['other_systems'] = other_systems
 
-    ctx["vote_readonly"] = (vote.status.stage != "I")
+    # check if the vote is read only
+    ctx["vote_readonly"] = not vote.canBeModified()
+    
+    return (system, vote, ctx)
+
+@login_required
+def vote_edit(request, system_name, vote_name):
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
 
     if request.method == "POST":
 
@@ -169,6 +171,54 @@ def vote_edit(request, system_name, vote_name, alert_head=None, alert_text=None,
 
     # render the template
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_filter(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A non open vote can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # now try and parse the form
+    try:
+        form = EditVoteFilterForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # write filter, then save to db. 
+    try:
+        # store the filter by id
+        vote.filter = UserFilter.objects.filter(id=form.cleaned_data["filter_id"])[0]
+
+        # and try to clean + save
+        vote.clean()
+        vote.save()
+    except Exception as e:
+        vote.machine_name = vote_name
+        ctx['alert_head'] = 'Saving filter failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # Woo, we made it
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Saving suceeded'
+    ctx['alert_text'] = 'Associated filter has been updated. '
+    
+    # so render the basic template
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
 
 @login_required
 def vote_options_add(request, system_name, vote_name):

@@ -39,7 +39,12 @@ class Vote(models.Model):
 			Checks if a user can edit this vote.
 		"""
 		return self.system.canEdit(user)
-
+	
+	def canBeModified(self):
+		"""
+			Checks if this vote can still be modified. 
+		"""
+		return self.status.stage == "I"
 class Option(models.Model):
 	vote = models.ForeignKey(Vote)
 
