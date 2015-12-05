@@ -38,11 +38,11 @@ class Vote(models.Model):
 		"""
 			Checks if a user can edit this vote.
 		"""
-		return self.system.canEdit(user)
-	
+		return user.isAdminFor(self.system)
+
 	def canBeModified(self):
 		"""
-			Checks if this vote can still be modified. 
+			Checks if this vote can still be modified.
 		"""
 		return self.status.stage == "I"
 class Option(models.Model):
