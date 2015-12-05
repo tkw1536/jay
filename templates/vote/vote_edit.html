@@ -98,6 +98,8 @@
   </form>
 
   <!-- TODO: Options -->
+  {% for o in vote_options %}
+  {% endfor %}
   
   <!-- Max / Min Options -->
   <form method="POST" action="{% url 'votes:edit_options' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">

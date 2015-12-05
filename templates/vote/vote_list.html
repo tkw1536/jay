@@ -12,7 +12,7 @@
         <a href="{{ vote_url }}">
           {{ vote.name }}
           {% if vote|can_edit:request.user.profile %}
-            <a href="#">
+            <a href="{{ url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name}}">
               <span class="pull-right glyphicon glyphicon-pencil"></span>
             </a>
           {% endif %}

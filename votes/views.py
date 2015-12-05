@@ -116,9 +116,20 @@ def vote_edit_context(request, system_name, vote_name):
 
     # add the vote to the system
     ctx['vote'] = vote
+    ctx['vote_options'] = vote.option_set.order_by("number")
     
-    ctx['vote_uri'] = request.build_absolute_uri(reverse('votes:vote', kwargs={"system_name": system.machine_name, "vote_name":vote.machine_name}))
-    ctx['results_uri'] = request.build_absolute_uri(reverse('votes:results', kwargs={"system_name": system.machine_name, "vote_name":vote.machine_name}))
+    ctx['vote_uri'] = request.build_absolute_uri(
+        reverse('votes:vote', kwargs={
+            "system_name": system.machine_name,
+            "vote_name":vote.machine_name
+        })
+    )
+    ctx['results_uri'] = request.build_absolute_uri(
+        reverse('votes:results', kwargs={
+            "system_name": system.machine_name,
+            "vote_name":vote.machine_name
+        })
+    )
 
     # and the filters
     ctx['admin_systems'] = admin_systems
@@ -364,7 +375,7 @@ class VoteView(View):
         ctx = {}
         ctx['vote'] = vote
 
-        options = vote.option_set.all()
+        options = vote.option_set.order_by("number")
         ctx['options'] = options
 
         # TODO Check status of vote
