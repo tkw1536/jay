@@ -11,3 +11,6 @@ class EditVoteFilterForm(forms.Form):
 class EditVoteOptionsForm(forms.Form):
     min_votes = forms.IntegerField()
     max_votes = forms.IntegerField()
+
+class GetVoteOptionForm(forms.Form):
+    option_id = forms.IntegerField()

@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 
 from django.views.generic import TemplateView
 
-from votes.views import VoteView, results, system_home, system_settings, admin_add, admin_remove, vote_edit, vote_filter, vote_option, vote_options_add, vote_options_edit, vote_options_remove
+from votes.views import VoteView, results, system_home, system_settings, admin_add, admin_remove, vote_edit, vote_filter, vote_option, vote_options_add, vote_options_edit, vote_options_remove, vote_options_up, vote_options_down
 
 urlpatterns = [
     # Home for the votes
@@ -27,6 +27,7 @@ urlpatterns = [
     # Options for a vote
     url(r'^(?P<vote_name>[\w-]+)/edit/options/add$', vote_options_add, name="option_add"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options/edit$', vote_options_edit, name="option_edit"),
-    url(r'^(?P<vote_name>[\w-]+)/edit/options/delete$', vote_options_remove, name="option_delete")
+    url(r'^(?P<vote_name>[\w-]+)/edit/options/up$', vote_options_up, name="option_up"),
+    url(r'^(?P<vote_name>[\w-]+)/edit/options/down$', vote_options_down, name="option_down"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options/delete$', vote_options_remove, name="option_delete")
 ]

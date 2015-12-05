@@ -53,21 +53,37 @@ class Vote(models.Model):
 		"""
 		
 		# give all of them a sequential number. 
-		for i, v in self.option_set.order_by("number"):
+		for i, v in enumerate(self.option_set.order_by("number")):
 			v.number = i
 			v.save()
-	
-	def removeOption(self, option):
+		
+		
+	@transaction.atomic
+	def deleteOption(self, option):
 		"""
 			Removes an option from this vote. 
 		"""
 		
 		# if the option is not in our options, something weird happened. 
-		if not option in self.option_set:
+		if not option.id in self.option_set.values_list('id', flat=True):
 			raise ValueError
 		
 		# remove the option
-		option.remove()
+		option.delete()
+		
+		# get the count
+		count = self.option_set.count()
+		
+		# adn check if min_votes or max_votes are too big. 
+		# then update accordingly. 
+		if self.min_votes > count:
+			self.min_votes = count
+		
+		if self.max_votes > count:
+			self.max_votes = count
+		
+		# and save of course
+		self.save()
 		
 		# and renumber
 		self.renumberOptions()
@@ -82,7 +98,7 @@ class Vote(models.Model):
 		self.renumberOptions()
 		
 		# find a number for the new option
-		num = self.option_set.count
+		num = self.option_set.count()
 		
 		# create a new option
 		opt = Option(vote=self, number = num, name = "Option #"+str(num + 1))
@@ -98,7 +114,7 @@ class Vote(models.Model):
 		"""
 		
 		# if the option is not in our options, something weird happened. 
-		if not option in self.option_set:
+		if not option.id in self.option_set.values_list('id', flat=True):
 			raise ValueError
 		
 		# renumber options to make sure we are in a valid order
@@ -126,7 +142,7 @@ class Vote(models.Model):
 		"""
 		
 		# if the option is not in our options, something weird happened. 
-		if not option in self.option_set:
+		if not option.id in self.option_set.values_list('id', flat=True):
 			raise ValueError
 		
 		# renumber options to make sure we are in a valid order

@@ -96,10 +96,39 @@
       </div>
     </div>
   </form>
+  
+  <h2> Options </h2>
 
-  <!-- TODO: Options -->
+  <!-- Options -->
   {% for o in vote_options %}
+    <div class="row">
+      {{o}}
+      <form method="POST" action="{% url 'votes:option_up' system_name=vote.system.machine_name vote_name=vote.machine_name %}" class="form-inline" style="display: inline; ">
+        {% csrf_token %}
+        <input type="hidden" name="option_id" value="{{o.id}}">
+        <button type="submit" class="btn btn-danger" {% if vote_readonly %} disabled="disabled" {% endif %}>Up</button>
+      </form>
+      <form method="POST" action="{% url 'votes:option_down' system_name=vote.system.machine_name vote_name=vote.machine_name %}" class="form-inline" style="display: inline; ">
+        {% csrf_token %}
+        <input type="hidden" name="option_id" value="{{o.id}}">
+        <button type="submit" class="btn btn-danger" {% if vote_readonly %} disabled="disabled" {% endif %}>Down</button>
+      </form>
+      <form method="POST" action="{% url 'votes:option_delete' system_name=vote.system.machine_name vote_name=vote.machine_name %}" class="form-inline" style="display: inline; ">
+        {% csrf_token %}
+        <input type="hidden" name="option_id" value="{{o.id}}">
+        <button type="submit" class="btn btn-danger" {% if vote_readonly %} disabled="disabled" {% endif %}>Remove option</button>
+      </form>
+    </div>
   {% endfor %}
+  
+  <div class="row">
+    <div class="col-sm-12">
+      <form method="POST" action="{% url 'votes:option_add' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Add option</button>
+      </form>
+    </div>
+  </div>
   
   <!-- Max / Min Options -->
   <form method="POST" action="{% url 'votes:edit_options' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
@@ -115,7 +144,7 @@
     <div class="row">
       <div class="col-sm-12">
         <div class="form-group">
-          <label for="max_votes">Minimal number of votes</label>
+          <label for="max_votes">Maximal number of votes</label>
           <input type="number" name="max_votes" id="max_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.max_votes}}">
         </div>
       </div>

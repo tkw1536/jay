@@ -20,7 +20,7 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm
+from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
@@ -314,8 +314,19 @@ def vote_options_add(request, system_name, vote_name):
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
     
-    pass
+    # try to add an option
+    try:
+        vote.addOption()
+    except Exception as e:
+        ctx['alert_head'] = 'Adding option failed'
+        ctx['alert_text'] = 'Something went wrong. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
     
+    # and done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Adding option suceeded'
+    ctx['alert_text'] = 'New option added. '
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
 @login_required
 def vote_options_edit(request, system_name, vote_name):
@@ -347,7 +358,129 @@ def vote_options_remove(request, system_name, vote_name):
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
     
-    pass
+    try:
+        form = GetVoteOptionForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    try:
+        # find the option
+        option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. That option does not exist. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # and try to remove it
+    try:
+        vote.deleteOption(option)
+    except Exception as e:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # and done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Options updated'
+    ctx['alert_text'] = 'Option removed. '
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_options_down(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    try:
+        form = GetVoteOptionForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    try:
+        # find the option
+        option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. That option does not exist. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # and try to remove it
+    try:
+        vote.moveUpOption(option)
+    except Exception as e:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # and done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Options updated'
+    ctx['alert_text'] = 'Option moved down. '
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_options_up(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+    
+    # if the vote is read-only, do not save
+    if ctx["vote_readonly"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    try:
+        form = GetVoteOptionForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    try:
+        # find the option
+        option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. That option does not exist. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # and try to remove it
+    try:
+        vote.moveDownOption(option)
+    except Exception as e:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # and done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Options updated'
+    ctx['alert_text'] = 'Option moved up. '
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
 
 
