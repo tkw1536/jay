@@ -83,7 +83,8 @@
     </div>
     <div class="row">
       <div class="col-sm-12">
-          <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Update filter</button>
+          <a clas="btn btn-default" target="_blank" href="{% url 'filters:edit' filter_id=vote.filter.id %}">Edit filter</a>
+          <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
       </div>
     </div>
   </form>
