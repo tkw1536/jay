@@ -1,0 +1,53 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load filter %}
+
+{% block head %}
+ <link rel="stylesheet" type="text/css" href="{% static "css/forest/forest.css" %}">
+{% endblock %}
+
+{% block page_title %}Filters - Edit - {{filter.name}} {% endblock %}
+
+{% block content %}
+  {% include "error.html" %}
+  <input type="hidden" id="filter_tree" value="{{filter.tree | escape}}">
+  <div class="row">
+    <div class="col-sm-12">
+      <h2 style="display:inline; "> Test Filter </h2>
+      
+      <a href="{% url 'filters:forest' %}" class="btn btn-xs btn-danger">Back to overview</a>
+    </div>
+  </div>
+  <form class="form" method="POST" action="{% url 'filters:test' filter_id=filter.id %}">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <textarea class="form-control" rows="10" name="test_obj" id="obj">{{obj | escape }}</textarea>
+        </div>
+      </div>
+      <div class="col-sm-6" id="preview">
+        {% render_full filter.value obj %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <input type="submit" class="btn btn-danger" id="submit" value="Test" />
+      </div>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+{{block.super}}
+
+<script type="text/javascript" src="{% static 'js/forest/jsep.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/logic.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/layouter.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/renderer.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/forest/test_preview.js' %}"></script>
+{% endblock %}

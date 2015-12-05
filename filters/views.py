@@ -7,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
 from filters.models import UserFilter
-from filters.forms import NewFilterForm, EditFilterForm
+from filters.forms import NewFilterForm, EditFilterForm, FilterTestForm
 import filters.forest as forest
+
+import json
 
 
 from votes.models import VotingSystem
@@ -17,6 +19,7 @@ from jay.utils import priviliged
 
 FILTER_FOREST_TEMPLATE = "filters/forest.html"
 FILTER_EDIT_TEMPLATE = "filters/edit.html"
+FILTER_TEST_TEMPLATE = "filters/test.html"
 
 @login_required
 @priviliged
@@ -177,4 +180,21 @@ def FilterEdit(request, filter_id):
 def FilterTest(request, filter_id):
     # try and grab the user filter
     filter = get_object_or_404(UserFilter, id=filter_id)
-    return Forest(request, alert_head="Unimplemented")
+    
+    obj = '{}'
+    
+    # if we have some post data try and parse it
+    if request.method == "POST":
+        try:
+            form = FilterTestForm(request.POST)
+            if form.is_valid():
+                obj = form.cleaned_data["test_obj"]
+        except:
+            pass
+    
+    ctx = {
+        'obj': obj, 
+        'filter': filter
+    }
+    
+    return render(request, FILTER_TEST_TEMPLATE, ctx)
