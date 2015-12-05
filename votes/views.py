@@ -20,7 +20,7 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm
+from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
@@ -342,7 +342,48 @@ def vote_options_edit(request, system_name, vote_name):
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
     
-    pass
+    try:
+        form = EditVoteOptionForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+    except Exception as e:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # try to find the option
+    try:
+        option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
+        
+        if not option.id in vote.option_set.values_list('id', flat=True):
+            raise Exception
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Nice try. That option does not exist. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # try and store the values
+    try:
+        option.name = form.cleaned_data["name"]
+        option.description = form.cleaned_data["description"]
+        option.personal_link = form.cleaned_data["personal_link"]
+        option.link_name = form.cleaned_data["link_name"]
+        
+        option.clean()
+        option.save()
+    except Exception as e:
+        ctx['alert_head'] = 'Saving option failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+    
+    # Woo, we made it
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Saving suceeded'
+    ctx['alert_text'] = 'Option saved'
+    
+    # so render the basic template
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
 @login_required
 def vote_options_remove(request, system_name, vote_name):
