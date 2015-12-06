@@ -1,8 +1,11 @@
 <div class="row">
-  <div class="col-sm-12">
-    <form method="POST" action="{% url 'votes:option_add' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-default" {% if vote_readonly %} disabled="disabled" {% endif %}><span class="glyphicon glyphicon-plus"></span>&nbsp;Add</button>
-    </form>
-  </div>
+  <form method="POST" action="{% url 'votes:option_add' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-default" {% if vote_readonly %} disabled="disabled" {% endif %}><span class="glyphicon glyphicon-plus"></span>&nbsp;Add new option</button>
+      </div>
+    </div>
+  </form>
 </div>
