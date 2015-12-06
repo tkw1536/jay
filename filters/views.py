@@ -19,9 +19,9 @@ from votes.models import VotingSystem
 
 from jay.utils import priviliged
 
-FILTER_FOREST_TEMPLATE = "filters/forest.html"
-FILTER_EDIT_TEMPLATE = "filters/edit.html"
-FILTER_TEST_TEMPLATE = "filters/test.html"
+FILTER_FOREST_TEMPLATE = "filters/filter_forest.html"
+FILTER_EDIT_TEMPLATE = "filters/filter_edit.html"
+FILTER_TEST_TEMPLATE = "filters/filter_test.html"
 
 @login_required
 @priviliged

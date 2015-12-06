@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
 
     # Help
-    url(r'^help/filters/$', TemplateView.as_view(template_name="filters/help.html"), name="filter_help"),
+    url(r'^help/filters/$', TemplateView.as_view(template_name="filters/filter_help.html"), name="filter_help"),
 
     # Authentication
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),

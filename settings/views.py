@@ -13,8 +13,8 @@ from django.http import Http404
 from .models import VotingSystem
 from .forms import EditSystemForm
 
-SETTINGS_SYSTEMS_TEMPLATE = "systems/overview.html"
-SETTINGS_SYSTEMS_EDIT_TEMPLATE = "systems/edit.html"
+SETTINGS_SYSTEMS_TEMPLATE = "systems/systems_overview.html"
+SETTINGS_SYSTEMS_EDIT_TEMPLATE = "systems/systems_edit.html"
 
 # Create your views here.
 @login_required
