@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 
 from django.db import transaction
 from django.db.models import F
@@ -100,7 +100,7 @@ def admin_remove(request, system_name):
 
 def vote_edit_context(request, system_name, vote_name):
     """
-        Returns context and basic parameters for vote editing. 
+        Returns context and basic parameters for vote editing.
     """
     (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
 
@@ -110,14 +110,14 @@ def vote_edit_context(request, system_name, vote_name):
 
     # make a context
     ctx = {}
-    
+
     # get all the systems this user can edit
     (admin_systems, other_systems) = request.user.profile.getSystems()
 
     # add the vote to the system
     ctx['vote'] = vote
     ctx['vote_options'] = vote.option_set.order_by("number")
-    
+
     ctx['vote_uri'] = request.build_absolute_uri(
         reverse('votes:vote', kwargs={
             "system_name": system.machine_name,
@@ -137,7 +137,7 @@ def vote_edit_context(request, system_name, vote_name):
 
     # check if the vote is read only
     ctx["vote_readonly"] = not vote.canBeModified()
-    
+
     return (system, vote, ctx)
 
 @login_required
@@ -194,13 +194,13 @@ def vote_filter(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # now try and parse the form
     try:
         form = EditVoteFilterForm(request.POST)
@@ -211,8 +211,8 @@ def vote_filter(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
-    # write filter, then save to db. 
+
+    # write filter, then save to db.
     try:
         # store the filter by id
         vote.filter = UserFilter.objects.filter(id=form.cleaned_data["filter_id"])[0]
@@ -225,12 +225,12 @@ def vote_filter(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving filter failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # Woo, we made it
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Saving suceeded'
     ctx['alert_text'] = 'Associated filter has been updated. '
-    
+
     # so render the basic template
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
@@ -241,13 +241,13 @@ def vote_option(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # now try and parse the form
     try:
         form = EditVoteOptionsForm(request.POST)
@@ -255,30 +255,30 @@ def vote_option(request, system_name, vote_name):
         if not form.is_valid():
             raise Exception
     except:
-        
+
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     min_votes = form.cleaned_data["min_votes"]
     max_votes = form.cleaned_data["max_votes"]
     count = vote.option_set.count()
-    
+
     # read min and max votes, then store them
     try:
-        
+
         # check range for min votes
         if min_votes < 0 or min_votes > count:
             raise Exception("Minimum number of votes must be between 0 and the number of available options. ")
-        
+
         # check range for max votes
         if max_votes < 0 or max_votes > count:
             raise Exception("Maximum number of votes must be between 0 and the number of available options. ")
-        
+
         if min_votes > max_votes:
             raise Exception("The maximum number of votes may not be smaller than the minimum number of votes. ")
-        
-        
+
+
         vote.min_votes = min_votes
         vote.max_votes = max_votes
 
@@ -290,15 +290,15 @@ def vote_option(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving vote failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # Woo, we made it
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Saving suceeded'
     ctx['alert_text'] = 'Number of vote options updated. '
-    
+
     # so render the basic template
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
 
 @login_required
 def vote_options_add(request, system_name, vote_name):
@@ -307,13 +307,13 @@ def vote_options_add(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # try to add an option
     try:
         vote.addOption()
@@ -321,7 +321,7 @@ def vote_options_add(request, system_name, vote_name):
         ctx['alert_head'] = 'Adding option failed'
         ctx['alert_text'] = 'Something went wrong. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and done
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Adding option suceeded'
@@ -335,13 +335,13 @@ def vote_options_edit(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         form = EditVoteOptionForm(request.POST)
 
@@ -351,37 +351,37 @@ def vote_options_edit(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # try to find the option
     try:
         option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
-        
+
         if not option.id in vote.option_set.values_list('id', flat=True):
             raise Exception
     except:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. That option does not exist. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # try and store the values
     try:
         option.name = form.cleaned_data["name"]
         option.description = form.cleaned_data["description"]
         option.personal_link = form.cleaned_data["personal_link"]
         option.link_name = form.cleaned_data["link_name"]
-        
+
         option.clean()
         option.save()
     except Exception as e:
         ctx['alert_head'] = 'Saving option failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # Woo, we made it
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Saving suceeded'
     ctx['alert_text'] = 'Option saved'
-    
+
     # so render the basic template
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
@@ -392,13 +392,13 @@ def vote_options_remove(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         form = GetVoteOptionForm(request.POST)
 
@@ -408,7 +408,7 @@ def vote_options_remove(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         # find the option
         option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
@@ -416,7 +416,7 @@ def vote_options_remove(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. That option does not exist. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and try to remove it
     try:
         vote.deleteOption(option)
@@ -424,7 +424,7 @@ def vote_options_remove(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and done
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Options updated'
@@ -438,13 +438,13 @@ def vote_options_down(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         form = GetVoteOptionForm(request.POST)
 
@@ -454,7 +454,7 @@ def vote_options_down(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         # find the option
         option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
@@ -462,7 +462,7 @@ def vote_options_down(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. That option does not exist. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and try to remove it
     try:
         vote.moveUpOption(option)
@@ -470,7 +470,7 @@ def vote_options_down(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and done
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Options updated'
@@ -484,13 +484,13 @@ def vote_options_up(request, system_name, vote_name):
         raise Http404
 
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
-    
+
     # if the vote is read-only, do not save
     if ctx["vote_readonly"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. A vote that has been opened can not be edited. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         form = GetVoteOptionForm(request.POST)
 
@@ -500,7 +500,7 @@ def vote_options_up(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     try:
         # find the option
         option = Option.objects.filter(id=form.cleaned_data["option_id"])[0]
@@ -508,7 +508,7 @@ def vote_options_up(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Nice try. That option does not exist. '
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and try to remove it
     try:
         vote.moveDownOption(option)
@@ -516,7 +516,7 @@ def vote_options_up(request, system_name, vote_name):
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
-    
+
     # and done
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Options updated'
@@ -535,6 +535,13 @@ def results(request, system_name, vote_name):
     ctx['vote'] = vote
     ctx['options'] = vote.option_set.order_by('-count')
 
+    if vote.status.stage != Status.PUBLIC:
+        ctx['alert_type'] = 'danger'
+        ctx['alert_head'] = 'Non-public'
+        ctx['alert_text'] = 'The results are not public yet. Please come back later.'
+
+        return render(request, VOTE_ERROR_TEMPLATE, ctx)
+
     # render the stuff
     return render(request, VOTE_RESULT_TEMPLATE, ctx)
 
@@ -543,6 +550,7 @@ class VoteView(View):
     def get(self, request, system_name, vote_name):
         (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
         filter = vote.filter
+        status = vote.status
 
         error = False
 
@@ -581,7 +589,17 @@ class VoteView(View):
         except ActiveVote.DoesNotExist:
             pass
 
+        if status.stage not in [Status.OPEN, Status.PUBLIC]:
+            error = True
+
+            ctx['alert_type'] = "danger"
+            ctx['alert_head'] = "Not open"
+            ctx['alert_text'] = "This vote is not open. Come back later."
+
         if not error:
+            if status.stage == Status.PUBLIC:
+                return redirect('votes:results', system_name=system.machine_name, vote_name=vote.machine_name)
+
             return render(request, "vote/vote_vote.html", context=ctx)
         else:
             return render(request, VOTE_ERROR_TEMPLATE, context=ctx, status=403)
