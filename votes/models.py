@@ -1,3 +1,7 @@
+import datetime
+
+from django.utils import timezone
+
 from django.db import models, transaction
 from django.contrib.auth.models import User
 
@@ -45,6 +49,29 @@ class Vote(models.Model):
 			Checks if this vote can still be modified.
 		"""
 		return self.status.stage == Status.INIT
+
+	# Touch yourself
+	def touch(self):
+		status = self.status
+		stage = self.status.stage
+		now = timezone.now()
+
+		if stage == Status.INIT:
+			return
+
+		if stage == Status.STAGED and status.open_time:
+			if status.open_time <= now:
+				self.status.stage = Status.OPEN
+
+		if stage == Status.OPEN and status.close_time:
+			if status.close_time <= now:
+				self.status.stage = Status.CLOSE
+
+		if stage == Status.CLOSE and status.public_time:
+			if status.public_time <= now:
+				self.status.stage = Status.PUBLIC
+
+		self.status.save()
 
 	@transaction.atomic
 	def renumberOptions(self):
