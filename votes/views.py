@@ -98,11 +98,37 @@ def admin_remove(request, system_name):
     pass
 
 
+def get_vote_props(ctx, vote):
+    # check if the vote is read only
+    ctx["vote_readonly"] = not vote.canBeModified()
+
+    # check if the vote is staged
+    ctx["vote_is_init"] = (vote.status.stage == Status.STAGED)
+    ctx["vote_is_staged"] = (vote.status.stage == Status.STAGED)
+    ctx["vote_is_open"] = (vote.status.stage == Status.OPEN)
+    ctx["vote_is_closed"] = (vote.status.stage == Status.CLOSE)
+    ctx["vote_is_public"] = (vote.status.stage == Status.PUBLIC)
+
+    # check for all the times
+    ctx["vote_has_open_time"] = (vote.status.open_time != None)
+    ctx["vote_has_close_time"] = (vote.status.close_time != None)
+    ctx["vote_has_public_time"] = (vote.status.public_time != None)
+
+    # and what we can do
+    ctx["can_set_open"] = ctx["vote_is_staged"] and (not ctx["vote_has_open_time"])
+    ctx["can_set_close"] = ctx["vote_is_open"] and (not ctx["vote_has_close_time"])
+    ctx["can_set_public"] = ctx["vote_is_closed"] and (not ctx["vote_has_public_time"])
+
+    return ctx
+
 def vote_edit_context(request, system_name, vote_name):
     """
         Returns context and basic parameters for vote editing.
     """
     (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+    # touch the vote
+    vote.touch()
 
     # raise an error if the user trying to access is not an admin
     if not system.isAdmin(request.user.profile):
@@ -135,8 +161,8 @@ def vote_edit_context(request, system_name, vote_name):
     ctx['admin_systems'] = admin_systems
     ctx['other_systems'] = other_systems
 
-    # check if the vote is read only
-    ctx["vote_readonly"] = not vote.canBeModified()
+    # reload the stages
+    ctx = get_vote_props(ctx, vote)
 
     return (system, vote, ctx)
 
@@ -232,6 +258,108 @@ def vote_filter(request, system_name, vote_name):
     ctx['alert_text'] = 'Associated filter has been updated. '
 
     # so render the basic template
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_open(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_set_open"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'A vote can only be set to open if there is no open time and it is already staged. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # set the vote status to public
+    try:
+        vote.status.stage = Status.OPEN
+        vote.status.save()
+    except Exception as e:
+        vote.machine_name = vote_name
+        ctx['alert_head'] = 'Opening vote failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Status updated'
+    ctx['alert_text'] = 'Vote has been opened. '
+
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_close(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_set_close"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'A vote can only be set to close if there is no close time and it is already open. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # set the vote status to public
+    try:
+        vote.status.stage = Status.CLOSE
+        vote.status.save()
+    except Exception as e:
+        vote.machine_name = vote_name
+        ctx['alert_head'] = 'Closing vote failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Status updated'
+    ctx['alert_text'] = 'Vote has been closed. '
+
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_public(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_set_public"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'A vote can only be set to public if there is no public time and it is already closed. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # set the vote status to public
+    try:
+        vote.status.stage = Status.PUBLIC
+        vote.status.save()
+    except Exception as e:
+        vote.machine_name = vote_name
+        ctx['alert_head'] = 'Making vote public failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Status updated'
+    ctx['alert_text'] = 'Vote has been made public. '
+
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
 @login_required

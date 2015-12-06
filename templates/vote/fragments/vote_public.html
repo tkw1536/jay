@@ -1,0 +1,21 @@
+{% if vote_is_closed or vote_is_public %}
+
+<div class="row">
+  <form method="POST" action="{% url 'votes:edit_public' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-danger" {% if not can_set_public %} disabled="disabled" {% endif %} ><span class="glyphicon glyphicon-globe"></span>&nbsp;Make vote Public</button>
+        &nbsp;
+        {% if vote_is_public %}
+          (vote is already public)
+        {% elif not vote_is_closed %}
+          (vote needs to close before you can make it public)
+        {% endif %}
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endif %}

@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 
 from django.views.generic import TemplateView
 
-from votes.views import VoteView, results, system_home, system_settings, admin_add, admin_remove, vote_edit, vote_filter, vote_option, vote_options_add, vote_options_edit, vote_options_remove, vote_options_up, vote_options_down
+from votes.views import VoteView, results, system_home, system_settings, admin_add, admin_remove, vote_edit, vote_filter, vote_option, vote_options_add, vote_options_edit, vote_options_remove, vote_options_up, vote_options_down, vote_public, vote_close, vote_open
 
 urlpatterns = [
     # Home for the votes
@@ -23,6 +23,10 @@ urlpatterns = [
     url(r'^(?P<vote_name>[\w-]+)/edit$', vote_edit, name="edit"),
     url(r'^(?P<vote_name>[\w-]+)/edit/filter$', vote_filter, name="edit_filter"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options$', vote_option, name="edit_options"),
+
+    url(r'^(?P<vote_name>[\w-]+)/edit/stage/open$', vote_open, name="edit_open"),
+    url(r'^(?P<vote_name>[\w-]+)/edit/stage/close$', vote_close, name="edit_close"),
+    url(r'^(?P<vote_name>[\w-]+)/edit/stage/public$', vote_public, name="edit_public"),
 
     # Options for a vote
     url(r'^(?P<vote_name>[\w-]+)/edit/options/add$', vote_options_add, name="option_add"),
