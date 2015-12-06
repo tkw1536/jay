@@ -42,7 +42,26 @@
                     {{ user.username }} <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                    <li role="presentation"><a href="#">Admin</a></li>
+                    {% if user.profile.isSuperAdmin %}
+                      <li class="dropdown-header">Management</li>
+
+                      <li role="presentation"><a href="{% url 'settings:systems' %}">Voting Systems</a></li>
+                      <li role="presentation"><a href="#">Super Admins</a></li>
+                    {% endif %}
+
+                    {% with admin_for=user.profile.getAdministratedSystems %}
+
+                      {% if admin_for %}
+                        <li class="dropdown-header">Voting Systems</li>
+                        {% for vs in admin_for %}
+                          {% url 'votes:system' system_name=vs.machine_name as vs_url %}
+                          <li role="presentation"><a href="{{ vs_url }}">{{ vs.simple_name }}</a></li>
+                        {% endfor %}
+                      {% endif %}
+
+                    {% endwith %}
+
+                    <li role="separator" class="divider"></li>
                     <li role="presentation"><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                   </ul>
                 {% else %}
