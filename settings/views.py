@@ -12,9 +12,11 @@ from django.http import Http404
 
 from .models import VotingSystem
 from .forms import EditSystemForm
+from users.models import SuperAdmin
 
 SETTINGS_SYSTEMS_TEMPLATE = "systems/systems_overview.html"
 SETTINGS_SYSTEMS_EDIT_TEMPLATE = "systems/systems_edit.html"
+SETTINGS_GLOBAL_SETTINGS_TEMPLATE = "systems/global_settings.html"
 
 # Create your views here.
 @login_required
@@ -126,3 +128,42 @@ def system_new(request):
 
 	# redirect to the edit page
 	return redirect(reverse('settings:edit', kwargs={'system_id': str(vs.id)}))
+
+
+@login_required
+@superadmin
+def settings(request, alert_type=None, alert_head=None, alert_text=None):
+	superadmin_list = SuperAdmin.objects.all()
+
+	ctx = {'superadmin_list': superadmin_list}
+
+	if alert_head or alert_text or alert_type:
+		ctx['alert_type'] = alert_type
+		ctx['alert_head'] = alert_head
+		ctx['alert_text'] = alert_text
+
+	return render(request, SETTINGS_GLOBAL_SETTINGS_TEMPLATE, ctx)
+
+@login_required
+@superadmin
+def superadmin_remove(request, user_id):
+	
+	# only POST is supported
+	if request.method != "POST":
+		raise Http404
+
+	superadmin = get_object_or_404(SuperAdmin, user__id=user_id)
+	current_user = request.user
+
+	# forbidden to delete oneself
+	if superadmin.user.username == current_user.username:
+		return settings(request, alert_head = "Deletion failed", alert_text = "Don't torture yourself.")
+
+	try:
+		superadmin.delete()
+	except:
+		return settings(request, alert_head = "Deletion failed")
+
+	return settings(request, alert_type = "success", alert_head = "Deletion succeeded", alert_text = "Super Admin Deleted.")
+
+

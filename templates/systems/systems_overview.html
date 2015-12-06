@@ -38,7 +38,7 @@
                   <a href="#" class="btn btn-default" role="button"><i class="fa fa-eye"></i>&nbsp;View</a>
                   <a href="{% url 'settings:edit' system_id=vs.id %}" class="btn btn-default" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp;Edit</a>
 
-                  <form action="{% url 'settings:delete' system_id=vs.id %}" method="post" class="form-inline" style="display:inline; ">
+                  <form action="{% url 'settings:superuser_delete' system_id=vs.id %}" method="post" class="form-inline" style="display:inline; ">
                     {% csrf_token %}
                     <input type="submit" class="btn btn-primary" value="Delete" />
                   </form>
