@@ -15,7 +15,7 @@
   <div class="row">
     <div class="col-sm-12">
       <h2 style="display:inline; "> Test Filter </h2>
-      
+
       <a href="{% url 'filters:forest' %}" class="btn btn-xs btn-danger">Back to overview</a>
     </div>
   </div>
@@ -37,6 +37,22 @@
       </div>
     </div>
 </form>
+
+<div class="row">
+  <div class="col-sm-12">
+    <form action="{% url 'filters:testuser' filter_id=filter.id %}" method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <select name="user" class="form-control">
+          {% for u in usernames %}
+            <option value="{{u | escape}}">{{u | escape}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <input type="submit" value="Check user" class="btn btn-primary"></input>
+    </form>
+  </div>
+</div>
 
 {% endblock %}
 

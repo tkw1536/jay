@@ -6,6 +6,9 @@ class NewFilterForm(forms.Form):
 class FilterTestForm(forms.Form):
     test_obj = forms.CharField()
 
+class FilterTestUserForm(forms.Form):
+    user = forms.CharField()
+
 class EditFilterForm(forms.Form):
     name = forms.CharField(max_length=255)
     value = forms.CharField(max_length=255)

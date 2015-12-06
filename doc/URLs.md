@@ -33,8 +33,8 @@ All URLs in the list below are relative to the hostname of Jay's instance
 * `/filters` - List of all filter trees on this voting instance (aka "The Forest")
   * `/new/<vote_sys_name>/` - Creates a new filter tree and redirects to edit page
 
-  * `<tree_id>` - Runs the filter against the user database to give an example for who you can vote
-    * `/edit` - Edit a filter tree.
+  * `<tree_id>` - Allows filter testing with manual input.
+    * `/testuser` - Allows testing against the user database
     * `/delete` - Delete a filter tree.
 
 * `/login` - Login to the system

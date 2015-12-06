@@ -3,11 +3,13 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
 
 from django.http import Http404
 
 from filters.models import UserFilter
-from filters.forms import NewFilterForm, EditFilterForm, FilterTestForm
+from filters.forms import NewFilterForm, EditFilterForm, FilterTestForm, FilterTestUserForm
 import filters.forest as forest
 
 import json
@@ -177,24 +179,49 @@ def FilterEdit(request, filter_id):
 
 @login_required
 @priviliged
-def FilterTest(request, filter_id):
+def FilterTest(request, filter_id, obj = None):
     # try and grab the user filter
     filter = get_object_or_404(UserFilter, id=filter_id)
-    
-    obj = '{}'
-    
-    # if we have some post data try and parse it
-    if request.method == "POST":
-        try:
-            form = FilterTestForm(request.POST)
-            if form.is_valid():
-                obj = form.cleaned_data["test_obj"]
-        except:
-            pass
-    
+
+    if obj == None:
+        obj = '{}'
+
+        # if we have some post data try and parse it
+        if request.method == "POST":
+            try:
+                form = FilterTestForm(request.POST)
+                if form.is_valid():
+                    obj = form.cleaned_data["test_obj"]
+            except:
+                pass
+
     ctx = {
-        'obj': obj, 
+        'obj': obj,
+        'usernames': User.objects.values_list("username", flat=True),
         'filter': filter
     }
-    
+
     return render(request, FILTER_TEST_TEMPLATE, ctx)
+
+@login_required
+@priviliged
+def FilterTestUser(request, filter_id):
+    # try and grab the user filter
+    filter = get_object_or_404(UserFilter, id=filter_id)
+
+    obj = '{}'
+
+    # only post is supported
+    if request.method != "POST":
+        raise Http404
+
+    try:
+        form = FilterTestUserForm(request.POST)
+        if form.is_valid():
+            obj = form.cleaned_data["user"]
+            obj = User.objects.filter(username=obj)[0].profile.details
+    except Exception as e:
+        print(e)
+        pass
+
+    return FilterTest(request, filter_id, obj = obj)
