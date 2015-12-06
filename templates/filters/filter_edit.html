@@ -7,7 +7,7 @@
  <link rel="stylesheet" type="text/css" href="{% static "css/forest/forest.css" %}">
 {% endblock %}
 
-{% block page_title %}Filters - Edit - {{filter.name}} {% endblock %}
+{% block page_title %}Filters - Edit - {{filter.name | escape}} {% endblock %}
 
 {% block content %}
   {% include "error.html" %}
@@ -16,7 +16,7 @@
     <div class="col-sm-6">
       <h2 style="display:inline; "> Edit Filter </h2>
 
-      <a href="{% url 'filters:test' filter_id=filter.id %}" class="btn btn-xs btn-default">Test</a>
+      <a href="{% url 'filters:test' filter_id=filter.id %}" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-play-circle"></span>&nbsp;Test</a>
       <a href="{% url 'filters:forest' %}" class="btn btn-xs btn-danger">Back to overview</a>
 
       <br />
@@ -39,7 +39,7 @@
           <input type="text" class="form-control" name="value" id="value" placeholder="Filter" value="{{filter.value | escape}}">
         </div>
 
-        <button type="submit" class="btn btn-danger" id="submit">Save</button>
+        <button type="submit" class="btn btn-primary" id="submit"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save</button>
       </form>
     </div>
     <div class="col-sm-6 centertable" id="preview">

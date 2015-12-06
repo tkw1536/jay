@@ -3,7 +3,7 @@
 {% load staticfiles %}
 {% load markdown %}
 
-{% block page_title %}Results{% endblock %}
+{% block page_title %}Votes - Results - {{vote.name | escape}}{% endblock %}
 
 {% block head %}
 <link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
