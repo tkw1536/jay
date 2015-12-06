@@ -24,7 +24,9 @@
         </div>
 
         <div class="col-sm-2">
+          {% if vote.filter %}
           <a class="btn btn-default" target="_blank" href="{% url 'filters:edit' filter_id=vote.filter.id %}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit filter</a>
+          {% endif %}
         </div>
       </div>
 
