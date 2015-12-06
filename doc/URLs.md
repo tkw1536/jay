@@ -26,6 +26,7 @@ All URLs in the list below are relative to the hostname of Jay's instance
         * `/up` - Move option up
         * `/down` - Move option down
         * `/delete` - Removing an option
+      * `/makepublic` - Make a vote public
       * `/filter` - Edit vote filter
       * `/stage` - Edit vote staging
       * `/delete` - Deleting a vote

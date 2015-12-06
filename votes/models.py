@@ -56,6 +56,9 @@ class Vote(models.Model):
 		"""
 		return self.status.stage == Status.INIT
 
+	def update_eligibility(self, username, password):
+		print("update_eligibility", username, password)
+
 	# Touch yourself
 	def touch(self):
 		status = self.status
