@@ -54,7 +54,7 @@
       <form action="{% url 'settings:add' %}" method="post" class="form-inline" role="form">
         {% csrf_token %}
         <div class="form-group">
-          <select name="user_to_add" class="form-control">
+          <select name="user_id" class="form-control">
             {% for user in user_list %}
               <option value="{{ user.id | escape }}">{{ user.username }}</option>
             {% endfor %}

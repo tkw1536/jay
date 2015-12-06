@@ -3,17 +3,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
-
 from django.contrib.auth.models import User
-
 from jay.utils import superadmin
-
 import time
-
 from django.http import Http404
+from django.db.models import Count
 
 from .models import VotingSystem
-from .forms import EditSystemForm
+from .forms import EditSystemForm, AddSuperAdminForm
 from users.models import SuperAdmin
 
 SETTINGS_SYSTEMS_TEMPLATE = "systems/systems_overview.html"
@@ -33,7 +30,6 @@ def systems(request, alert_type=None, alert_head=None, alert_text=None):
 		ctx['alert_type'] = alert_type
 		ctx['alert_head'] = alert_head
 		ctx['alert_text'] = alert_text
-
 
 	return render(request, SETTINGS_SYSTEMS_TEMPLATE, ctx)
 
@@ -137,8 +133,8 @@ def system_new(request):
 def settings(request, alert_type=None, alert_head=None, alert_text=None):
 	superadmin_list = SuperAdmin.objects.all()
 
-	# TODO: exclude all existing superadmins
-	user_list = User.objects.all()
+	# exclude existing super users
+	user_list = User.objects.annotate(sa=Count('superadmin')).filter(sa=0)
 
 	ctx = {'superadmin_list': superadmin_list, 'user_list': user_list}
 
@@ -175,7 +171,37 @@ def superadmin_remove(request, user_id):
 @login_required
 @superadmin
 def superadmin_add(request):
-	pass
+
+	# only POST is supported
+	if request.method != "POST":
+		raise Http404
+
+	try:
+		# parse the form
+		form = AddSuperAdminForm(request.POST)
+		if not form.is_valid():
+			raise Exception
+	except Exception as e:
+		print(e)
+		return settings(request, alert_head='Grant Failed', alert_text='Invalid data submitted')
+	
+	try:
+		user_id = form.cleaned_data['user_id']
+
+		# get a user object and construct a new super admin
+		user = get_object_or_404(User, id=user_id)
+		superadmin = SuperAdmin(user=user)
+		
+		# clean + save
+		superadmin.clean()
+		superadmin.save()
+	except Exception as e:
+		print(e)
+		return settings(request, alert_head="Grant Failed", alert_text="Unable to make user " + str(user.username) +" a super admin. ")
+
+	return settings(request, alert_type = "success", alert_head = "Grant succeeded", alert_text = "User " + str(user.username) + " is a super admin now.")
+
+
 
 
 
