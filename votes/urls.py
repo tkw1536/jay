@@ -24,6 +24,7 @@ urlpatterns = [
 
     # editing a vote
     url(r'^(?P<vote_name>[\w-]+)/edit$', vote_edit, name="edit"),
+    url(r'^(?P<vote_name>[\w-]+)/delete$', vote_delete, name="delete"),
     url(r'^(?P<vote_name>[\w-]+)/edit/filter$', vote_filter, name="edit_filter"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options$', vote_option, name="edit_options"),
 
