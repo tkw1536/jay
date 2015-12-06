@@ -44,127 +44,127 @@ class Vote(models.Model):
 		"""
 			Checks if this vote can still be modified.
 		"""
-		return self.status.stage == "I"
-	
+		return self.status.stage == Status.INIT
+
 	@transaction.atomic
 	def renumberOptions(self):
 		"""
-			Renumbers the options in this vote. 
+			Renumbers the options in this vote.
 		"""
-		
-		# give all of them a sequential number. 
+
+		# give all of them a sequential number.
 		for i, v in enumerate(self.option_set.order_by("number")):
 			v.number = i
 			v.save()
-		
-		
+
+
 	@transaction.atomic
 	def deleteOption(self, option):
 		"""
-			Removes an option from this vote. 
+			Removes an option from this vote.
 		"""
-		
-		# if the option is not in our options, something weird happened. 
+
+		# if the option is not in our options, something weird happened.
 		if not option.id in self.option_set.values_list('id', flat=True):
 			raise ValueError
-		
+
 		# remove the option
 		option.delete()
-		
+
 		# get the count
 		count = self.option_set.count()
-		
-		# adn check if min_votes or max_votes are too big. 
-		# then update accordingly. 
+
+		# adn check if min_votes or max_votes are too big.
+		# then update accordingly.
 		if self.min_votes > count:
 			self.min_votes = count
-		
+
 		if self.max_votes > count:
 			self.max_votes = count
-		
+
 		# and save of course
 		self.save()
-		
+
 		# and renumber
 		self.renumberOptions()
-	
+
 	@transaction.atomic
 	def addOption(self):
 		"""
 			Adds a new option.
 		"""
-		
+
 		# renumber the options to make sure we are in order
 		self.renumberOptions()
-		
+
 		# find a number for the new option
 		num = self.option_set.count()
-		
+
 		# create a new option
 		opt = Option(vote=self, number = num, name = "Option #"+str(num + 1))
-		
+
 		# and save it
 		opt.save()
-		
-	
+
+
 	@transaction.atomic
 	def moveDownOption(self, option):
 		"""
-			move an option down in the indexing. 
+			move an option down in the indexing.
 		"""
-		
-		# if the option is not in our options, something weird happened. 
+
+		# if the option is not in our options, something weird happened.
 		if not option.id in self.option_set.values_list('id', flat=True):
 			raise ValueError
-		
+
 		# renumber options to make sure we are in a valid order
 		self.renumberOptions()
-		
-		# if we are already at the bottom there is nothing to do. 
+
+		# if we are already at the bottom there is nothing to do.
 		if option.number == 0:
 			return
-		
+
 		# find the option right below our option
 		below = self.option_set.filter(number=option.number - 1)[0]
-		
+
 		# switch our two number
 		below.number = option.number
 		option.number = option.number - 1
-		
+
 		# and save the options
 		below.save()
 		option.save()
-		
+
 	@transaction.atomic
 	def moveUpOption(self, option):
 		"""
-			move an option up in the indexing. 
+			move an option up in the indexing.
 		"""
-		
-		# if the option is not in our options, something weird happened. 
+
+		# if the option is not in our options, something weird happened.
 		if not option.id in self.option_set.values_list('id', flat=True):
 			raise ValueError
-		
+
 		# renumber options to make sure we are in a valid order
 		self.renumberOptions()
-		
-		# if we are already at the top there is nothing to do. 
+
+		# if we are already at the top there is nothing to do.
 		if option.number == self.option_set.count() - 1:
 			return
-		
+
 		# find the option right above our option
 		above = self.option_set.filter(number=option.number + 1)[0]
-		
+
 		# switch our two number
 		above.number = option.number
 		option.number = option.number + 1
-		
+
 		# and save the options
 		above.save()
 		option.save()
-	
-		
-		
+
+
+
 class Option(models.Model):
 	vote = models.ForeignKey(Vote)
 
@@ -179,7 +179,7 @@ class Option(models.Model):
 	link_name = models.CharField(blank = True, max_length = 16)
 
 	count = models.IntegerField(default = 0, blank = True)
-	
+
 	class Meta():
 		unique_together = (("vote", "number"))
 
