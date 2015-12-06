@@ -531,6 +531,8 @@ def results(request, system_name, vote_name):
     # grab vote and system
     (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
 
+    vote.touch()
+
     # set options and the vote
     ctx['vote'] = vote
     ctx['options'] = vote.option_set.order_by('-count')
@@ -557,6 +559,9 @@ class VoteView(View):
     @method_decorator(login_required)
     def get(self, request, system_name, vote_name):
         (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+        vote.touch()
+
         filter = vote.filter
         status = vote.status
 
@@ -634,6 +639,9 @@ class VoteView(View):
         options = json.loads(request.POST['options_selected'])
 
         (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
+
+        vote.touch()
+
         filter = vote.filter
 
         error = False

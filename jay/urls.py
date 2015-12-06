@@ -35,6 +35,7 @@ urlpatterns = [
     # Static stuff
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
+    url(r'^about/$', TemplateView.as_view(template_name="base/humblebrag.html"), name="about"),
 
     # Help
     url(r'^help/filters/$', TemplateView.as_view(template_name="filters/filter_help.html"), name="filter_help"),
