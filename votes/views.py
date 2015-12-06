@@ -1,4 +1,5 @@
 import json
+import time
 
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 
@@ -148,6 +149,38 @@ def vote_edit_context(request, system_name, vote_name):
     ctx["vote_readonly"] = not vote.canBeModified()
 
     return (system, vote, ctx)
+
+@login_required
+def vote_add(request, system_name):
+    """
+        Add a blank vote and redirect to its edit page
+    """
+    vs = get_object_or_404(VotingSystem, machine_name=system_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not vs.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    v = Vote()
+
+    s = Status()
+    s.save()
+
+    now = str(int(time.time()))
+
+    v.name = "Untitled Vote 1"
+    v.machine_name = "new_" + now
+
+    v.system = vs
+    v.status = s
+    v.creator = request.user
+
+    v.min_votes = 0
+    v.max_votes = 0
+
+    v.save()
+
+    return redirect('votes:edit', system_name=system_name, vote_name=v.machine_name)
 
 @login_required
 def vote_edit(request, system_name, vote_name):
