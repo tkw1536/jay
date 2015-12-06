@@ -1,4 +1,5 @@
 import json
+import time
 
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 
@@ -38,11 +39,20 @@ def get_vote_and_system_or_404(system_name, vote_name):
 
 def system_home(request, system_name):
     ctx = {}
-    ctx['vs'] = get_object_or_404(VotingSystem, machine_name=system_name)
+    ctx['vs'] = vs = get_object_or_404(VotingSystem, machine_name=system_name)
 
-    ctx['votes'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.OPEN)
+    all_votes = Vote.objects.filter(system=vs)
 
-    ctx['results'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.PUBLIC)
+    if request.user.is_authenticated() and vs.isAdmin(request.user.profile):
+        ctx['votes'] = all_votes
+        ctx['results'] = Vote.objects.filter(system=vs, status__stage__in=[Status.PUBLIC, Status.CLOSE])
+
+        ctx['alert_type'] = 'info'
+        ctx['alert_head'] = 'Non-public items shown'
+        ctx['alert_text'] = 'Some items shown here may not be public.'
+    else:
+        ctx['votes'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.OPEN)
+        ctx['results'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.PUBLIC)
 
     return render(request, "vote/vote_system_overview.html", ctx)
 
@@ -165,6 +175,38 @@ def vote_edit_context(request, system_name, vote_name):
     ctx = get_vote_props(ctx, vote)
 
     return (system, vote, ctx)
+
+@login_required
+def vote_add(request, system_name):
+    """
+        Add a blank vote and redirect to its edit page
+    """
+    vs = get_object_or_404(VotingSystem, machine_name=system_name)
+
+    # raise an error if the user trying to access is not an admin
+    if not vs.isAdmin(request.user.profile):
+        raise PermissionDenied
+
+    v = Vote()
+
+    s = Status()
+    s.save()
+
+    now = str(int(time.time()))
+
+    v.name = "Untitled Vote 1"
+    v.machine_name = "new_" + now
+
+    v.system = vs
+    v.status = s
+    v.creator = request.user
+
+    v.min_votes = 0
+    v.max_votes = 0
+
+    v.save()
+
+    return redirect('votes:edit', system_name=system_name, vote_name=v.machine_name)
 
 @login_required
 def vote_edit(request, system_name, vote_name):

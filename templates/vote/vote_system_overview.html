@@ -11,15 +11,32 @@
     </div>
   </div>
 
+  {% if alert_head %}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-{{ alert_type | default:"danger"}}">
+        <strong>{{ alert_head | default:"Something happened."}}</strong>
+        {{ alert_text | default:"An internal error occured." }}
+      </div>
+    </div>
+  </div><!-- row -->
+  {% endif %}
+
   <div class="row">
     <div class="col-sm-6">
       {% if votes %}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{{ vote_list_title | default:"Votes" }}</h3>
+
         </div>
         <div class="panel-body list-group">
           {% include "vote/fragments/vote_list.html" with votes=votes %}
+          <div class="list-group-item">
+              <a class="text-muted" href="{% url 'votes:add' system_name=vs.machine_name %}">
+                <span class="glyphicon glyphicon-plus"></span>
+              </a>
+          </div>
         </div>
       </div>
       {% endif %}

@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 
 from django.views.generic import TemplateView
 
-from votes.views import VoteView, results, system_home, system_settings, admin_add, admin_remove, vote_edit, vote_filter, vote_option, vote_options_add, vote_options_edit, vote_options_remove, vote_options_up, vote_options_down, vote_public, vote_close, vote_open
+from votes.views import *
 
 urlpatterns = [
     # Home for the votes
@@ -14,6 +14,9 @@ urlpatterns = [
     # adding / removing admins
     url(r'^admins/add$', admin_add, name="admins_add"),
     url(r'^admins/remove$', admin_remove, name="admins_remove"),
+
+    # adding a vote
+    url(r'^add/$', vote_add, name="add"),
 
     # vote and results
     url(r'^(?P<vote_name>[\w-]+)/$', VoteView.as_view(), name="vote"),
