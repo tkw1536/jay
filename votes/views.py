@@ -50,6 +50,9 @@ def system_home(request, system_name):
         ctx['alert_type'] = 'info'
         ctx['alert_head'] = 'Non-public items shown'
         ctx['alert_text'] = 'Some items shown here may not be public.'
+
+        ctx['is_vs_admin'] = True
+
     else:
         ctx['votes'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.OPEN)
         ctx['results'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.PUBLIC)
