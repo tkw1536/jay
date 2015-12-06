@@ -7,7 +7,7 @@
  <link rel="stylesheet" type="text/css" href="{% static "css/forest/forest.css" %}">
 {% endblock %}
 
-{% block page_title %}Filters - Edit - {{filter.name}} {% endblock %}
+{% block page_title %}Filters - Edit - {{filter.name | escape}} {% endblock %}
 
 {% block content %}
   {% include "error.html" %}
