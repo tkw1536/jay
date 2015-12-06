@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
 
+from django.contrib.auth.models import User
+
 from jay.utils import superadmin
 
 import time
@@ -135,7 +137,10 @@ def system_new(request):
 def settings(request, alert_type=None, alert_head=None, alert_text=None):
 	superadmin_list = SuperAdmin.objects.all()
 
-	ctx = {'superadmin_list': superadmin_list}
+	# TODO: exclude all existing superadmins
+	user_list = User.objects.all()
+
+	ctx = {'superadmin_list': superadmin_list, 'user_list': user_list}
 
 	if alert_head or alert_text or alert_type:
 		ctx['alert_type'] = alert_type
@@ -165,5 +170,13 @@ def superadmin_remove(request, user_id):
 		return settings(request, alert_head = "Deletion failed")
 
 	return settings(request, alert_type = "success", alert_head = "Deletion succeeded", alert_text = "Super Admin Deleted.")
+
+
+@login_required
+@superadmin
+def superadmin_add(request):
+	pass
+
+
 
 

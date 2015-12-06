@@ -44,7 +44,26 @@
           </tbody>
         </table>
       {% endif %}
-
     </div>
   </div>
+
+
+  {% if user_list %}
+  <div class="row">
+    <div class="col-sm-12">
+      <form action="{% url 'settings:add' %}" method="post" class="form-inline" role="form">
+        {% csrf_token %}
+        <div class="form-group">
+          <select name="user_to_add" class="form-control">
+            {% for user in user_list %}
+              <option value="{{ user.id | escape }}">{{ user.username }}</option>
+            {% endfor %}
+          </select>
+          <input type="submit" class="btn btn-primary" value="Add" />           
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
 {% endblock %}
