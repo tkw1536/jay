@@ -1,0 +1,24 @@
+<form method="POST" action="{% url 'votes:edit_options' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <label for="min_votes">Minimal number of votes</label>
+        <input type="number" name="min_votes" id="min_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.min_votes}}">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <label for="max_votes">Maximal number of votes</label>
+        <input type="number" name="max_votes" id="max_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.max_votes}}">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+        <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
+    </div>
+  </div>
+</form>

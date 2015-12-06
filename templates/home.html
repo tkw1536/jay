@@ -48,7 +48,7 @@
           <h3 class="panel-title">{{ vote_list_title | default:"All votes" }}</h3>
         </div>
         <div class="panel-body list-group">
-          {% include "vote/vote_list.html" with votes=votes %}
+          {% include "vote/fragments/vote_list.html" with votes=votes %}
         </div>
       </div>
       {% endif %}
@@ -61,7 +61,7 @@
           <h3 class="panel-title">{{ results_list_title | default:"Results" }}</h3>
         </div>
         <div class="panel-body list-group">
-          {% include "vote/vote_list.html" with votes=results results=True %}
+          {% include "vote/fragments/vote_list.html" with votes=results results=True %}
         </div>
       </div>
       {% endif %}

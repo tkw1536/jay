@@ -56,7 +56,7 @@
           <div class="row">
             {% for opt in options %}
               <div class="col-sm-6">
-                {% include "vote/option_fragment.html" with option=opt num_votes=opt.count %}
+                {% include "vote/fragments/option_fragment.html" with option=opt num_votes=opt.count %}
               </div>
             {% empty %}
               <div class="col-sm-6 col-sm-3-offset">

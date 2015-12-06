@@ -1,0 +1,27 @@
+<form method="POST" action="{% url 'votes:edit_filter' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-sm-12">
+      <label for="filter_id">Elgibility Determined by</label>
+        <select name="filter_id" class="form-control" {% if vote_readonly %} disabled="disabled" {% endif %}>
+          {% for s in admin_systems %}
+            {% for f in s.userfilter_set.all %}
+              <option value="{{ f.id | escape }}" {% if vote.filter.id == f.id %} selected="selected" {% endif %}>{{ f | escape }}</option>
+            {% endfor %}
+          {% endfor %}
+
+          {% for s in other_systems %}
+            {% for f in s.userfilter_set.all %}
+              <option value="{{ f.id | escape }}" {% if vote.filter.id == f.id %} selected="selected" {% endif %} >{{ f | escape }}</option>
+            {% endfor %}
+          {% endfor %}
+        </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+        <a clas="btn btn-default" target="_blank" href="{% url 'filters:edit' filter_id=vote.filter.id %}">Edit filter</a>
+        <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
+    </div>
+  </div>
+</form>

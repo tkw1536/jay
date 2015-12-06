@@ -1,0 +1,8 @@
+<div class="row">
+  <div class="col-sm-12">
+    <form method="POST" action="{% url 'votes:option_add' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Add option</button>
+    </form>
+  </div>
+</div>

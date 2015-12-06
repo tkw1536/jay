@@ -11,206 +11,31 @@
 
 {% block content %}
   {% include "error.html" %}
-  
+
   <h2>Description and generic options</h2>
-  <!-- General vote description -->
-  <form method="POST" action="{% url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-sm-12">
 
-        <div class="form-group">
-          <label>Voting System</label>
-          {{vote.system.simple_name | escape}}
-        </div>
+  <!-- Generic vote description edit -->
+  {% include "vote/fragments/desc_edit.html" with vote=vote vote_readonly=vote_readonly %}
 
-        <div class="form-group">
-          <label>Created by</label>
-          {{vote.creator.username | escape}}
-        </div>
+  <h2>Filter</h2>
 
-        <div class="form-group">
-          <label for="machine_name">Name</label>
-          <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{vote.name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
-        </div>
-
-        <div class="form-group">
-          <label for="machine_name">Machine Name</label>
-          <input type="text" class="form-control" id="machine_name" name="machine_name" placeholder="Machine Name" value="{{vote.machine_name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
-        </div>
-        
-        <!-- TODO: Make these copyable and possibly move these -->
-        <div class="form-group">
-          <label for="vote_uri">Vote link</label>
-          <input type="text" class="form-control"  value="{{vote_uri}}" readonly="readonly" id="vote_uri">
-        </div>
-        
-        <div class="form-group">
-          <label for="results_uri">Results link</label>
-          <input type="text" class="form-control"  value="{{results_uri}}" readonly="readonly" id="results_uri">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="form-group">
-          <textarea class="form-control" rows="10" name="description" id="description" {% if vote_readonly %} readonly="readonly" {% endif %}>{{vote.description | escape }}</textarea>
-        </div>
-      </div>
-      <div class="col-sm-6" id="preview">
-        {{vote.description | markdown | safe }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-          <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save description</button>
-      </div>
-    </div>
-  </form>
-  
   <!-- Filter -->
-  <form method="POST" action="{% url 'votes:edit_filter' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-sm-12">
-        <label for="filter_id">Elgibility Determined by</label>
-          <select name="filter_id" class="form-control" {% if vote_readonly %} disabled="disabled" {% endif %}>
-            {% for s in admin_systems %}
-              {% for f in s.userfilter_set.all %}
-                <option value="{{ f.id | escape }}" {% if vote.filter.id == f.id %} selected="selected" {% endif %}>{{ f | escape }}</option>
-              {% endfor %}
-            {% endfor %}
-            
-            {% for s in other_systems %}
-              {% for f in s.userfilter_set.all %}
-                <option value="{{ f.id | escape }}" {% if vote.filter.id == f.id %} selected="selected" {% endif %} >{{ f | escape }}</option>
-              {% endfor %}
-            {% endfor %}
-          </select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-          <a clas="btn btn-default" target="_blank" href="{% url 'filters:edit' filter_id=vote.filter.id %}">Edit filter</a>
-          <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
-      </div>
-    </div>
-  </form>
-  
-  <h2> Options </h2>
+  {% include "vote/fragments/filter_edit.html" with vote=vote vote_readonly=vote_readonly admin_systems=admin_systems other_systems=other_systems %}
 
-  <!-- Editing Options -->
+  <h2>Options</h2>
+
+  <!-- Editing options -->
   {% for o in vote_options %}
-  
-    <!-- Option edit -->
-    <form method="POST" action="{% url 'votes:option_edit' system_name=vote.system.machine_name vote_name=vote.machine_name %}" style="display: inline; ">
-      
-      {% csrf_token %}
-      <input type="hidden" name="option_id" value="{{o.id}}">
-      
-      <div class="row">
-        <div class="form-group">
-          <label for="opt_name_{{o.number}}">Name</label>
-          <input type="text" class="form-control" id="opt_name_{{o.number}}" name="name" placeholder="Name" value="{{o.name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="form-group">
-            <textarea class="form-control" rows="10" name="description" id="opt_desc_{{o.number}}" {% if vote_readonly %} readonly="readonly" {% endif %}>{{o.description | escape }}</textarea>
-          </div>
-        </div>
-        <div class="col-sm-6" id="opt_preview_{{o.number}}">
-          {{o.description | markdown | safe }}
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="form-group">
-          <label for="opt_link_{{o.number}}">Link Name</label>
-          <input type="text" class="form-control" id="opt_link_{{o.number}}" name="link_name" placeholder="Link Name" value="{{o.link_name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
-        </div>
-        
-        <div class="form-group">
-          <label for="opt_link_url_{{o.number}}">Link URL</label>
-          <input type="text" class="form-control" id="opt_link_url_{{o.number}}" name="personal_link" placeholder="Link Name" value="{{o.personal_link | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="col-sm-12">
-            <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
-        </div>
-      </div>
-    </form>
-    <!-- /Option edit -->
-      
-    <!-- Toolbar for other stuff -->
-    <div class="row">
-      <div class="col-sm-12">
-        <form method="POST" action="{% url 'votes:option_up' system_name=vote.system.machine_name vote_name=vote.machine_name %}" class="form-inline" style="display: inline; ">
-          {% csrf_token %}
-          <input type="hidden" name="option_id" value="{{o.id}}">
-          <button type="submit" class="btn btn-default" {% if vote_readonly %} disabled="disabled" {% endif %}>Up</button>
-        </form>
-        <form method="POST" action="{% url 'votes:option_down' system_name=vote.system.machine_name vote_name=vote.machine_name %}" class="form-inline" style="display: inline; ">
-          {% csrf_token %}
-          <input type="hidden" name="option_id" value="{{o.id}}">
-          <button type="submit" class="btn btn-default" {% if vote_readonly %} disabled="disabled" {% endif %}>Down</button>
-        </form>
-        <form method="POST" action="{% url 'votes:option_delete' system_name=vote.system.machine_name vote_name=vote.machine_name %}" class="form-inline" style="display: inline; ">
-          {% csrf_token %}
-          <input type="hidden" name="option_id" value="{{o.id}}">
-          <button type="submit" class="btn btn-danger" {% if vote_readonly %} disabled="disabled" {% endif %}>Remove option</button>
-        </form>
-      </div>
-    </div>
-    <!-- /Toolbar for other stuff -->
+    {% include "vote/fragments/option_edit.html" with o=o vote=vote vote_readonly=vote_readonly %}
   {% endfor %}
-  <!-- /Editing Options -->
-  
+
   <!-- Adding a new option -->
-  <div class="row">
-    <div class="col-sm-12">
-      <form method="POST" action="{% url 'votes:option_add' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Add option</button>
-      </form>
-    </div>
-  </div>
-  <!-- /Number of options to select -->
-  
-  <!-- Number of options to select -->
-  <form method="POST" action="{% url 'votes:edit_options' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="form-group">
-          <label for="min_votes">Minimal number of votes</label>
-          <input type="number" name="min_votes" id="min_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.min_votes}}">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="form-group">
-          <label for="max_votes">Maximal number of votes</label>
-          <input type="number" name="max_votes" id="max_votes" min="0" max="{{vote.option_set.count}}" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{vote.max_votes}}">
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-          <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}>Save</button>
-      </div>
-    </div>
-  </form>
-    <!-- /Number of options to select -->
+  {% include "vote/fragments/add_option.html" with vote=vote vote_readonly=vote_readonly %}
 
-      <!-- TODO: Staging (@leonhard) -->
+  <!-- Number of options -->
+  {% include "vote/fragments/num_options_edit.html" with vote=vote vote_readonly=vote_readonly %}
 
-
+  <!-- TODO: Staging (@leonhard) -->
 {% endblock %}
 
 {% block scripts %}
