@@ -2,7 +2,7 @@
 
 {% load staticfiles %}
 
-{% block page_title %}Global Settings Management{% endblock %}
+{% block page_title %}Global Settings{% endblock %}
 
 {% block head %}
 <link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
@@ -15,7 +15,6 @@
 
   <div class="row">
     <div class="col-sm-12">
-      {% if superadmin_list %}
         <table class="table table-striped">
           <thead>
             <tr>
@@ -36,34 +35,39 @@
                 <td class="text-right">
                   <form action="{% url 'settings:remove' user_id=superadmin.user.id %}" method="post" class="form-inline" style="display:inline; ">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Delete" />
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
                   </form>
                 </td>
               </tr>
             {% endfor %}
+
+            {% if user_list %}
+              <tr>
+                <td colspan="5">
+                  <form action="{% url 'settings:add' %}" method="post" class="form-horizontal" role="form">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                          <select name="user_id" class="form-control">
+                            {% for user in user_list %}
+                              <option value="{{ user.id | escape }}">{{ user.username }}</option>
+                            {% endfor %}
+                          </select>
+
+                          <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    {% csrf_token %}
+                  </form>
+                </td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
-      {% endif %}
     </div>
   </div>
-
-
-  {% if user_list %}
-  <div class="row">
-    <div class="col-sm-12">
-      <form action="{% url 'settings:add' %}" method="post" class="form-inline" role="form">
-        {% csrf_token %}
-        <div class="form-group">
-          <select name="user_id" class="form-control">
-            {% for user in user_list %}
-              <option value="{{ user.id | escape }}">{{ user.username }}</option>
-            {% endfor %}
-          </select>
-          <input type="submit" class="btn btn-primary" value="Add" />           
-        </div>
-      </form>
-    </div>
-  </div>
-  {% endif %}
 
 {% endblock %}
