@@ -79,25 +79,25 @@
       <p>This is Jay, your friendly voting system.</p>
     {% endblock %}
 
-  </div> <!-- /container -->
+    <footer id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="text-muted navbar-left">&copy; 2015 Jay Services Inc.</span>
+          </div>
 
-  <footer id="footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <span class="text-muted navbar-left">&copy; 2015 Jay Services Inc.</span>
-        </div>
+          <div class="col-md-4">
+          </div>
 
-        <div class="col-md-4">
-        </div>
-
-        <div class="col-md-4">
-          <a href="{% url 'imprint' %}" class="text-muted">Imprint</a>
-          <a href="{% url 'privacy' %}" class="text-muted">Privacy&nbsp;Policy</a>
+          <div class="col-md-4">
+            <a href="{% url 'imprint' %}" class="text-muted">Imprint</a>
+            <a href="{% url 'privacy' %}" class="text-muted">Privacy&nbsp;Policy</a>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+
+  </div> <!-- /container -->
 
 
 {% block scripts %}
