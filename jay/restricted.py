@@ -1,7 +1,20 @@
 from django.core.exceptions import ValidationError
 
 RESTRICTED_WORDS = [
-    'settings', 'systems', 'new', 'admin', 'results', 'edit', 'delete', 'login', 'logout', 'imprint', 'privacy', 'help', 'superadmins'
+    # MASTER
+    'djangoadmin', 'imprint', 'privacy', 'about', 'help', 'filters', 'login', 'logout', 'settings', 
+
+    # filters
+    'new', 'edit', 'delete', 'testuser',
+
+    # settings
+    'superadmins', 'add', 'remove', 'new',
+
+    # Votes
+    'settings', 'admins', 'add', 'remove', 'results', 'edit', 'delete', 'filter', 'options', 'stage', 'update', 'open', 'close', 'public', 'up', 'down',
+
+    # Static
+    'static'
 ]
 
 def is_restricted_word(name, value):

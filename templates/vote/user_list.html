@@ -2,14 +2,14 @@
 
 {% load staticfiles %}
 
-{% block page_title %}Global Settings{% endblock %}
+{% block page_title %}Voting Systems - Admins - {{vs.simple_name | escape}}{% endblock %}
 
 {% block head %}
 <link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-  <legend>Global Settings Management</legend>
+  <legend>Editing admins for {{vs.simple_name | escape}}</legend>
 
   {% include "error.html" %}
 
@@ -26,31 +26,32 @@
             </tr>
           </thead>
           <tbody>
-            {% for superadmin in superadmin_list %}
+            {% for a in admins %}
               <tr>
-                <td>{{ superadmin.user.username }}</td>
-                <td>{{ superadmin.user.first_name }}</td>
-                <td>{{ superadmin.user.last_name }}</td>
-                <td>{{ superadmin.user.email }}</td>
+                <td>{{ a.user.username }}</td>
+                <td>{{ a.user.first_name }}</td>
+                <td>{{ a.user.last_name }}</td>
+                <td>{{ a.user.email }}</td>
                 <td class="text-right">
-                  <form action="{% url 'settings:remove' user_id=superadmin.user.id %}" method="post" class="form-inline" style="display:inline; ">
+                  <form action="{% url 'votes:admins_remove' system_name=vs.machine_name %}" method="post" class="form-inline" style="display:inline; ">
                     {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ a.user.username | escape }}">
                     <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
                   </form>
                 </td>
               </tr>
             {% endfor %}
 
-            {% if user_list %}
+            {% if not_admins %}
               <tr>
                 <td colspan="5">
-                  <form action="{% url 'settings:add' %}" method="post" class="form-horizontal" role="form">
+                  <form action="{% url 'votes:admins_add' system_name=vs.machine_name %}" method="post" class="form-horizontal" role="form">
 
                     <div class="form-group">
                         <div class="input-group">
-                          <select name="user_id" class="form-control">
-                            {% for user in user_list %}
-                              <option value="{{ user.id | escape }}">{{ user.username }}</option>
+                          <select name="username" class="form-control">
+                            {% for user in not_admins %}
+                              <option value="{{ user.username | escape }}">{{ user.username }}</option>
                             {% endfor %}
                           </select>
 

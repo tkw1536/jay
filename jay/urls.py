@@ -28,9 +28,9 @@ from settings import urls as settings_urls
 urlpatterns = [
     # Home page
     url(r'^$', home, name="home"),
-
-    # TODO: Remove these?
-    url(r'^admin/', include(admin.site.urls)),
+    
+    # django admin
+    url(r'^djangoadmin/', include(admin.site.urls)),
 
     # Static stuff
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),

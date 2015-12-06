@@ -8,6 +8,9 @@ class EditVoteForm(forms.Form):
 class EditVoteFilterForm(forms.Form):
     filter_id = forms.IntegerField()
 
+class AdminSelectForm(forms.Form):
+    username = forms.CharField()
+
 class EditVoteOptionsForm(forms.Form):
     min_votes = forms.IntegerField()
     max_votes = forms.IntegerField()
@@ -25,3 +28,8 @@ class EditVoteOptionForm(forms.Form):
     description = forms.CharField(required = False)
     personal_link = forms.URLField(required = False)
     link_name = forms.CharField(required = False, max_length = 16)
+
+class EditScheduleForm(forms.Form):
+    open_time = forms.DateTimeField(required = False)
+    close_time = forms.DateTimeField(required = False)
+    public_time = forms.DateTimeField(required = False)

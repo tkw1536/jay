@@ -3,6 +3,8 @@ import time
 
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 
+from django.utils import formats
+
 from django.db import transaction
 from django.db.models import F
 
@@ -18,14 +20,18 @@ from django.utils.decorators import method_decorator
 
 from votes.models import Vote, Option, Status, ActiveVote
 from filters.models import UserFilter
-from users.models import UserProfile
+from users.models import UserProfile, Admin
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm, PasswordForm
+from django.contrib.auth.models import User
+
+from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm, PasswordForm, EditScheduleForm, AdminSelectForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
 VOTE_EDIT_TEMPLATE = "vote/vote_edit.html"
+SYS_EDIT_TEMPLATE = "vote/user_list.html"
+
 
 def get_vote_and_system_or_404(system_name, vote_name):
     """
@@ -60,7 +66,7 @@ def system_home(request, system_name):
     return render(request, "vote/vote_system_overview.html", ctx)
 
 @login_required
-def system_settings(request, system_name):
+def admin(request, system_name, alert_type=None, alert_head=None, alert_text=None):
 
     # get the voting system
     ctx = {}
@@ -70,9 +76,23 @@ def system_settings(request, system_name):
     if not vs.isAdmin(request.user.profile):
         raise PermissionDenied
 
-    # TODO: @leonhard implement generic overview page for settings
-    # should have an add admin, remove admin, add vote, delete vote button
-    pass
+    ctx['vs'] = vs
+
+    # add an alert state if needed
+    if alert_head or alert_text or alert_type:
+        ctx['alert_type'] = alert_type
+        ctx['alert_head'] = alert_head
+        ctx['alert_text'] = alert_text
+
+    # all the admins
+    ctx['admins'] = vs.admin_set.all()
+    admin_users = [a.user for a in ctx['admins']]
+
+    ctx['not_admins'] = [ u for u in User.objects.all() if not u in admin_users ]
+
+    return render(request, SYS_EDIT_TEMPLATE, ctx)
+
+
 
 @login_required
 def admin_add(request, system_name):
@@ -89,9 +109,24 @@ def admin_add(request, system_name):
     if not vs.isAdmin(request.user.profile):
         raise PermissionDenied
 
-    # TODO: @leonhard implement adding a an admin to a voting system
-    pass
+    try:
+        # parse the form
+        form = AdminSelectForm(request.POST)
 
+        if not form.is_valid():
+            raise Exception
+
+        user = User.objects.filter(username=form.cleaned_data["username"])[0]
+    except:
+        return admin(request, system_name=system_name, alert_head='Grant Failed', alert_text='Invalid data submitted')
+
+    try:
+        sa = Admin(user=user, system=vs)
+        sa.save()
+    except Exception as e:
+        return admin(request, system_name=system_name, alert_head='Grant Failed', alert_text=str(e))
+
+    return admin(request, system_name=system_name, alert_type = "success", alert_head = "Grant succeeded", alert_text = "User added to admins. ")
 @login_required
 def admin_remove(request, system_name):
 
@@ -107,8 +142,28 @@ def admin_remove(request, system_name):
     if not vs.isAdmin(request.user.profile):
         raise PermissionDenied
 
-    # TODO: @leonhard implement removing an admin from a voting system
-    pass
+    try:
+        # parse the form
+        form = AdminSelectForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+
+        user = User.objects.filter(username=form.cleaned_data["username"])[0]
+    except:
+        return admin(request, system_name=system_name, alert_head='Removing failed', alert_text='Invalid data submitted')
+
+    try:
+        the_admin = Admin.objects.filter(system=vs, user=user)[0]
+
+        if the_admin.user.username == request.user.username:
+            raise Exception("Don't torture yourself. ")
+
+        the_admin.delete()
+    except Exception as e:
+        return admin(request, system_name=system_name, alert_head='Removing failed. ', alert_text=str(e))
+
+    return admin(request, system_name=system_name, alert_type = "success", alert_head = "Removing succeeded", alert_text = "User is no longer an admin. ")
 
 
 def get_vote_props(ctx, vote):
@@ -127,8 +182,20 @@ def get_vote_props(ctx, vote):
     ctx["vote_has_close_time"] = (vote.status.close_time != None)
     ctx["vote_has_public_time"] = (vote.status.public_time != None)
 
+    if ctx["vote_has_open_time"]:
+        ctx["vote_open_time"] = vote.status.open_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    if ctx["vote_has_close_time"]:
+        ctx["vote_close_time"] = vote.status.close_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    if ctx["vote_has_public_time"]:
+        ctx["vote_public_time"] = vote.status.public_time.strftime("%Y-%m-%d %H:%M:%S")
+
+
     # and what we can do
     ctx["can_set_stage"] = ctx["vote_is_init"]
+    ctx["can_set_time"] = ctx["vote_is_init"]
+
     ctx["can_update_eligibile"] = ctx["vote_is_staged"] or ctx["vote_is_open"] or ctx["vote_is_closed"]
     ctx["can_set_open"] = ctx["vote_is_staged"] and (not ctx["vote_has_open_time"])
     ctx["can_set_close"] = ctx["vote_is_open"] and (not ctx["vote_has_close_time"])
@@ -367,6 +434,60 @@ def vote_stage(request, system_name, vote_name):
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Status updated'
     ctx['alert_text'] = 'Vote has been staged. '
+
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_time(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_set_time"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Timings can not be changed'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # now try and parse the form
+    try:
+        form = EditScheduleForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+
+        # set the open / closed / public time
+        open_time = form.cleaned_data["open_time"]
+        close_time = form.cleaned_data["close_time"]
+        public_time = form.cleaned_data["public_time"]
+
+    except Exception as e:
+        print(e, form.errors)
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+
+    # set the vote status to public
+    try:
+        vote.status.open_time = open_time
+        vote.status.close_time = close_time
+        vote.status.public_time = public_time
+        vote.status.save()
+    except Exception as e:
+        ctx['alert_head'] = 'Updating times failed. '
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Times updated'
+    ctx['alert_text'] = 'Scheduling has been saved'
 
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
 

@@ -14,11 +14,16 @@ class Admin(models.Model):
 	user = models.ForeignKey(User)
 	system = models.ForeignKey(VotingSystem)
 
+	class Meta():
+		unique_together = (("system", "user"))
+
 	def __str__(self):
 		return u'[%s] %s' % (self.system.machine_name, self.user)
 
+
+
 class SuperAdmin(models.Model):
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, unique = True)
 
 	def __str__(self):
 		return u'%s' % (self.user)

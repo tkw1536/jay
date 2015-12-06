@@ -1,13 +1,22 @@
 {% if vote_is_staged %}
 
 <div class="row">
-  <form method="POST" action="{% url 'votes:edit_open' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+  <form method="POST" action="{% url 'votes:edit_open' system_name=vote.system.machine_name vote_name=vote.machine_name  %}" class="form-horizontal">
     {% csrf_token %}
-
     <div class="form-group">
-      <div class="col-sm-12">
+      <label class="control-label col-sm-3">Staging:</label>
+
+      <div class="col-sm-3">
         <button type="submit" class="btn btn-danger" {% if not can_set_open %} disabled="disabled" {% endif %} >&nbsp;Open Vote</button>
       </div>
+
+      {% if not can_set_open %}
+        <div class="col-sm-3">
+          <div class="form-group">
+            A time has been scheduled and this vote will open automatically. 
+          </div>
+        </div>
+      {% endif %}
     </div>
   </form>
 </div>
