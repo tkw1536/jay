@@ -58,7 +58,7 @@ class UserProfile(models.Model):
 
 		# else return only the systems we are an admin for.
 		else:
-			return self.user.admin_set.values_list('system', flat=True).distinct()
+			return map(lambda x: x.system, Admin.objects.filter(user=self.user))
 	def isElevated(self):
 		"""
 			Checks if this user is an elevated user.
