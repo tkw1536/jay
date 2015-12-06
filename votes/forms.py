@@ -15,6 +15,9 @@ class EditVoteOptionsForm(forms.Form):
 class GetVoteOptionForm(forms.Form):
     option_id = forms.IntegerField()
 
+class PasswordForm(forms.Form):
+    password = forms.CharField()
+
 class EditVoteOptionForm(forms.Form):
     option_id = forms.IntegerField()
 

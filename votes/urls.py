@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^(?P<vote_name>[\w-]+)/edit/filter$', vote_filter, name="edit_filter"),
     url(r'^(?P<vote_name>[\w-]+)/edit/options$', vote_option, name="edit_options"),
 
+    url(r'^(?P<vote_name>[\w-]+)/edit/stage/stage$', vote_stage, name="edit_stage"),
+    url(r'^(?P<vote_name>[\w-]+)/edit/stage/update$', vote_update, name="edit_update"),
     url(r'^(?P<vote_name>[\w-]+)/edit/stage/open$', vote_open, name="edit_open"),
     url(r'^(?P<vote_name>[\w-]+)/edit/stage/close$', vote_close, name="edit_close"),
     url(r'^(?P<vote_name>[\w-]+)/edit/stage/public$', vote_public, name="edit_public"),

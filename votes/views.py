@@ -21,7 +21,7 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm
+from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm, PasswordForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
@@ -113,7 +113,7 @@ def get_vote_props(ctx, vote):
     ctx["vote_readonly"] = not vote.canBeModified()
 
     # check if the vote is staged
-    ctx["vote_is_init"] = (vote.status.stage == Status.STAGED)
+    ctx["vote_is_init"] = (vote.status.stage == Status.INIT)
     ctx["vote_is_staged"] = (vote.status.stage == Status.STAGED)
     ctx["vote_is_open"] = (vote.status.stage == Status.OPEN)
     ctx["vote_is_closed"] = (vote.status.stage == Status.CLOSE)
@@ -125,6 +125,8 @@ def get_vote_props(ctx, vote):
     ctx["vote_has_public_time"] = (vote.status.public_time != None)
 
     # and what we can do
+    ctx["can_set_stage"] = ctx["vote_is_init"]
+    ctx["can_update_eligibile"] = ctx["vote_is_staged"] or ctx["vote_is_open"] or ctx["vote_is_closed"]
     ctx["can_set_open"] = ctx["vote_is_staged"] and (not ctx["vote_has_open_time"])
     ctx["can_set_close"] = ctx["vote_is_open"] and (not ctx["vote_has_close_time"])
     ctx["can_set_public"] = ctx["vote_is_closed"] and (not ctx["vote_has_public_time"])
@@ -303,6 +305,109 @@ def vote_filter(request, system_name, vote_name):
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
 
 @login_required
+def vote_stage(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_set_stage"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'A vote can only be staged when it is in init stage. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # now try and parse the form
+    try:
+        form = PasswordForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+
+        # read username + password
+        username = request.user.username
+        password = form.cleaned_data['password']
+
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+
+    # set the vote status to public
+    try:
+        vote.update_eligibility(username, password)
+
+
+        vote.status.stage = Status.STAGED
+        vote.status.save()
+    except Exception as e:
+        vote.machine_name = vote_name
+        ctx['alert_head'] = 'Staging vote failed'
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Status updated'
+    ctx['alert_text'] = 'Vote has been staged. '
+
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_update(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_update_eligibile"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Given vote eligibility is already fixed. '
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # now try and parse the form
+    try:
+        form = PasswordForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+
+        # read username + password
+        username = request.user.username
+        password = form.cleaned_data['password']
+
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+
+    # set the vote status to public
+    try:
+        vote.update_eligibility(username, password)
+    except Exception as e:
+        ctx['alert_head'] = 'Updating eligibility failed. '
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Eligibility updated'
+    ctx['alert_text'] = 'People have been re-counted. '
+
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
 def vote_open(request, system_name, vote_name):
     # you may only use POST
     if request.method != "POST":
@@ -321,7 +426,6 @@ def vote_open(request, system_name, vote_name):
         vote.status.stage = Status.OPEN
         vote.status.save()
     except Exception as e:
-        vote.machine_name = vote_name
         ctx['alert_head'] = 'Opening vote failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
@@ -355,7 +459,6 @@ def vote_close(request, system_name, vote_name):
         vote.status.stage = Status.CLOSE
         vote.status.save()
     except Exception as e:
-        vote.machine_name = vote_name
         ctx['alert_head'] = 'Closing vote failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
@@ -389,7 +492,6 @@ def vote_public(request, system_name, vote_name):
         vote.status.stage = Status.PUBLIC
         vote.status.save()
     except Exception as e:
-        vote.machine_name = vote_name
         ctx['alert_head'] = 'Making vote public failed'
         ctx['alert_text'] = str(e)
         return render(request, VOTE_EDIT_TEMPLATE, ctx)

@@ -1,0 +1,41 @@
+{% if can_set_stage %}
+
+<div class="row">
+  <form method="POST" action="{% url 'votes:edit_stage' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <div class="col-sm-3">
+        <div class="input-group">
+          <input type="password" name="password" class="form-control">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-danger" >&nbsp;Stage</button>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        Re-enter your password to stage the vote.
+      </div>
+    </div>
+  </form>
+</div>
+
+{% elif can_update_eligibile %}
+<div class="row">
+  <form method="POST" action="{% url 'votes:edit_update' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <div class="col-sm-3">
+        <div class="input-group">
+          <input type="password" name="password" class="form-control">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-danger" >&nbsp;Update eligibility</button>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-9">
+        Re-enter your password to do this.
+      </div>
+    </div>
+  </form>
+</div>
+{% endif %}
