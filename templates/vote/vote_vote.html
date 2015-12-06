@@ -3,23 +3,14 @@
 {% load staticfiles %}
 {% load markdown %}
 
-{% block page_title %}Vote{% endblock %}
+{% block page_title %}Votes - Vote - {{vote.name | escape}}{% endblock %}
 
 {% block head %}
 <link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-  {% if alert_head %}
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="alert alert-{{ alert_type | default:"danger"}}">
-          <strong>{{ alert_head | default:"Something happened."}}</strong>
-          {{ alert_text | default:"An internal error occured." }}
-        </div>
-      </div>
-    </div><!-- row -->
-  {% endif %}
+  {% include "error.html" %}
 
   <div class="row">
     <div class="col-sm-10">
@@ -45,7 +36,7 @@
 
     {% for opt in options %}
       <div class="col-sm-6">
-        {% include "vote/option_fragment.html" with option=opt %}
+        {% include "vote/fragments/option_fragment.html" with option=opt %}
       </div>
     {% empty %}
       <div class="col-sm-6 col-sm-3-offset">

@@ -10,6 +10,9 @@
   <!-- Bootstrap core CSS -->
   <link href="{% static "css/bootstrap/bootstrap.min.css" %}" rel="stylesheet">
 
+  <!-- Font Awesome -->
+  <link href="{% static "css/font-awesome.min.css" %}" rel="stylesheet">
+
   <!-- Custom styles for this template -->
   <link href="{% static "css/style.css" %}" rel="stylesheet">
 
@@ -39,7 +42,26 @@
                     {{ user.username }} <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                    <li role="presentation"><a href="#">Admin</a></li>
+                    {% if user.profile.isSuperAdmin %}
+                      <li class="dropdown-header">Management</li>
+
+                      <li role="presentation"><a href="{% url 'settings:systems' %}">Voting Systems</a></li>
+                      <li role="presentation"><a href="{% url 'settings:settings' %}">Super Admins</a></li>
+                    {% endif %}
+
+                    {% with admin_for=user.profile.getAdministratedSystems %}
+
+                      {% if admin_for %}
+                        <li class="dropdown-header">Voting Systems</li>
+                        {% for vs in admin_for %}
+                          {% url 'votes:system' system_name=vs.machine_name as vs_url %}
+                          <li role="presentation"><a href="{{ vs_url }}">{{ vs.simple_name }}</a></li>
+                        {% endfor %}
+                      {% endif %}
+
+                    {% endwith %}
+
+                    <li role="separator" class="divider"></li>
                     <li role="presentation"><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                   </ul>
                 {% else %}
@@ -57,25 +79,26 @@
       <p>This is Jay, your friendly voting system.</p>
     {% endblock %}
 
-  </div> <!-- /container -->
+    <footer id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="text-muted navbar-left">&copy; 2015 Jay Services Inc.</span>
+          </div>
 
-  <footer id="footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <span class="text-muted navbar-left">&copy; 2015 Jay Services Inc.</span>
-        </div>
+          <div class="col-md-4">
+          </div>
 
-        <div class="col-md-4">
-        </div>
-
-        <div class="col-md-4">
-          <a href="{% url 'imprint' %}" class="text-muted">Imprint</a>
-          <a href="{% url 'privacy' %}" class="text-muted">Privacy&nbsp;Policy</a>
+          <div class="col-md-4">
+            <a href="{% url 'about' %}" class="text-muted">About</a>
+            <a href="{% url 'imprint' %}" class="text-muted">Imprint</a>
+            <a href="{% url 'privacy' %}" class="text-muted">Privacy&nbsp;Policy</a>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+
+  </div> <!-- /container -->
 
 
 {% block scripts %}

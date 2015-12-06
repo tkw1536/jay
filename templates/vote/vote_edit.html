@@ -1,0 +1,57 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load markdown %}
+
+{% block page_title %}Votes - Edit - {{vote.name | escape}}{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+  <h2> Edit Vote </h2>
+
+  {% include "error.html" %}
+
+  <legend>Staging</legend>
+
+  {% include "vote/fragments/vote_stage.html" %}
+  {% include "vote/fragments/vote_open.html" %}
+  {% include "vote/fragments/vote_close.html" %}
+  {% include "vote/fragments/vote_public.html" %}
+
+  <legend>Description and generic options</legend>
+
+  <!-- Generic vote description edit -->
+  {% include "vote/fragments/desc_edit.html" with vote=vote vote_readonly=vote_readonly %}
+
+  <legend>Filter</legend>
+
+  <!-- Filter -->
+  {% include "vote/fragments/filter_edit.html" with vote=vote vote_readonly=vote_readonly admin_systems=admin_systems other_systems=other_systems %}
+
+  <legend>Options</legend>
+
+  <!-- Editing options -->
+  {% for o in vote_options %}
+    {% include "vote/fragments/option_edit.html" with o=o vote=vote vote_readonly=vote_readonly %}
+  {% endfor %}
+
+  <!-- Adding a new option -->
+  {% include "vote/fragments/add_option.html" with vote=vote vote_readonly=vote_readonly %}
+
+  <br />
+
+  <!-- Number of options -->
+  {% include "vote/fragments/num_options_edit.html" with vote=vote vote_readonly=vote_readonly %}
+
+  <!-- TODO: Staging (@leonhard) -->
+{% endblock %}
+
+{% block scripts %}
+{{block.super}}
+<script type="text/javascript" src="{% static 'js/votes/markdown.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/votes/edit_preview.js' %}"></script>
+{% endblock %}

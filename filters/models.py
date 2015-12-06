@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 from django.contrib import admin
@@ -20,7 +22,7 @@ class UserFilter(models.Model):
 
 	def clean(self):
 		try:
-			self.tree = forest.parse_and_simplify(self.value)
+			self.tree = json.dumps(forest.parse_and_simplify(self.value))
 		except Exception as e:
 			self.tree = None
 
@@ -35,13 +37,13 @@ class UserFilter(models.Model):
 		"""
 
 		try:
-			return forest.logic_matches(self.tree, obj)
+			return forest.matches(json.loads(self.tree), obj)
 		except Exception as e:
 			return False
 
 	def canEdit(self, user):
 		"""
-			Checks if a user can edit this UserFilter. 
+			Checks if a user can edit this UserFilter.
 		"""
 
 		return self.system.isAdmin(user)

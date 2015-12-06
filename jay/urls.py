@@ -19,34 +19,33 @@ from django.contrib.auth import views as auth_views
 
 from django.views.generic import TemplateView
 
-from . import demo_urls
-from votes import urls as votes_urls
-from filters import urls as filter_urls
 from core.views import home
 
-urlpatterns = [
+from votes import urls as votes_urls
+from filters import urls as filters_urls
+from settings import urls as settings_urls
 
+urlpatterns = [
     # Home page
     url(r'^$', home, name="home"),
 
-    # Admin Page TODO: Do we really need this?
+    # TODO: Remove these?
     url(r'^admin/', include(admin.site.urls)),
 
-    # Dummy TODO: Remove this
-    url(r'^demo/', include(demo_urls)),
-
-    # Legal things
+    # Static stuff
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
+    url(r'^about/$', TemplateView.as_view(template_name="base/humblebrag.html"), name="about"),
 
     # Help
-    # TODO: Add help pages for all sorts of stuff
-    url(r'^help/filters/$', TemplateView.as_view(template_name="filters/help.html"), name="filter_help"),
+    url(r'^help/filters/$', TemplateView.as_view(template_name="filters/filter_help.html"), name="filter_help"),
 
-    # authentication.
+    # Authentication
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name="login"),
     url(r'^logout/', auth_views.logout, {'template_name': 'auth/logout.html', 'next_page':'home'}, name="logout"),
 
-    url(r'^filters/', include(filter_urls, namespace='filters')),
+    # Sub-projects
+    url(r'^filters/', include(filters_urls, namespace='filters')),
+    url(r'^settings/', include(settings_urls, namespace='settings')),
     url(r'^(?P<system_name>[\w-]+)/', include(votes_urls, namespace='votes')),
 ]

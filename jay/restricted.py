@@ -1,16 +1,7 @@
 from django.core.exceptions import ValidationError
 
 RESTRICTED_WORDS = [
-    'settings',
-    'demo',
-    'imprint',
-    'privacy',
-    'help',
-    'filters',
-    'login',
-    'logout',
-    'edit',
-    'new'
+    'settings', 'systems', 'new', 'admin', 'results', 'edit', 'delete', 'login', 'logout', 'imprint', 'privacy', 'help', 'superadmins'
 ]
 
 def is_restricted_word(name, value):

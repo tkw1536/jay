@@ -58,20 +58,33 @@ class UserProfile(models.Model):
 
 		# else return only the systems we are an admin for.
 		else:
-			return self.user.admin_set.values_list('system', flat=True).distinct()
+			return map(lambda x: x.system, Admin.objects.filter(user=self.user))
 	def isElevated(self):
 		"""
-			Checks if this user is an elevated user. 
-			
+			Checks if this user is an elevated user.
+
 			(i. e. if they are a superadmin or admin for some voting system)
 		"""
-		
+
 		# thy are a superadmin
 		if self.isSuperAdmin():
 			return True
-		
+
 		# they administer some voting system
 		return self.user.admin_set.count() > 0
+
+	def getSystems(self):
+		"""
+			Gets the editable filters for this user.
+		"""
+
+		# get all the voting systems for this user
+		admin_systems = self.getAdministratedSystems()
+
+		# and all the other ones also
+		other_systems = list(filter(lambda a: not a in admin_systems, VotingSystem.objects.all()))
+
+		return (admin_systems, other_systems)
 
 admin.site.register(Admin)
 admin.site.register(SuperAdmin)

@@ -1,0 +1,68 @@
+{% load markdown %}
+<form method="POST" action="{% url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name  %}" class="form-horizontal">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-sm-12">
+
+      <div class="form-group">
+        <label class="control-label col-sm-3">Voting System:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" readonly="readonly" value="{{vote.system.simple_name | escape}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3">Created by:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" readonly="readonly" value="{{vote.creator.username | escape}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="name">Name:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" name="name" id="name" value="{{vote.name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="machine_name">Machine Name:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" name="machine_name" id="machine_name" value="{{vote.machine_name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
+        </div>
+      </div>
+
+      <!-- TODO: Make these copyable and possibly move these -->
+      <div class="form-group">
+        <label class="control-label col-sm-3">Vote link:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" readonly="readonly" id="vote_uri" value="{{vote_uri | escape}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3">Results link:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" readonly="readonly" id="results_uri" value="{{results_uri | escape}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3">Description:</label>
+        <div class="col-sm-4">
+          <textarea class="form-control" rows="10" name="description" id="description" {% if vote_readonly %} readonly="readonly" {% endif %}>{{vote.description | escape }}</textarea>
+        </div>
+        <div class="col-sm-5" id="preview">
+          {{vote.description | markdown | safe }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+          <button type="submit" id="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save Description</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

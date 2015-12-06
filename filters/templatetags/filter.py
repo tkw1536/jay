@@ -22,24 +22,6 @@ def render_full(src, inp):
     # that is what we return
     return render
 
-@register.simple_tag(takes_context=False)
-def render_layout(src, inp):
-    # load some json
-    obj = json.loads(inp)
-
-    # parse the source code
-    tree = forest.parse(src)
-
-    # make a layout with the given object
-    layout = forest.layouter(tree, obj)
-
-    return str(layout)
-
-@register.simple_tag(takes_context=False)
-def render_tree(src):
-    # parse the source code
-    return str(forest.parse(src))
-
 
 @register.simple_tag(takes_context=False)
 def render_lbox(name, inp, out):
