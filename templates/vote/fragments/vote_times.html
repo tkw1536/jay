@@ -1,0 +1,12 @@
+<div class="row">
+  <form method="POST" action="{% url 'votes:edit_time' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" id="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save Times</button>
+      </div>
+    </div>
+
+  </form>
+</div>

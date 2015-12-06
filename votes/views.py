@@ -21,7 +21,7 @@ from filters.models import UserFilter
 from users.models import UserProfile
 from settings.models import VotingSystem
 
-from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm, PasswordForm
+from votes.forms import EditVoteForm, EditVoteFilterForm, EditVoteOptionsForm, GetVoteOptionForm, EditVoteOptionForm, PasswordForm, EditScheduleForm
 
 VOTE_ERROR_TEMPLATE = "vote/vote_msg.html"
 VOTE_RESULT_TEMPLATE = "vote/vote_result.html"
@@ -124,8 +124,12 @@ def get_vote_props(ctx, vote):
     ctx["vote_has_close_time"] = (vote.status.close_time != None)
     ctx["vote_has_public_time"] = (vote.status.public_time != None)
 
+
+
     # and what we can do
     ctx["can_set_stage"] = ctx["vote_is_init"]
+    ctx["can_set_time"] = ctx["vote_is_init"]
+
     ctx["can_update_eligibile"] = ctx["vote_is_staged"] or ctx["vote_is_open"] or ctx["vote_is_closed"]
     ctx["can_set_open"] = ctx["vote_is_staged"] and (not ctx["vote_has_open_time"])
     ctx["can_set_close"] = ctx["vote_is_open"] and (not ctx["vote_has_close_time"])
@@ -364,6 +368,58 @@ def vote_stage(request, system_name, vote_name):
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Status updated'
     ctx['alert_text'] = 'Vote has been staged. '
+
+    return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+@login_required
+def vote_time(request, system_name, vote_name):
+    # you may only use POST
+    if request.method != "POST":
+        raise Http404
+
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    # if the vote is not closed, dont make it public
+    if not ctx["can_update_time"]:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Timings can not be changed'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # now try and parse the form
+    try:
+        form = EditScheduleForm(request.POST)
+
+        if not form.is_valid():
+            raise Exception
+
+        # set the open / closed / public time
+        open_time = form.cleaned_data["open_time"]
+        close_time = form.cleaned_data["close_time"]
+        public_time = form.cleaned_data["public_time"]
+
+    except:
+        ctx['alert_head'] = 'Saving failed'
+        ctx['alert_text'] = 'Invalid data submitted'
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+
+    # set the vote status to public
+    try:
+        vote.open_time = open_time
+        vote.close_time = close_time
+        vote.public_time = public_time
+    except Exception as e:
+        ctx['alert_head'] = 'Updating times failed. '
+        ctx['alert_text'] = str(e)
+        return render(request, VOTE_EDIT_TEMPLATE, ctx)
+
+    # reload the vote props
+    ctx = get_vote_props(ctx, vote)
+
+    # done
+    ctx['alert_type'] = 'success'
+    ctx['alert_head'] = 'Times updated'
+    ctx['alert_text'] = 'Scheduling has been saved'
 
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
 

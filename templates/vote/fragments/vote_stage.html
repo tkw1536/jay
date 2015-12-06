@@ -1,9 +1,10 @@
 {% if can_set_stage %}
 
 <div class="row">
-  <form method="POST" action="{% url 'votes:edit_stage' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+  <form method="POST" action="{% url 'votes:edit_stage' system_name=vote.system.machine_name vote_name=vote.machine_name  %}" class="form-horizontal">
     {% csrf_token %}
     <div class="form-group">
+      <label class="control-label col-sm-3">Staging:</label>
       <div class="col-sm-3">
         <div class="input-group">
           <input type="password" name="password" class="form-control">
@@ -12,8 +13,10 @@
           </span>
         </div>
       </div>
-      <div class="col-sm-9">
-        Re-enter your password to stage the vote.
+      <div class="col-sm-3">
+        <div class="form-group">
+          Re-enter your password to stage the vote. This will prevent any further changes to be made. 
+        </div>
       </div>
     </div>
   </form>
@@ -21,9 +24,10 @@
 
 {% elif can_update_eligibile %}
 <div class="row">
-  <form method="POST" action="{% url 'votes:edit_update' system_name=vote.system.machine_name vote_name=vote.machine_name  %}">
+  <form method="POST" action="{% url 'votes:edit_update' system_name=vote.system.machine_name vote_name=vote.machine_name  %}" class="form-horizontal">
     {% csrf_token %}
     <div class="form-group">
+      <label class="control-label col-sm-3">Eligibility:</label>
       <div class="col-sm-3">
         <div class="input-group">
           <input type="password" name="password" class="form-control">
@@ -32,8 +36,10 @@
           </span>
         </div>
       </div>
-      <div class="col-sm-9">
-        Re-enter your password to do this.
+      <div class="col-sm-3">
+        <div class="form-group">
+          Re-enter your password to stage the vote.
+        </div>
       </div>
     </div>
   </form>
