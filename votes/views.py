@@ -3,6 +3,8 @@ import time
 
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 
+from django.utils import formats
+
 from django.db import transaction
 from django.db.models import F
 
@@ -124,6 +126,14 @@ def get_vote_props(ctx, vote):
     ctx["vote_has_close_time"] = (vote.status.close_time != None)
     ctx["vote_has_public_time"] = (vote.status.public_time != None)
 
+    if ctx["vote_has_open_time"]:
+        ctx["vote_open_time"] = vote.status.open_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    if ctx["vote_has_close_time"]:
+        ctx["vote_close_time"] = vote.status.close_time.strftime("%Y-%m-%d %H:%M:%S")
+
+    if ctx["vote_has_public_time"]:
+        ctx["vote_public_time"] = vote.status.public_time.strftime("%Y-%m-%d %H:%M:%S")
 
 
     # and what we can do
@@ -380,7 +390,7 @@ def vote_time(request, system_name, vote_name):
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
 
     # if the vote is not closed, dont make it public
-    if not ctx["can_update_time"]:
+    if not ctx["can_set_time"]:
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Timings can not be changed'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
@@ -397,7 +407,8 @@ def vote_time(request, system_name, vote_name):
         close_time = form.cleaned_data["close_time"]
         public_time = form.cleaned_data["public_time"]
 
-    except:
+    except Exception as e:
+        print(e, form.errors)
         ctx['alert_head'] = 'Saving failed'
         ctx['alert_text'] = 'Invalid data submitted'
         return render(request, VOTE_EDIT_TEMPLATE, ctx)
@@ -405,9 +416,10 @@ def vote_time(request, system_name, vote_name):
 
     # set the vote status to public
     try:
-        vote.open_time = open_time
-        vote.close_time = close_time
-        vote.public_time = public_time
+        vote.status.open_time = open_time
+        vote.status.close_time = close_time
+        vote.status.public_time = public_time
+        vote.status.save()
     except Exception as e:
         ctx['alert_head'] = 'Updating times failed. '
         ctx['alert_text'] = str(e)
