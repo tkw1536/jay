@@ -10,7 +10,14 @@
 
     <div class="list-group-item">
         <a href="{{ vote_url }}">
-          {{ vote.name }}
+          &nbsp;{{ vote.name }}
+
+          {% if vote|can_delete:request.user.profile %}
+            <a href="{% url 'votes:delete' system_name=vote.system.machine_name vote_name=vote.machine_name %}">
+              <span class="pull-left glyphicon glyphicon-remove"></span>
+            </a>
+          {% endif %}
+
           {% if vote|can_edit:request.user.profile %}
             <a href="{% url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name %}">
               <span class="pull-right glyphicon glyphicon-pencil"></span>

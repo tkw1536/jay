@@ -183,6 +183,15 @@ def vote_add(request, system_name):
     return redirect('votes:edit', system_name=system_name, vote_name=v.machine_name)
 
 @login_required
+def vote_delete(request, system_name, vote_name):
+    (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
+
+    if vote.canDelete(request.user.profile):
+        vote.delete()
+
+    return redirect('votes:system', system_name=system_name)
+
+@login_required
 def vote_edit(request, system_name, vote_name):
     (system, vote, ctx) = vote_edit_context(request, system_name, vote_name)
 
