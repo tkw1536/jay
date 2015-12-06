@@ -66,12 +66,33 @@ class Vote(models.Model):
 		if stage == Status.OPEN and status.close_time:
 			if status.close_time <= now:
 				self.status.stage = Status.CLOSE
+				self.close()
 
 		if stage == Status.CLOSE and status.public_time:
 			if status.public_time <= now:
 				self.status.stage = Status.PUBLIC
 
 		self.status.save()
+
+
+
+	"""
+
+	Converts the ActiveVotes on this vote to a count on the PassiveVote of this Vote
+
+	"""
+	def close(self):
+		try:
+			pasv = self.passivevote
+			voters = self.activevote_set
+
+			pasv.num_voters = voters.count()
+			pasv.save()
+
+			voters.delete()
+
+		except PassiveVote.DoesNotExist:
+			pass
 
 	@transaction.atomic
 	def renumberOptions(self):
