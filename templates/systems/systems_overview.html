@@ -36,9 +36,10 @@
                 <td>{{ vs.machine_name }}</td>
                 <td class="text-right">
                   <a href="{% url 'votes:system' system_name=vs.machine_name %}" class="btn btn-default" role="button"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;View</a>
-                  <a href="{% url 'settings:edit' system_id=vs.id %}" class="btn btn-default" role="button"><span class="glyphicon glyphicon-pencil></span>&nbsp;Edit</a>
+                  <a href="{% url 'settings:edit' system_id=vs.id %}" class="btn btn-default" role="button"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit
+                  </a>
 
-                  <form action="{% url 'settings:delete' system_id=vs.id %}" method="post" class="form-inline" style="display:inline; ">
+                  <form action="{% url 'settings:delete' system_id=vs.id %}" method="post" class="form-inline" style="display: inline; ">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
                   </form>

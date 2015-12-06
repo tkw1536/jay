@@ -20,7 +20,7 @@
   </div>
   <div class="row">
     <div class="col-sm-12">
-        <a class="btn btn-default" target="_blank" href="{% url 'filters:edit' filter_id=vote.filter.id %}"><span class="glyphicon glyphicon-pencil></span>&nbsp;Edit filter</a>
+        <a class="btn btn-default" target="_blank" href="{% url 'filters:edit' filter_id=vote.filter.id %}"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit filter</a>
         <button type="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save</button>
     </div>
   </div>

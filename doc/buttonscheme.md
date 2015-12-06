@@ -1,5 +1,5 @@
 * Edit : btn-default
-  * <span class="glyphicon glyphicon-pencil></span>&nbsp;Edit
+  * <span class="glyphicon glyphicon-pencil"></span>&nbsp;Edit
 * Save : btn-primary
   * <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
 * Add : btn-default
@@ -9,7 +9,7 @@
 * Test : btn-default
   * <span class="glyphicon glyphicon-play-circle"></span>&nbsp;Test
 * View : btn-default
-  * <span class="glyphicon glyphicon-play-circle"></span>&nbsp;View 
+  * <span class="glyphicon glyphicon-play-circle"></span>&nbsp;View
 * Up : btn-default
   * <span class="glyphicon glyphicon-chevron-up"></span>&nbsp;Up
 * Down : btn-default
