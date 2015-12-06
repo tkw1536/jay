@@ -36,11 +36,11 @@
                   {% endautoescape %}
                 </td>
                 <td>
-                  <a href="{% url 'filters:test' filter_id=f.id %}" class="btn btn-default">Test</a>
-                  <a href="{% url 'filters:edit' filter_id=f.id %}" class="btn btn-danger">Edit</a>
+                  <a href="{% url 'filters:test' filter_id=f.id %}" class="btn btn-default"><span class="glyphicon glyphicon-play-circle"></span>&nbsp;Test</a>
+                  <a href="{% url 'filters:edit' filter_id=f.id %}" class="btn btn-default"><span class="glyphicon glyphicon-pencil></span>&nbsp;Edit</a>
                   <form action="{% url 'filters:delete' filter_id=f.id %}" method="post" class="form-inline" style="display:inline; ">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-primary" value="Delete" />
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>
                   </form>
                 </td>
               </tr>
@@ -51,7 +51,7 @@
                 <form action="{% url 'filters:new' %}" method="post" class="form-inline" style="display:inline; ">
                   {% csrf_token %}
                   <input type="hidden" name="system_name" value="{{ s.machine_name }}">
-                  <button type="submit" style=""><i class="fa fa-plus"></i></button>
+                  <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>&nbsp;Add</button>
                 </form>
             </tr>
           </tbody>
@@ -71,6 +71,7 @@
           <tr>
               <th>Name</th>
               <th>Filter</th>
+              <th>Test</th>
           </tr>
         </thead>
         <tbody>
@@ -83,6 +84,9 @@
                 {% autoescape on %}
                   {{ f.value }}
                 {% endautoescape %}
+              </td>
+              <td>
+                <a href="{% url 'filters:test' filter_id=f.id %}" class="btn btn-default"><span class="glyphicon glyphicon-play-circle"></span>&nbsp;Test</a>
               </td>
             </tr>
           {% endfor %}

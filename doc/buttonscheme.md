@@ -1,0 +1,16 @@
+* Edit : btn-default
+  * <span class="glyphicon glyphicon-pencil></span>&nbsp;Edit
+* Save : btn-primary
+  * <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
+* Add : btn-default
+  * <span class="glyphicon glyphicon-plus"></span>&nbsp;Add
+* Delete : btn-danger
+  * <span class="glyphicon glyphicon-remove"></span>&nbsp;Delete
+* Test : btn-default
+  * <span class="glyphicon glyphicon-play-circle"></span>&nbsp;Test
+* View : btn-default
+  * <span class="glyphicon glyphicon-play-circle"></span>&nbsp;View 
+* Up : btn-default
+  * <span class="glyphicon glyphicon-chevron-up"></span>&nbsp;Up
+* Down : btn-default
+  * <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;Down
