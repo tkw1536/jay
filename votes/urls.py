@@ -8,10 +8,8 @@ urlpatterns = [
     # Home for the votes
     url(r'^$', system_home, name="system"),
 
-    # vote manager for a system
-    url(r'^settings$', system_settings, name="settings"),
-
     # adding / removing admins
+    url(r'^admins$', admin, name="admins"),
     url(r'^admins/add$', admin_add, name="admins_add"),
     url(r'^admins/remove$', admin_remove, name="admins_remove"),
 

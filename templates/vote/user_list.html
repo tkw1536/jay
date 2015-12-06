@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Voting Systems - Admins - {{vs.simple_name | escape}}{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <legend>Editing admins for {{vs.simple_name | escape}}</legend>
+
+  {% include "error.html" %}
+
+  <div class="row">
+    <div class="col-sm-12">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th class="text-right">Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in admins %}
+              <tr>
+                <td>{{ a.user.username }}</td>
+                <td>{{ a.user.first_name }}</td>
+                <td>{{ a.user.last_name }}</td>
+                <td>{{ a.user.email }}</td>
+                <td class="text-right">
+                  <form action="{% url 'votes:admins_remove' system_name=vs.machine_name %}" method="post" class="form-inline" style="display:inline; ">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ a.user.username | escape }}">
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+
+            {% if not_admins %}
+              <tr>
+                <td colspan="5">
+                  <form action="{% url 'votes:admins_add' system_name=vs.machine_name %}" method="post" class="form-horizontal" role="form">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                          <select name="username" class="form-control">
+                            {% for user in not_admins %}
+                              <option value="{{ user.username | escape }}">{{ user.username }}</option>
+                            {% endfor %}
+                          </select>
+
+                          <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    {% csrf_token %}
+                  </form>
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+    </div>
+  </div>
+
+{% endblock %}
