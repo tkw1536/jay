@@ -536,6 +536,14 @@ def results(request, system_name, vote_name):
     ctx['options'] = vote.option_set.order_by('-count')
 
     if vote.status.stage != Status.PUBLIC:
+        if vote.status.stage == Status.CLOSE and request.user.is_authenticated():
+            if vote.system.isAdmin(request.user.profile):
+                ctx['alert_type'] = 'info'
+                ctx['alert_head'] = 'Non-public'
+                ctx['alert_text'] = 'The results are not public yet. You can see the results because you are admin.'
+
+                return render(request, VOTE_RESULT_TEMPLATE, ctx)
+
         ctx['alert_type'] = 'danger'
         ctx['alert_head'] = 'Non-public'
         ctx['alert_text'] = 'The results are not public yet. Please come back later.'
