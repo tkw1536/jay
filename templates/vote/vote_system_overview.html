@@ -22,6 +22,7 @@
   </div><!-- row -->
   {% endif %}
 
+
   <div class="row">
     <div class="col-sm-6">
       {% if votes %}
@@ -32,11 +33,14 @@
         </div>
         <div class="panel-body list-group">
           {% include "vote/fragments/vote_list.html" with votes=votes %}
-          <div class="list-group-item">
-              <a href="{% url 'votes:add' system_name=vs.machine_name %}">
-                <span class="glyphicon glyphicon-plus"></span>
-              </a>
-          </div>
+
+          {% if is_vs_admin %}
+            <div class="list-group-item">
+                <a href="{% url 'votes:add' system_name=vs.machine_name %}">
+                  <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            </div>
+          {% endif %}
         </div>
       </div>
       {% endif %}
