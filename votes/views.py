@@ -38,11 +38,20 @@ def get_vote_and_system_or_404(system_name, vote_name):
 
 def system_home(request, system_name):
     ctx = {}
-    ctx['vs'] = get_object_or_404(VotingSystem, machine_name=system_name)
+    ctx['vs'] = vs = get_object_or_404(VotingSystem, machine_name=system_name)
 
-    ctx['votes'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.OPEN)
+    all_votes = Vote.objects.filter(system=vs)
 
-    ctx['results'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.PUBLIC)
+    if request.user.is_authenticated() and vs.isAdmin(request.user.profile):
+        ctx['votes'] = all_votes
+        ctx['results'] = Vote.objects.filter(system=vs, status__stage__in=[Status.PUBLIC, Status.CLOSE])
+
+        ctx['alert_type'] = 'info'
+        ctx['alert_head'] = 'Non-public items shown'
+        ctx['alert_text'] = 'Some items shown here may not be public.'
+    else:
+        ctx['votes'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.OPEN)
+        ctx['results'] = Vote.objects.filter(system=ctx['vs'], status__stage=Status.PUBLIC)
 
     return render(request, "vote/vote_system_overview.html", ctx)
 

@@ -42,7 +42,7 @@ class Vote(models.Model):
 		"""
 			Checks if a user can edit this vote.
 		"""
-		return user.isAdminFor(self.system)
+		return user.isAdminFor(self.system) and self.status.stage == Status.INIT
 
 	def canBeModified(self):
 		"""
