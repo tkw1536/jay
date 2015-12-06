@@ -52,6 +52,13 @@ body {
   }
 }
 
+/* Move body down further when menu collapses */
+@media screen and (max-width: 768px) {
+  body {
+    padding-top: 126px;
+  }
+}
+
 /* form for cookies */
 .form-cookies {
   font-size: x-small;
@@ -92,8 +99,8 @@ body {
 }
 
 .centertable {
-  max-height: 500px; 
-  overflow: auto; 
+  max-height: 500px;
+  overflow: auto;
 }
 .centertable > table {
   margin: 0 auto !important;
