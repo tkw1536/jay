@@ -59,6 +59,11 @@ class Vote(models.Model):
 		return self.status.stage == Status.INIT
 
 	def update_eligibility(self, username, password):
+		
+		# HACK!
+		
+		PassiveVote.objects.get_or_create(vote=self, defaults={'num_voters': 0, 'num_eligible': 0})
+		return
 
 		if self.filter == None:
 			raise Exception("Missing filter. ")
@@ -72,9 +77,9 @@ class Vote(models.Model):
 		check = self.filter.map_matches(everyone)
 		c = 0
 
-		#for b in check:
-		#	if b:
-		#		c += 1
+		for b in check:
+			if b:
+				c += 1
 
 		# get or create the passive vote object
 		(pv, _) = PassiveVote.objects.get_or_create(vote=self, defaults={'num_voters': 0, 'num_eligible': 0})
