@@ -85,7 +85,7 @@ def get_all(username, password):
 	token = resp['token']
 
 	allusers = requests.get(OPENJUB_BASE + "query",
-		params = {'token':token, 'limit':100000})
+		params = {'token':token, 'limit':100000}, timeout = 20)
 
 	if allusers.status_code != requests.codes.ok:
 		return None
