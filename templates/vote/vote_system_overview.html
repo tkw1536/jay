@@ -35,7 +35,7 @@
 
   <div class="row">
     <div class="col-sm-6">
-      {% if votes %}
+      {% if votes or is_vs_admin %}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{{ vote_list_title | default:"Votes" }}</h3>
