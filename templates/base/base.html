@@ -51,17 +51,21 @@
 
                     {% with admin_for=user.profile.getAdministratedSystems %}
 
-                      {% if admin_for %}
+                      {% if admin_for|length > 0 %}
                         <li class="dropdown-header">Voting Systems</li>
                         {% for vs in admin_for %}
                           {% url 'votes:system' system_name=vs.machine_name as vs_url %}
                           <li role="presentation"><a href="{{ vs_url }}">{{ vs.simple_name }}</a></li>
                         {% endfor %}
+
+
+                        <li class="dropdown-header">Filters</li>
+                        <li role="presentation"><a href="{% url 'filters:forest' %}">The Forest</a>
+
+                        <li role="separator" class="divider"></li>
                       {% endif %}
 
                     {% endwith %}
-
-                    <li role="separator" class="divider"></li>
                     <li role="presentation"><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                   </ul>
                 {% else %}
