@@ -11,14 +11,14 @@ var simplify = function( tree ){
 
 /** Checks if an object matches a filter tree */
 var matches = function(tree, obj){
-  return logic.matches(tree, obj)
+  return logic.matches(tree, obj);
 }
 
 /** Finds objects that match a filter tree */
 var map_match = function(tree, objs){
   var res = [];
 
-  for(var i = 0; i < obj.length; i++){
+  for(var i = 0; i < objs.length; i++){
     res.push(matches(tree, objs[i]));
   }
 

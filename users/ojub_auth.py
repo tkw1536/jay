@@ -71,3 +71,23 @@ class OjubBackend(object):
 			return User.objects.get(pk=user_id)
 		except User.DoesNotExist:
 			return None
+
+def get_all(username, password):
+	r = requests.post(OPENJUB_BASE + "auth/signin",
+		data = {'username':username, 'password': password})
+
+	if r.status_code != requests.codes.ok:
+		return None
+
+	resp = r.json()
+
+	uname = resp['user']
+	token = resp['token']
+
+	allusers = requests.get(OPENJUB_BASE + "query",
+		params = {'token':token, 'limit':100000})
+
+	if allusers.status_code != requests.codes.ok:
+		return None
+	else:
+		return allusers.json()["data"]

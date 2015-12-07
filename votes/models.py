@@ -10,6 +10,8 @@ from django.contrib import admin
 from settings.models import VotingSystem
 from filters.models import UserFilter
 
+from users.ojub_auth import get_all
+
 from jay.restricted import is_restricted_word
 
 # Create your models here.
@@ -57,7 +59,32 @@ class Vote(models.Model):
 		return self.status.stage == Status.INIT
 
 	def update_eligibility(self, username, password):
-		print("update_eligibility", username, password)
+
+		if self.filter == None:
+			raise Exception("Missing filter. ")
+
+		everyone = get_all(username, password)
+
+		if everyone == None:
+			raise Exception("Invalid password. ")
+
+
+		check = self.filter.map_matches(everyone)
+		c = 0
+
+		for b in check:
+			if b:
+				c += 1
+
+		# get or create the passive vote object
+		(pv, _) = PassiveVote.objects.get_or_create(vote=self, defaults={'num_voters': 0, 'num_eligible': 0})
+
+		# update the eligibility number
+		pv.num_eligible = c
+
+		# and save
+		pv.save()
+
 
 	# Touch yourself
 	def touch(self):

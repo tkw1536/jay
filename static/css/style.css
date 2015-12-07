@@ -7,9 +7,11 @@ footer#footer {
   line-height: 50px;
 }
 
+/*
 footer#footer div.row {
   border-top: 1px solid lightgrey;
 }
+*/
 
 footer#footer a {
   float: right;
