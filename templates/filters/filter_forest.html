@@ -1,0 +1,95 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Filters - Overview{% endblock %}
+
+{% block content %}
+{% autoescape on %}
+
+  {% include "error.html" %}
+
+  <legend>Filters you can edit</legend>
+
+  {% for s in admin_systems %}
+    <div>
+      <h3>{{ s.machine_name }}</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Filter</th>
+              <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+            {% for f in s.userfilter_set.all %}
+              <tr>
+                <td>
+                  {{ f.name }}
+                </td>
+                <td>
+                  {% autoescape on %}
+                    {{ f.value }}
+                  {% endautoescape %}
+                </td>
+                <td>
+                  <a href="{% url 'filters:test' filter_id=f.id %}" class="btn btn-primary"><span class="glyphicon glyphicon-play-circle"></span></a>
+                  <a href="{% url 'filters:edit' filter_id=f.id %}" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
+                  <form action="{% url 'filters:delete' filter_id=f.id %}" method="post" class="form-inline" style="display:inline; ">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+            <tr>
+              <td colspan="3">
+                <form action="{% url 'filters:new' %}" method="post" class="form-inline" style="display:inline; ">
+                  {% csrf_token %}
+                  <input type="hidden" name="system_name" value="{{ s.machine_name }}">
+                  <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+  {% endfor %}
+
+  <legend>Filters you can only view</legend>
+
+  {% for s in other_systems %}
+    <div>
+      <h3>{{ s.machine_name }}</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Filter</th>
+              <th>Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in s.userfilter_set.all %}
+            <tr>
+              <td>
+                {{ f.name }}
+              </td>
+              <td>
+                {% autoescape on %}
+                  {{ f.value }}
+                {% endautoescape %}
+              </td>
+              <td>
+                <a href="{% url 'filters:test' filter_id=f.id %}" class="btn btn-primary"><span class="glyphicon glyphicon-play-circle"></span></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
+{% endautoescape %}
+{% endblock %}

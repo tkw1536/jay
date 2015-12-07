@@ -1,0 +1,35 @@
+<div class="row">
+  <form method="POST" action="{% url 'votes:edit_time' system_name=vote.system.machine_name vote_name=vote.machine_name  %}" class="form-horizontal">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label class="control-label col-sm-3" for="open_time">Open Time:</label>
+      <div class="col-sm-9">
+          <input type="text" class="form-control" name="open_time" id="open_time" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{ vote_open_time }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-3" for="close_time">Close Time:</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" name="close_time" id="close_time" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{ vote_close_time }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-sm-3" for="public_time">Public Time:</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" name="public_time" id="public_time" {% if vote_readonly %} disabled="disabled" {% endif %} value="{{ vote_public_time }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-3">
+        <button type="submit" id="submit" class="btn btn-primary" {% if vote_readonly %} disabled="disabled" {% endif %}><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save Times</button>
+
+        &nbsp; All times in UTC.
+      </div>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,167 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load filter %}
+
+{% block head %}
+ <link rel="stylesheet" type="text/css" href="{% static "css/forest/forest.css" %}">
+{% endblock %}
+
+{% block page_title %}Filters - Help{% endblock %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div>
+          There are several logical operations you can use to join primitive filters. You can find find a list of them in the table below:
+      </div>
+      <table class="table">
+        <tbody>
+          <tr>
+            <th>
+              Name
+            </th>
+            <th>
+              Purpose
+            </th>
+            <th colspan="2">
+              Demo
+            </th>
+          </tr>
+
+          <tr>
+            <td>
+              FALSE
+            </td>
+            <td>
+              always returns false
+            </td>
+            <td colspan="2">
+              {% render_lbox 'false' '' '0' %}
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              TRUE
+            </td>
+            <td>
+              always returns true
+            </td>
+            <td colspan="2">
+              {% render_lbox 'true' '' '1' %}
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              NOT
+            </td>
+            <td>
+              the inverse of the input
+            </td>
+            <td>
+              {% render_lbox 'not' '0' '1' %}
+            </td>
+            <td>
+              {% render_lbox 'not' '1' '0' %}
+            </td>
+          </tr>
+
+          <tr>
+            <td rowspan="2">
+              AND
+            </td>
+            <td rowspan="2">
+              true if both inputs are true
+            </td>
+            <td>
+              {% render_lbox 'and' '00' '0' %}
+            </td>
+            <td>
+              {% render_lbox 'and' '01' '0' %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% render_lbox 'and' '10' '0' %}
+            </td>
+            <td>
+              {% render_lbox 'and' '11' '1' %}
+            </td>
+          </tr>
+
+          <tr>
+            <td rowspan="2">
+              OR
+            </td>
+            <td rowspan="2">
+              true if at least one input is true
+            </td>
+            <td>
+              {% render_lbox 'or' '00' '0' %}
+            </td>
+            <td>
+              {% render_lbox 'or' '01' '1' %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% render_lbox 'or' '10' '1' %}
+            </td>
+            <td>
+              {% render_lbox 'or' '11' '1' %}
+            </td>
+          </tr>
+
+          <tr>
+            <td rowspan="2">
+              NAND
+            </td>
+            <td rowspan="2">
+              true if at most one input is true
+            </td>
+            <td>
+              {% render_lbox 'nand' '00' '1' %}
+            </td>
+            <td>
+              {% render_lbox 'nand' '01' '1' %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% render_lbox 'nand' '10' '1' %}
+            </td>
+            <td>
+              {% render_lbox 'nand' '11' '0' %}
+            </td>
+          </tr>
+
+          <tr>
+            <td rowspan="2">
+              XOR
+            </td>
+            <td rowspan="2">
+              true if exactly one input is true
+            </td>
+            <td>
+              {% render_lbox 'xor' '00' '0' %}
+            </td>
+            <td>
+              {% render_lbox 'xor' '01' '1' %}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {% render_lbox 'xor' '10' '1' %}
+            </td>
+            <td>
+              {% render_lbox 'xor' '11' '0' %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- row -->
+{% endblock %}

@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 
+from users.models import UserProfile
+
 import requests
 
 OPENJUB_BASE = "https://api.jacobs-cs.club/"
@@ -26,6 +28,13 @@ class OjubBackend(object):
 		uname = resp['user']
 		token = resp['token']
 
+		details = requests.get(OPENJUB_BASE + "user/me",
+			params = {'token':token})
+
+		if details.status_code != requests.codes.ok:
+			print("Could not get user details")
+			return None
+
 		try:
 			user = User.objects.get(username=uname)
 		except User.DoesNotExist:
@@ -38,13 +47,6 @@ class OjubBackend(object):
 				user.is_staff = True
 				user.is_superuser = True
 
-			details = requests.get(OPENJUB_BASE + "user/me",
-				params = {'token':token})
-
-			if details.status_code != requests.codes.ok:
-				print("Could not get user details")
-				return None
-
 			data = details.json()
 
 			user.first_name = data['firstName']
@@ -53,6 +55,15 @@ class OjubBackend(object):
 
 			user.save()
 
+		# Make a user profile if there isn't one already
+		try:
+			profile = UserProfile.objects.get(user=user)
+		except UserProfile.DoesNotExist:
+			profile = UserProfile(user=user)
+
+		profile.details = details.text
+		profile.save()
+
 		return user
 
 	def get_user(self, user_id):
@@ -60,3 +71,23 @@ class OjubBackend(object):
 			return User.objects.get(pk=user_id)
 		except User.DoesNotExist:
 			return None
+
+def get_all(username, password):
+	r = requests.post(OPENJUB_BASE + "auth/signin",
+		data = {'username':username, 'password': password})
+
+	if r.status_code != requests.codes.ok:
+		return None
+
+	resp = r.json()
+
+	uname = resp['user']
+	token = resp['token']
+
+	allusers = requests.get(OPENJUB_BASE + "query",
+		params = {'token':token, 'limit':100000})
+
+	if allusers.status_code != requests.codes.ok:
+		return None
+	else:
+		return allusers.json()["data"]

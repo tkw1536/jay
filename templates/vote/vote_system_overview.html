@@ -1,0 +1,73 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Voting Systems - Overview - {{vs.simple_name | escape}}{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>{{ vs.simple_name }} <small>Votes and Results</small>
+        <a class="btn btn-xs btn-default" href="{% url 'votes:admins' system_name=vs.machine_name %}">
+          <span class="glyphicon glyphicon-pencil"></span>&nbsp;Manage admins
+        </a>
+      </h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+
+    </div>
+  </div>
+
+  {% if alert_head %}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-{{ alert_type | default:"danger"}}">
+        <strong>{{ alert_head | default:"Something happened."}}</strong>
+        {{ alert_text | default:"An internal error occured." }}
+      </div>
+    </div>
+  </div><!-- row -->
+  {% endif %}
+
+
+  <div class="row">
+    <div class="col-sm-6">
+      {% if votes or is_vs_admin %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ vote_list_title | default:"Votes" }}</h3>
+
+        </div>
+        <div class="panel-body list-group">
+          {% include "vote/fragments/vote_list.html" with votes=votes %}
+
+          {% if is_vs_admin %}
+            <div class="list-group-item">
+                <a href="{% url 'votes:add' system_name=vs.machine_name %}">
+                  <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-6">
+      {% if results %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ results_list_title | default:"Results" }}</h3>
+        </div>
+        <div class="panel-body list-group">
+          {% include "vote/fragments/vote_list.html" with votes=results results=True %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div><!-- row -->
+
+{% endblock %}

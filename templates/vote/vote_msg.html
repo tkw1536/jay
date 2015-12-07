@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}{{ page_title | default:"Vote Error"}}{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Vote <small>{{ vote.name }}</small></h1>
+      <div class="alert alert-{{ alert_type | default:"danger"}}">
+        <strong>{{ alert_head | default:"Something happened."}}</strong>
+        {{ alert_text | default:"An internal error occured." }}
+      </div>
+    </div>
+  </div><!-- row -->
+
+{% endblock %}

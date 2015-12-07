@@ -1,0 +1,334 @@
+/**
+  ==============
+  TREE BOX
+  ==============
+**/
+
+.tree_box {
+  height: 100px; /* 5*lineHeight */
+
+  width: 200px; /* boxWidth */
+
+  overflow: hidden;
+
+  font-size: 15px;
+
+  font-family: 'Lucida Console', 'Lucida Sans Typewriter', monaco, 'Bitstream Vera Sans Mono', monospace;
+}
+
+/**
+  ==============
+  CONTENT BOX
+  ==============
+**/
+
+.content_box {
+  height: 60px; /* 3*lineHeight */
+  line-height: 20px;
+
+  width: 200px; /* boxWidth */
+
+  color: white;
+  background-color: gray;
+
+  text-align: center;
+
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.content_box_logical {
+  width: 200px;
+  height: 60px;
+
+  font-size: 40px;
+  line-height: 60px;
+}
+
+.content_box_filter {
+  width: 200px;
+  height: 60px;
+}
+
+.content_box_filter_content {
+  width: 200px;
+  height: 24px;
+
+  font-size: 24px;
+  line-height: 24px;
+
+  font-weight: bold;
+}
+
+.content_box_filter_key, .content_box_filter_value {
+  width: 200px;
+  height: 18px;
+
+  font-size: 18px;
+  line-height: 18px;
+}
+
+/* LOGICAL CONNECTORS */
+.content_box_logical.content_box_TRUE > .content_box_logic_content::before {
+  content: "TRUE";
+}
+
+.content_box_logical.content_box_FALSE > .content_box_logic_content::before {
+  content: "FALSE";
+}
+
+.content_box_logical.content_box_NOT > .content_box_logic_content::before {
+  content: "NOT";
+}
+
+.content_box_logical.content_box_AND > .content_box_logic_content::before {
+  content: "AND";
+}
+
+.content_box_logical.content_box_OR > .content_box_logic_content::before {
+  content: "OR";
+}
+
+.content_box_logical.content_box_NAND > .content_box_logic_content::before {
+  content: "NAND";
+}
+
+.content_box_logical.content_box_XOR > .content_box_logic_content::before {
+  content: "XOR";
+}
+
+
+/* FILTERS CONNECTORS */
+.content_box_filter.content_box_EQUALS > .content_box_filter_content::before {
+  content: "EQUALS to";
+}
+
+.content_box_filter.content_box_LESS_THAN > .content_box_filter_content::before {
+  content: "LESS than";
+}
+
+.content_box_filter.content_box_LESS_EQUAL > .content_box_filter_content::before {
+  content: "LESS or EQUAL to";
+}
+
+.content_box_filter.content_box_GREATER_THAN > .content_box_filter_content::before {
+  content: "GREATER than";
+}
+
+.content_box_filter.content_box_GREATER_EQUAL > .content_box_filter_content::before {
+  content: "GREATER or EQUAL to";
+}
+
+.content_box_filter.content_box_CONTAINS > .content_box_filter_content::before {
+  content: "CONTAINS";
+}
+
+.content_box_filter.content_box_MATCHES > .content_box_filter_content::before {
+  content: "MATCHES";
+}
+
+/**
+  ==============
+  STATUS NODES
+  ==============
+**/
+.status_node {
+  height: 20px; /* lineHeight */
+  line-height: 20px; /* lineHeight */
+
+  width: 50px; /* 1/4 * boxWidth */
+
+  text-align: center;
+
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+
+/* actual status of the nodes */
+.status_node_true {
+  color: black;
+  background-color: yellow;
+}
+
+.status_node_true::before {
+    content: "TRUE";
+}
+
+.status_node_false {
+  color: white;
+  background-color: black;
+}
+
+.status_node_false::before {
+    content: "FALSE";
+}
+
+/* node positions */
+
+.status_node_center {
+  position: relative;
+  top: 0px;
+  left: 75px; /* 3/8 * boxWidth */
+}
+
+.status_node_left {
+  position: relative;
+  top: 0px;
+  left: 33px; /* 1/6 * boxWidth */
+}
+
+.status_node_right {
+  position: relative;
+  top: -20px; /* -lineHeight */
+  left: 117px; /* 7/12 * boxWidth */
+}
+
+/*
+  =======
+  TREE CONNECT LINES
+  =======
+*/
+
+/* straight lines */
+.tree_connect_ver {
+  width: 10px; /* lineWidth */
+  height: 100px;
+
+  margin-left: 95px; /*  1/2 boxWidth - 1 / 2 lineWidth */
+  margin-right: 95px; /*  1/2 boxWidth - 1 / 2 lineWidth */
+}
+
+.tree_connect_hor {
+  width: 200px; /* lineWidth */
+  height: 10px;
+
+  margin-top: 45px; /* 1/2 boxHeight - 1 / 2 lineWidth */
+  margin-bottom: 45px; /* 1/2 boxHeight - 1 / 2 lineWidth */
+}
+
+.tree_connect_ver.tree_connect_true, .tree_connect_hor.tree_connect_true {
+    background-color: yellow;
+}
+
+.tree_connect_ver.tree_connect_false, .tree_connect_hor.tree_connect_false {
+    background-color: black;
+}
+
+/* bottom bent lines */
+
+.tree_connect_bot_right.tree_connect_true {
+    border-top: 10px solid yellow;
+    border-left: 10px solid yellow;
+}
+
+.tree_connect_bot_right.tree_connect_false {
+    border-top: 10px solid black;
+    border-left: 10px solid black;
+}
+
+.tree_connect_bot_left.tree_connect_true {
+    border-top: 10px solid yellow;
+    border-right: 10px solid yellow;
+}
+
+.tree_connect_bot_left.tree_connect_false {
+    border-top: 10px solid black;
+    border-right: 10px solid black;
+}
+
+.tree_connect_bot_right {
+  width: 105px; /* boxWidth / 2 + lineWidth / 2*/
+  height: 55px; /* boxHeight / 2 + lineWidth / 2*/
+
+  margin-top: 45px; /* boxHeight / 2 - lineWidth / 2*/
+  margin-left: 95px; /* boxHeight / 2 - lineWidth / 2 */
+}
+
+.tree_connect_bot_left {
+  width: 105px; /* boxWidth / 2 + lineWidth / 2*/
+  height: 55px; /* boxHeight / 2 + lineWidth / 2*/
+
+  margin-top: 45px; /* boxHeight / 2 - lineWidth / 2*/
+  margin-right: 95px; /* boxHeight / 2 - lineWidth / 2 */
+}
+
+/* top bent lines */
+.tree_connect_top_right.tree_connect_true {
+    border-bottom: 10px solid yellow;
+    border-left: 10px solid yellow;
+}
+
+.tree_connect_top_right.tree_connect_false {
+    border-bottom: 10px solid black;
+    border-left: 10px solid black;
+}
+
+.tree_connect_top_left.tree_connect_true {
+    border-bottom: 10px solid yellow;
+    border-right: 10px solid yellow;
+}
+
+.tree_connect_top_left.tree_connect_false {
+    border-bottom: 10px solid black;
+    border-right: 10px solid black;
+}
+
+.tree_connect_top_right {
+  width: 105px; /* boxWidth / 2 + lineWidth / 2*/
+  height: 55px; /* boxHeight / 2 + lineWidth / 2*/
+
+  margin-bottom: 45px; /* boxHeight / 2 - lineWidth / 2*/
+  margin-left: 95px; /* boxHeight / 2 - lineWidth / 2 */
+}
+
+.tree_connect_top_left {
+  width: 105px; /* boxWidth / 2 + lineWidth / 2*/
+  height: 55px; /* boxHeight / 2 + lineWidth / 2*/
+
+  margin-bottom: 45px; /* boxHeight / 2 - lineWidth / 2*/
+  margin-right: 95px; /* boxHeight / 2 - lineWidth / 2 */
+}
+
+/* top left dual */
+.tree_connect_top_lr_left.tree_connect_true {
+    border-bottom: 10px solid yellow;
+    border-right: 10px solid yellow;
+}
+
+.tree_connect_top_lr_left.tree_connect_false {
+    border-bottom: 10px solid black;
+    border-right: 10px solid black;
+}
+
+.tree_connect_top_lr_right.tree_connect_true {
+    border-bottom: 10px solid yellow;
+    border-left: 10px solid yellow;
+}
+
+.tree_connect_top_lr_right.tree_connect_false {
+    border-bottom: 10px solid black;
+    border-left: 10px solid black;
+}
+
+.tree_connect_top_lr_left {
+  width: 63px; /* (7 / 24) boxWidth + lineWidth / 2*/
+  height: 55px; /* boxHeight / 2 + lineWidth / 2*/
+
+  margin-bottom: 45px; /* boxHeight / 2 - lineWidth / 2*/
+  margin-right: 37px; /* (5 / 24) * boxHeight - lineWidth / 2 */
+}
+
+.tree_connect_top_lr_right {
+  margin-bottom: -55px; /* - ( boxHeight / 2 + lineWidth / 2) */
+
+  position: relative;
+  top: -100px; /* - boxHeight */
+  left: 100px; /* boxWidth / 2 */
+
+  margin-left: 37px; /* (5/24) * boxWidth - lineWidth / 2*/
+
+  height: 55px; /* - ( boxHeight / 2 + lineWidth / 2) */
+  width: 63px; /* (7 / 24) boxWidth + lineWidth / 2*/
+}

@@ -1,0 +1,73 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Global Settings{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <legend>Global Settings Management</legend>
+
+  {% include "error.html" %}
+
+  <div class="row">
+    <div class="col-sm-12">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th class="text-right">Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for superadmin in superadmin_list %}
+              <tr>
+                <td>{{ superadmin.user.username }}</td>
+                <td>{{ superadmin.user.first_name }}</td>
+                <td>{{ superadmin.user.last_name }}</td>
+                <td>{{ superadmin.user.email }}</td>
+                <td class="text-right">
+                  <form action="{% url 'settings:remove' user_id=superadmin.user.id %}" method="post" class="form-inline" style="display:inline; ">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+
+            {% if user_list %}
+              <tr>
+                <td colspan="5">
+                  <form action="{% url 'settings:add' %}" method="post" class="form-horizontal" role="form">
+
+                    <div class="form-group">
+                        <div class="input-group">
+                          <select name="user_id" class="form-control">
+                            {% for user in user_list %}
+                              <option value="{{ user.id | escape }}">{{ user.username }}</option>
+                            {% endfor %}
+                          </select>
+
+                          <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    {% csrf_token %}
+                  </form>
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+    </div>
+  </div>
+
+{% endblock %}

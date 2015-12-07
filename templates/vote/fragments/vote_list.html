@@ -1,0 +1,29 @@
+ {% load canedit %}
+
+  {% for vote in votes %}
+
+  {% if results == True %}
+    {% url 'votes:results' system_name=vote.system.machine_name vote_name=vote.machine_name as vote_url %}
+  {% else %}
+    {% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name as vote_url %}
+  {% endif %}
+
+    <div class="list-group-item">
+        <a href="{{ vote_url }}">
+          &nbsp;{{ vote.name }}
+
+          {% if vote|can_delete:request.user.profile %}
+            <a href="{% url 'votes:delete' system_name=vote.system.machine_name vote_name=vote.machine_name %}">
+              <span class="pull-left glyphicon glyphicon-remove"></span>
+            </a>
+          {% endif %}
+
+          {% if vote|can_edit:request.user.profile %}
+            <a href="{% url 'votes:edit' system_name=vote.system.machine_name vote_name=vote.machine_name %}">
+              <span class="pull-right glyphicon glyphicon-pencil"></span>
+            </a>
+          {% endif %}
+        </a>
+    </div>
+
+  {% endfor %}

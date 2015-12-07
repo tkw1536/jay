@@ -1,0 +1,10 @@
+<div class="row">
+  <div class="col-sm-12" id="error">
+    {% if alert_head %}
+    <div class="alert alert-{{ alert_type | default:"danger"}}">
+      <strong>{{ alert_head | default:"Something happened." | escape}}</strong>
+      {{ alert_text | default:"An internal error occured." | escape}}
+    </div>
+    {% endif %}
+  </div>
+</div><!-- row -->

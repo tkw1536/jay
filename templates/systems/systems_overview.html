@@ -1,0 +1,57 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Voting Systems - Overview{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <legend>Voting System Overview</legend>
+
+  {% include "error.html" %}
+
+  <div class="row">
+    <div class="col-sm-12">
+      {% if voting_system_list %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Simple Name</th>
+              <th>Machine Name</th>
+              <th class="text-right">Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vs in voting_system_list %}
+              <tr>
+                <td>{{ vs.simple_name }}</td>
+                <td>{{ vs.machine_name }}</td>
+                <td class="text-right">
+                  <a href="{% url 'votes:system' system_name=vs.machine_name %}" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-eye-open"></span></a>
+                  <a href="{% url 'settings:edit' system_id=vs.id %}" class="btn btn-default" role="button"><span class="glyphicon glyphicon-pencil"></span>
+                  </a>
+                  <form action="{% url 'settings:delete' system_id=vs.id %}" method="post" class="form-inline" style="display: inline; ">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+            <tr>
+              <td colspan="3">
+                <form class="form" method="POST" action="{% url 'settings:new' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}

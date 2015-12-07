@@ -1,0 +1,151 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load markdown %}
+
+{% block page_title %}Votes - Vote - {{vote.name | escape}}{% endblock %}
+
+{% block head %}
+<link href="{% static "css/vote/vote.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  {% include "error.html" %}
+
+  <div class="row">
+    <div class="col-sm-10">
+      <h1>Vote <small>{{ vote.name }}</small></h1>
+      <p>{{ vote.description | markdown | safe }}</p>
+    </div>
+  </div><!-- row -->
+
+  <div class="row">
+    <div class="col-sm-6">
+      <p class="text-muted">
+        {% if vote.min_votes != vote.max_votes %}
+          Choose {{ vote.min_votes }} to {{ vote.max_votes }} options
+        {% else %}
+          Choose exactly {{ vote.min_votes }} option{{ vote.min_votes | pluralize }}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <!-- Options start below -->
+  <div class="row">
+
+    {% for opt in options %}
+      <div class="col-sm-6">
+        {% include "vote/fragments/option_fragment.html" with option=opt %}
+      </div>
+    {% empty %}
+      <div class="col-sm-6 col-sm-3-offset">
+        There are no options in this vote.
+      </div>
+    {% endfor %}
+
+  </div> <!-- row -->
+
+  <div class="row form-inline form-group">
+      <form method="post" action="{% url 'votes:vote' system_name=vote.system.machine_name vote_name=vote.machine_name %}">
+        {% csrf_token %}
+        <input id="options_selected" type="hidden" name="options_selected" value="[]" />
+        <input id="vote_id" type="hidden" name="vote_id" value="{{ vote.id }}" />
+
+        <div class="col-sm-12">
+          <button id="reset" type="button" class="btn btn-link pull-left">Start over</button>
+          <button id="submit" disabled type="submit" class="btn btn-primary pull-right">Confirm</button>
+        </div>
+      </form>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript">
+  $(function() {
+    var minNums = {{ vote.min_votes }}
+    var maxNums = {{ vote.max_votes }}
+
+    // Get number of currently selected items
+    function getNumSelected() {
+      return $("div.vote-option.selected").length
+    }
+
+    // Check if selected number of options is valid
+    function isValidSelection() {
+      var selCount = getNumSelected()
+
+      return (minNums <= selCount && selCount <= maxNums)
+    }
+
+    function updateSelectedField() {
+      var selected_field = $("input#options_selected")
+      var selected_ids = []
+
+      $(".vote-option.selected").each(function(index, el) {
+        selected_ids.push(parseInt($(el).attr('data-option-id')))
+      });
+
+      selected_field.prop("value", JSON.stringify(selected_ids))
+    }
+
+    function updateSubmitButton() {
+      var btn = $("button#submit")
+      if(isValidSelection()) {
+        btn.prop("disabled", false)
+      } else {
+        btn.prop("disabled", true)
+      }
+    }
+
+    // Allow user to select options by clicking
+    $(".vote-option").click(function() {
+      var el = $(this);
+      var body = el.children(".panel-body")
+      var icon = body.children("span")
+
+      el.toggleClass("panel-default")
+      el.toggleClass("panel-success")
+      el.toggleClass("selected")
+
+      body.toggleClass("bg-success")
+
+      icon.toggle()
+
+      updateSelectedField()
+      updateSubmitButton()
+    })
+
+    // Expanding description on click
+    $(".vote-option .show-desc").click(function() {
+      var el = $(this)
+
+      el.parent().hide()
+      el.hide()
+
+      el.parent().next().show()
+
+      return false
+    })
+
+    // Deselect everything on reset
+    $("button#reset").click(function() {
+      $(".vote-option.selected")
+        .removeClass("selected")
+        .removeClass("panel-success")
+        .addClass("panel-default")
+
+        .children(".panel-body")
+          .removeClass("bg-success")
+            .children("span")
+            .toggle()
+
+      updateSubmitButton()
+    })
+
+    updateSubmitButton()
+  })
+</script>
+{% endblock %}

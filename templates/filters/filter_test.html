@@ -1,0 +1,81 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+{% load filter %}
+
+{% block head %}
+ <link rel="stylesheet" type="text/css" href="{% static "css/forest/forest.css" %}">
+{% endblock %}
+
+{% block page_title %}Filters - Test - {{filter.name | escape}} {% endblock %}
+
+{% block content %}
+
+  <legend>Test filter</legend>
+
+  {% include "error.html" %}
+
+  <form class="form-horizontal" method="POST" action="{% url 'filters:test' filter_id=filter.id %}">
+
+    {% csrf_token %}
+
+    <input type="hidden" id="filter_tree" value="{{filter.tree | escape}}">
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <div class="col-sm-6">
+            <textarea class="form-control" rows="10" name="obj" id="obj">{{obj | escape }}</textarea>
+          </div>
+          <div class="col-sm-6" id="preview">
+            {% render_full filter.value obj %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <noscript>
+      <div class="form-group">
+        <div class="col-sm-9">
+          <button type="submit" id="submit" class="btn btn-primary"><span class="glyphicon glyphicon-play-circle"></span>&nbsp;Test</button>
+        </div>
+      </div>
+    </noscript>
+</form>
+
+<div class="row">
+  <div class="col-sm-12">
+    <form action="{% url 'filters:testuser' filter_id=filter.id %}" method="POST" class="form-horizontal">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <div class="col-sm-6">
+          <div class="input-group">
+            <select name="user" id="user" class="form-control">
+              {% for u in usernames %}
+                <option value="{{u | escape}}">{{u | escape}}</option>
+              {% endfor %}
+            </select>
+            <span class="input-group-btn">
+              <button type="submit" id="submit" class="btn btn-primary">Check user</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{{block.super}}
+
+<script type="text/javascript" src="{% static 'js/forest/jsep.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/logic.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/layouter.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/forest/renderer.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/forest/test_preview.js' %}"></script>
+{% endblock %}
