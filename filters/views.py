@@ -133,6 +133,15 @@ def FilterEdit(request, filter_id):
     if not filter.canEdit(request.user.profile):
         raise PermissionDenied
 
+    # Set up the breadcrumbs
+    bc = []
+    bc.append({'url':reverse('home'), 'text':'Home'})
+    bc.append({'url':reverse('filters:forest'), 'text':'Filters'})
+    bc.append({'url':filter.get_absolute_url(), 'text':filter.name, 'active':True})
+
+    ctx['breadcrumbs'] = bc
+
+
     if request.method == "POST":
         # parse the post data from the form
         try:
