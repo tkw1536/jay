@@ -9,6 +9,12 @@
 
   {% include "error.html" %}
 
+  <div class="row">
+    <div class="col-sm-12">
+      {% include "base/fragments/breadcrumbs.html" %}
+    </div>
+  </div>
+
   <legend>Filters you can edit</legend>
 
   {% for s in admin_systems %}

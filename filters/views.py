@@ -34,6 +34,12 @@ def Forest(request, alert_type=None, alert_head=None, alert_text=None):
     # build a new context
     ctx = {}
 
+    # Set up the breadcrumbs
+    bc = []
+    bc.append({'url':reverse('home'), 'text':'Home'})
+    bc.append({'url':reverse('filters:forest'), 'text':'Filters', 'active':True})
+    ctx['breadcrumbs'] = bc
+
     (admin_systems, other_systems) = request.user.profile.getSystems()
 
     # give those to the view
@@ -209,6 +215,16 @@ def FilterTest(request, filter_id, obj = None):
         'usernames': User.objects.values_list("username", flat=True),
         'filter': filter
     }
+
+    # Set up the breadcrumbs
+    bc = []
+    bc.append({'url':reverse('home'), 'text':'Home'})
+    bc.append({'url':reverse('filters:forest'), 'text':'Filters'})
+    bc.append({'url':filter.get_absolute_url(), 'text':filter.name})
+    bc.append({'url':reverse('filters:test', kwargs={'filter_id':filter.id}), 'text':'Test', 'active':True})
+
+
+    ctx['breadcrumbs'] = bc
 
     return render(request, FILTER_TEST_TEMPLATE, ctx)
 
