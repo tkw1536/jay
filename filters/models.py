@@ -44,7 +44,7 @@ class UserFilter(models.Model):
 			return False
 
 	def map_matches(self, objs):
-		
+
 		try:
 			return forest.map_match(json.loads(self.tree), objs)
 		except Exception as e:
@@ -56,5 +56,9 @@ class UserFilter(models.Model):
 		"""
 
 		return self.system.isAdmin(user)
+
+	def get_absolute_url(self):
+		from django.core.urlresolvers import reverse
+		return reverse('filters:edit', kwargs={'filter_id':self.id})
 
 admin.site.register(UserFilter)

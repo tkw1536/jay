@@ -11,6 +11,12 @@
 
 {% block content %}
 
+  <div class="row">
+    <div class="col-sm-12">
+      {% include "base/fragments/breadcrumbs.html" %}
+    </div>
+  </div>
+
   <legend>Edit Filter <a href="{% url 'filters:test' filter_id=filter.id %}"><span class="glyphicon glyphicon-play-circle"></span></a></legend>
 
   {% include "error.html" %}
