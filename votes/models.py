@@ -60,18 +60,16 @@ class Vote(models.Model):
 
 	def update_eligibility(self, username, password):
 		
-		# HACK!
-		
 		PassiveVote.objects.get_or_create(vote=self, defaults={'num_voters': 0, 'num_eligible': 0})
-		return
 
 		if self.filter == None:
 			raise Exception("Missing filter. ")
-
+		
+		# this will take really long
 		everyone = get_all(username, password)
 
-		if everyone == None:
-			raise Exception("Invalid password. ")
+		if not everyone:
+			raise Exception("Invalid password or something went wrong. ")
 
 
 		check = self.filter.map_matches(everyone)
