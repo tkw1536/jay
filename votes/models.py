@@ -65,17 +65,14 @@ class Vote(models.Model):
 		if self.filter == None:
 			raise Exception("Missing filter. ")
 		
-		print("PRE_GET_ALL")
 		# this will take really long
 		everyone = get_all(username, password)
-		print("POST_GET_ALL")
-		
+
 		if not everyone:
 			raise Exception("Invalid password or something went wrong. ")
 
-		print("EVERYONE", len(everyone))
+
 		check = self.filter.map_matches(everyone)
-		print("CHECK", check)
 		c = 0
 
 		for b in check:
