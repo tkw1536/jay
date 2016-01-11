@@ -1,0 +1,8 @@
+# Django itself
+Django==1.8.7
+
+# For highlighting
+Markdown==2.6.5
+
+# For filters
+PyExecJS==1.1.0
