@@ -59,14 +59,17 @@ class Vote(models.Model):
 		return self.status.stage == Status.INIT
 
 	def update_eligibility(self, username, password):
+		
+		PassiveVote.objects.get_or_create(vote=self, defaults={'num_voters': 0, 'num_eligible': 0})
 
 		if self.filter == None:
 			raise Exception("Missing filter. ")
-
+		
+		# this will take really long
 		everyone = get_all(username, password)
 
-		if everyone == None:
-			raise Exception("Invalid password. ")
+		if not everyone:
+			raise Exception("Invalid password or something went wrong. ")
 
 
 		check = self.filter.map_matches(everyone)

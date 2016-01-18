@@ -39,6 +39,8 @@ class UserFilter(models.Model):
 		try:
 			return forest.matches(json.loads(self.tree), obj)
 		except Exception as e:
+			import sys
+			sys.stderr.write(e)
 			return False
 
 	def map_matches(self, objs):

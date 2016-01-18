@@ -77,7 +77,7 @@ def FilterNew(request):
 
     # check if the user can edit it.
     # if not, go back to the overview
-    if not system.canEdit(request.user.profile):
+    if not system.isAdmin(request.user.profile):
         return Forest(request, alert_head="Creation failed", alert_text="Nice try. You are not allowed to edit this VotingSystem. ")
 
     # create a new filter
@@ -109,8 +109,8 @@ def FilterDelete(request, filter_id):
 
     # check if the user can edit it.
     # if not, go back to the overview
-    if not system.canEdit(request.user.profile):
-        return Forest(request, alert_head="Deletion failed", alert_text="Nice try. You don't have permissions to delete this voting system. ")
+    if not system.isAdmin(request.user.profile):
+        return Forest(request, alert_head="Deletion failed", alert_text="Nice try. You don't have permissions to delete this filter. ")
 
     # check that no voting system is using this filter before deleting.
     if filter.vote_set.count() > 0:
