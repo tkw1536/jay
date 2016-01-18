@@ -18,7 +18,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from votes.models import Vote, Option, Status, ActiveVote
+from votes.models import Vote, Option, Status, ActiveVote, PassiveVote
 from filters.models import UserFilter
 from users.models import UserProfile, Admin
 from settings.models import VotingSystem
@@ -1053,6 +1053,8 @@ class VoteView(View):
 
         options_obj = Option.objects.filter(id__in=options, vote__id=vote.id)
 
+        pv = PassiveVote.objects.get(vote=vote)
+
         ctx['vote'] = vote
         ctx['options'] = options_obj
 
@@ -1097,6 +1099,9 @@ class VoteView(View):
             except ActiveVote.DoesNotExist:
                 av = ActiveVote(user=request.user, vote=vote)
                 av.save()
+
+                pv.num_voters += 1
+                pv.save()
 
                 for opt in options_obj:
                     opt.count = F('count') + 1
