@@ -23,7 +23,10 @@ class Admin(models.Model):
 
 
 class SuperAdmin(models.Model):
-	user = models.ForeignKey(User, unique = True)
+	user = models.ForeignKey(User)
+	
+	class Meta():
+		unique_together = (("user",),)
 
 	def __str__(self):
 		return u'%s' % (self.user)

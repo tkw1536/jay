@@ -10,6 +10,11 @@
 {% block page_title %}Filters - Test - {{filter.name | escape}} {% endblock %}
 
 {% block content %}
+  <div class="row">
+    <div class="col-sm-12">
+      {% include "base/fragments/breadcrumbs.html" %}
+    </div>
+  </div>
 
   <legend>Test filter</legend>
 

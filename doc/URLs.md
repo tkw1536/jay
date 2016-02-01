@@ -1,4 +1,4 @@
-# Jay's proposed URL Scheme
+# Jay's URL scheme
 
 All URLs in the list below are relative to the hostname of Jay's instance
 

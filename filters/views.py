@@ -34,6 +34,12 @@ def Forest(request, alert_type=None, alert_head=None, alert_text=None):
     # build a new context
     ctx = {}
 
+    # Set up the breadcrumbs
+    bc = []
+    bc.append({'url':reverse('home'), 'text':'Home'})
+    bc.append({'url':reverse('filters:forest'), 'text':'Filters', 'active':True})
+    ctx['breadcrumbs'] = bc
+
     (admin_systems, other_systems) = request.user.profile.getSystems()
 
     # give those to the view
@@ -71,7 +77,7 @@ def FilterNew(request):
 
     # check if the user can edit it.
     # if not, go back to the overview
-    if not system.canEdit(request.user.profile):
+    if not system.isAdmin(request.user.profile):
         return Forest(request, alert_head="Creation failed", alert_text="Nice try. You are not allowed to edit this VotingSystem. ")
 
     # create a new filter
@@ -103,8 +109,8 @@ def FilterDelete(request, filter_id):
 
     # check if the user can edit it.
     # if not, go back to the overview
-    if not system.canEdit(request.user.profile):
-        return Forest(request, alert_head="Deletion failed", alert_text="Nice try. You don't have permissions to delete this voting system. ")
+    if not system.isAdmin(request.user.profile):
+        return Forest(request, alert_head="Deletion failed", alert_text="Nice try. You don't have permissions to delete this filter. ")
 
     # check that no voting system is using this filter before deleting.
     if filter.vote_set.count() > 0:
@@ -132,6 +138,15 @@ def FilterEdit(request, filter_id):
     # check if the user can edit it
     if not filter.canEdit(request.user.profile):
         raise PermissionDenied
+
+    # Set up the breadcrumbs
+    bc = []
+    bc.append({'url':reverse('home'), 'text':'Home'})
+    bc.append({'url':reverse('filters:forest'), 'text':'Filters'})
+    bc.append({'url':filter.get_absolute_url(), 'text':filter.name, 'active':True})
+
+    ctx['breadcrumbs'] = bc
+
 
     if request.method == "POST":
         # parse the post data from the form
@@ -200,6 +215,16 @@ def FilterTest(request, filter_id, obj = None):
         'usernames': User.objects.values_list("username", flat=True),
         'filter': filter
     }
+
+    # Set up the breadcrumbs
+    bc = []
+    bc.append({'url':reverse('home'), 'text':'Home'})
+    bc.append({'url':reverse('filters:forest'), 'text':'Filters'})
+    bc.append({'url':filter.get_absolute_url(), 'text':filter.name})
+    bc.append({'url':reverse('filters:test', kwargs={'filter_id':filter.id}), 'text':'Test', 'active':True})
+
+
+    ctx['breadcrumbs'] = bc
 
     return render(request, FILTER_TEST_TEMPLATE, ctx)
 

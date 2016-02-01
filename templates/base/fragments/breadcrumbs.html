@@ -1,0 +1,11 @@
+<ol class="breadcrumb">
+  {% for bc in breadcrumbs %}
+    <li class="{% if bc.active %}active{% endif %}">
+      {% if bc.active %}
+        {{ bc.text }}
+      {% else %}
+        <a href="{{ bc.url }}">{{ bc.text }}</a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ol>
