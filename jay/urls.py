@@ -28,7 +28,7 @@ from settings import urls as settings_urls
 urlpatterns = [
     # Home page
     url(r'^$', home, name="home"),
-    
+
     # django admin
     url(r'^djangoadmin/', include(admin.site.urls)),
 
@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^imprint/$', TemplateView.as_view(template_name="base/imprint.html"), name="imprint"),
     url(r'^privacy/$', TemplateView.as_view(template_name="base/privacy.html"), name="privacy"),
     url(r'^about/$', TemplateView.as_view(template_name="base/humblebrag.html"), name="about"),
+    url(r'^help/$', TemplateView.as_view(template_name="help/help.html"), name="help"),
 
     # Help
     url(r'^help/filters/$', TemplateView.as_view(template_name="filters/filter_help.html"), name="filter_help"),

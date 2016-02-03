@@ -961,6 +961,9 @@ def results(request, system_name, vote_name):
     return render(request, VOTE_RESULT_TEMPLATE, ctx)
 
 class VoteView(View):
+    def __init__(self, preview=False):
+        self.preview = preview
+
     @method_decorator(login_required)
     def get(self, request, system_name, vote_name):
         (system, vote) = get_vote_and_system_or_404(system_name, vote_name)
@@ -974,6 +977,8 @@ class VoteView(View):
 
         ctx = {}
         ctx['vote'] = vote
+
+        ctx['preview'] = self.preview
 
         options = vote.option_set.order_by("number")
         ctx['options'] = options
@@ -1007,14 +1012,20 @@ class VoteView(View):
         except ActiveVote.DoesNotExist:
             pass
 
-        if status.stage not in [Status.OPEN, Status.PUBLIC]:
+        if (status.stage not in [Status.OPEN, Status.PUBLIC]):
             error = True
 
             ctx['alert_type'] = "danger"
             ctx['alert_head'] = "Not open"
             ctx['alert_text'] = "This vote is not open. Come back later."
 
-        if not error:
+        if self.preview:
+            error = True
+            ctx['alert_type'] = "info"
+            ctx['alert_head'] = "Preview"
+            ctx['alert_text'] = "This is a preview, so you can't vote here."
+
+        if not error or self.preview:
             if status.stage == Status.PUBLIC:
                 return redirect('votes:results', system_name=system.machine_name, vote_name=vote.machine_name)
 
