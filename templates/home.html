@@ -5,12 +5,15 @@
 {% block page_title %}Home{% endblock %}
 
 {% block content %}
+  <!--
   <div class="row">
     <div class="col-sm-8">
       <h1>Home <small>is where you go at night</small></h1>
     </div>
   </div>
+  -->
 
+  <!--
   <div class="row">
     {% if eligible_alert %}
     <div class="col-sm-4">
@@ -39,32 +42,53 @@
       </div>
     {% endif %}
   </div>
+  -->
+
+  <div class="row">
+    <div class="jumbotron">
+      <h1>Voting for Jacobs</h1>
+      <p>We provide a voting platform for all students and purposes.
+         It allows for confidential voting, allowing student government elections
+         as well as simple majority votes for anyone at Jacobs. Any user can create
+         their own votes with fully adjustable eligibility and timing.
+      </p>
+      <p><a class="btn btn-primary btn-lg" href="{% url "help" %}" role="button">Learn more</a></p>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-sm-6">
-      {% if votes %}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{{ vote_list_title | default:"All votes" }}</h3>
         </div>
         <div class="panel-body list-group">
-          {% include "vote/fragments/vote_list.html" with votes=votes %}
+          {% if votes %}
+            {% include "vote/fragments/vote_list.html" with votes=votes %}
+          {% else %}
+            <div class="list-group-item">
+              &nbsp;No votes to show.
+            </div>
+          {% endif %}
         </div>
       </div>
-      {% endif %}
     </div>
 
     <div class="col-sm-6">
-      {% if results %}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">{{ results_list_title | default:"Results" }}</h3>
         </div>
         <div class="panel-body list-group">
-          {% include "vote/fragments/vote_list.html" with votes=results results=True %}
+          {% if results %}
+            {% include "vote/fragments/vote_list.html" with votes=results results=True %}
+          {% else %}
+            <div class="list-group-item">
+              &nbsp;No results to show.
+            </div>
+          {% endif %}
         </div>
       </div>
-      {% endif %}
     </div>
   </div><!-- row -->
 
