@@ -1,0 +1,66 @@
+{% extends "base/base.html" %}
+
+{% load staticfiles %}
+
+{% block page_title %}Help{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-12">
+      <h1 id="introduction">Introduction</h1>
+      <p>Jay provides secret majority votes to any member of Jacobs University. This guide elaborates on defining filters, configuring a vote, and the permissions of different classes of users.</p>
+      <h1 id="filters">Filters</h1>
+      <p>Filters are user-defined, arbitrary complexity boolean expressions. Users who satisfy the specified condition can vote.  Jay defines multiple primitive operators that can be applied to compare fields in a user&#39;s profile to given constants.</p>
+      <h4 id="primitives">Primitives</h4>
+      <ul>
+      <li>Equality: <code>equals</code> or <code>==</code> or <code>===</code>, all equivalent</li>
+      <li>Less than: <code>&lt;</code></li>
+      <li>Greater than: <code>&gt;</code></li>
+      </ul>
+      <h4 id="logic">Logic</h4>
+      <ul>
+      <li>Binary: <code>AND</code> <code>OR</code> <code>XOR</code></li>
+      <li>Unary: <code>NOT</code></li>
+      <li>Constants: <code>true</code> <code>false</code></li>
+      </ul>
+      <h4 id="user-profile-fields">User profile fields</h4>
+      <p>Any field in the user profile object can be used in a primitive filter expression. A sample user is provided below.</p>
+      <pre class="editor-colors lang-text"><div class="line"><span class="text plain"><span class="meta paragraph text"><span>{</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;</span><span class="meta paragraph text"><span>&quot;eid&quot;:&nbsp;&quot;39126&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;email&quot;:&nbsp;&quot;l.kuboschek@jacobs-university.de&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;username&quot;:&nbsp;&quot;lkuboschek&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;active&quot;:&nbsp;true,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;firstName&quot;:&nbsp;&quot;Leonhard&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;lastName&quot;:&nbsp;&quot;Kuboschek&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;fullName&quot;:&nbsp;&quot;Leonhard&nbsp;Kuboschek&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;country&quot;:&nbsp;&quot;Germany&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;flag&quot;:&nbsp;&quot;</span><span class="markup underline link https hyperlink"><span>https://api.jacobs-cs.club/flags/Germany.png</span></span><span>&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;picture&quot;:&nbsp;&quot;</span><span class="markup underline link https hyperlink"><span>https://api.jacobs-cs.club/user/image/lkuboschek/image.jpg</span></span><span>&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;college&quot;:&nbsp;&quot;Nordmetall&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;phone&quot;:&nbsp;&quot;6210&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;room&quot;:&nbsp;&quot;</span><span class="storage type class nb"><span>NB</span></span><span>-351&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;isCampusPhone&quot;:&nbsp;true,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;type&quot;:&nbsp;[</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="meta paragraph text"><span>&quot;Student&quot;</span></span></span></div><div class="line"><span class="text plain"><span>&nbsp;&nbsp;</span><span class="meta paragraph text"><span>],</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;isStudent&quot;:&nbsp;true,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;isFaculty&quot;:&nbsp;false,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;isStaff&quot;:&nbsp;false,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;description&quot;:&nbsp;&quot;ug&nbsp;17&nbsp;CS&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;status&quot;:&nbsp;&quot;undergrad&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;year&quot;:&nbsp;&quot;17&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;majorShort&quot;:&nbsp;&quot;CS&quot;,</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>&nbsp;&nbsp;&quot;major&quot;:&nbsp;&quot;Computer&nbsp;Science&quot;</span></span></span></div><div class="line"><span class="text plain"><span class="meta paragraph text"><span>}</span></span></span></div></pre><h1 id="votes">Votes</h1>
+      <h4 id="staging">Staging</h4>
+      <p>Votes have 5 stages that are activated in the following order:</p>
+      <h6 id="init">Init</h6>
+      <p>Newly created votes are created in this state. All details are editable.</p>
+      <h6 id="staged">Staged</h6>
+      <p>Once votes enter this state, no further edits to any part of it are allowed. If an opening time is set, the vote will open automatically.</p>
+      <h6 id="open">Open</h6>
+      <p>Any eligible user can vote. If a closing time is specified, the vote will close automatically.</p>
+      <h6 id="closed">Closed</h6>
+      <p>No further voting is allowed. Individual user participation records are discarded. Results are visible to admins of the voting system instance. If a publication time was specified, the results will be published at that time.</p>
+      <h6 id="public">Public</h6>
+      <p>The last stage of any vote. Results are public.</p>
+      <h1 id="permissions">Permissions</h1>
+      <h4 id="anyone">Anyone</h4>
+      <ul>
+      <li>View vote results</li>
+      <li>View a list of voting systems</li>
+      </ul>
+      <h4 id="logged-in-users">Logged in users</h4>
+      <ul>
+      <li>Vote, if eligible</li>
+      </ul>
+      <h4 id="system-admins">System admins</h4>
+      <ul>
+      <li>Create vote in system instance</li>
+      <li>Create and edit filters in system instance</li>
+      <li>Change admin rights for system instance</li>
+      </ul>
+      <h4 id="super-admins">Super admins</h4>
+      <ul>
+      <li>Create or edit any vote</li>
+      <li>Create or edit any filter</li>
+      <li>Change super admin to others</li>
+      </ul>
+    </div>
+  </div>
+
+{% endblock %}
