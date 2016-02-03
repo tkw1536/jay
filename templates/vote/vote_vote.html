@@ -67,6 +67,7 @@
   $(function() {
     var minNums = {{ vote.min_votes }}
     var maxNums = {{ vote.max_votes }}
+    var preview = {{ preview }}
 
     // Get number of currently selected items
     function getNumSelected() {
@@ -93,7 +94,7 @@
 
     function updateSubmitButton() {
       var btn = $("button#submit")
-      if(isValidSelection()) {
+      if(isValidSelection() && !preview) {
         btn.prop("disabled", false)
       } else {
         btn.prop("disabled", true)

@@ -19,6 +19,7 @@ urlpatterns = [
     # vote and results
     url(r'^(?P<vote_name>[\w-]+)/', include([
         url(r'^$', VoteView.as_view(), name="vote"),
+        url(r'^preview$', VoteView(True).get, name="preview"),
         url(r'^results$', results, name="results"),
 
         # editing a vote
