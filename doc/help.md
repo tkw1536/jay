@@ -54,19 +54,19 @@ Any field in the user profile object can be used in a primitive filter expressio
 #### Staging
 Votes have 5 stages that are activated in the following order:
 
-###### Init
+##### Init
 Newly created votes are created in this state. All details are editable.
 
-###### Staged
+##### Staged
 Once votes enter this state, no further edits to any part of it are allowed. If an opening time is set, the vote will open automatically.
 
-###### Open
+##### Open
 Any eligible user can vote. If a closing time is specified, the vote will close automatically.
 
-###### Closed
+##### Closed
 No further voting is allowed. Individual user participation records are discarded. Results are visible to admins of the voting system instance. If a publication time was specified, the results will be published at that time.
 
-###### Public
+##### Public
 The last stage of any vote. Results are public.
 
 
