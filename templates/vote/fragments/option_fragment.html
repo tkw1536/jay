@@ -13,8 +13,8 @@
     {% endif %}
 
     {% if option.description %}
-      <p>{{ option.description | truncatewords_html:5 }}<a href="#" class="caret show-desc"></a></p>
-      <div class="full-desc" class="pull-left" style="display: none;">
+      <p style="display: none;">{{ option.description | truncatewords_html:5 }}<a href="#" class="caret show-desc" style="display: none;"></a></p>
+      <div class="full-desc" class="pull-left">
         {{ option.description | markdown | safe }}
       </div>
     {% endif %}
