@@ -21,12 +21,12 @@ class Vote(models.Model):
 	name = models.CharField(max_length = 64)
 	machine_name = models.SlugField(max_length = 64)
 
-	auto_open_options = models.BooleanField(default=False, null=False)
+	auto_open_options = models.BooleanField(default = False)
 
-	filter = models.ForeignKey(UserFilter, null=True)
+	filter = models.ForeignKey(UserFilter, null = True)
 	status = models.OneToOneField('Status')
 
-	description = models.TextField()
+	description = models.TextField(blank = True)
 
 	creator = models.ForeignKey(User)
 
