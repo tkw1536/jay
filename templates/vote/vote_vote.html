@@ -67,7 +67,7 @@
   $(function() {
     var minNums = {{ vote.min_votes }}
     var maxNums = {{ vote.max_votes }}
-    var preview = {{ preview }}
+    var preview = {% if preview %}true{% else %}false{% endif %}
 
     // Get number of currently selected items
     function getNumSelected() {
