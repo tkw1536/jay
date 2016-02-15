@@ -12,6 +12,7 @@ class AdminSelectForm(forms.Form):
     username = forms.CharField()
 
 class EditVoteOptionsForm(forms.Form):
+    auto_open_options = forms.BooleanField(required=False)
     min_votes = forms.IntegerField()
     max_votes = forms.IntegerField()
 

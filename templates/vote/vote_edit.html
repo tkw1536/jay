@@ -11,7 +11,10 @@
 
 {% block content %}
 
-  <h2> Edit Vote </h2>
+  <h2>
+    Edit Vote
+    <a href="{% url 'votes:preview' system_name=vote.system.machine_name vote_name=vote.machine_name  %}" target="_blank"><span class="glyphicon glyphicon-play-circle"></span></a>
+  </h2>
 
   {% include "error.html" %}
 
@@ -56,9 +59,7 @@
   <br />
 
   <!-- Number of options -->
-  {% include "vote/fragments/num_options_edit.html" with vote=vote vote_readonly=vote_readonly %}
-
-  <!-- TODO: Staging (@leonhard) -->
+  {% include "vote/fragments/vote_options_edit.html" with vote=vote vote_readonly=vote_readonly %}
 {% endblock %}
 
 {% block scripts %}
