@@ -127,7 +127,6 @@ $(function(){
   tabs.on('shown.bs.tab', function(e){
     location.hash = $(e.target).attr("href");
   }).each(function(i, e){
-    console.log(i, e); 
     if($(e).attr("href") == hash){
       $(e).tab('show');
     }
