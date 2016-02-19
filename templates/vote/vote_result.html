@@ -118,7 +118,22 @@
 {% block scripts %}
 {{ block.super }}
 <script src="//code.highcharts.com/highcharts.js" charset="utf-8"></script>
+<script type="text/javascript">
+// make use of the hastags
+$(function(){
+  var tabs = $("[role=tablist]").find("a");
+  var hash = location.hash || tabs.eq(0).attr("href");
 
+  tabs.on('shown.bs.tab', function(e){
+    location.hash = $(e.target).attr("href");
+  }).each(function(i, e){
+    console.log(i, e); 
+    if($(e).attr("href") == hash){
+      $(e).tab('show');
+    }
+  });
+});
+</script>
 <script type="text/javascript">
   // Generate the bar chart
   $(function () {
