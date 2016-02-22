@@ -33,6 +33,9 @@
           </div>
 
           <div class="navbar-collapse" id="primary-menu">
+            {% block nav-header %}
+            {% endblock %}
+
             <ul class="nav navbar-nav navbar-right">
               <li role="presentation">
                 {%if user.is_authenticated %}
