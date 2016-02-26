@@ -4,6 +4,14 @@
 
 {% block page_title %}Home{% endblock %}
 
+{% block nav-header %}
+{% for s in systems %}
+<ul class="nav navbar-nav">
+  <li><a href="{% url 'votes:system' s.machine_name %}">{{ s.simple_name }}</a></li>
+</ul>
+{% endfor %}
+{% endblock %}
+
 {% block content %}
   <!--
   <div class="row">

@@ -942,7 +942,7 @@ def results(request, system_name, vote_name):
 
     # set options and the vote
     ctx['vote'] = vote
-    ctx['options'] = vote.option_set.order_by('-count')
+    ctx['options'] = vote.option_set.order_by('-count').annotate(percent=(F("count") * 100 /vote.passivevote.num_voters))
 
     if vote.status.stage != Status.PUBLIC:
         if vote.status.stage == Status.CLOSE and request.user.is_authenticated():

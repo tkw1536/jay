@@ -87,7 +87,7 @@
                   <td>#</td>
                   <td>Name</td>
                   <td>Votes</td>
-                  <td>Percentage</td>
+                  <td>Rel. %</td>
                 </tr>
               </thead>
 
@@ -97,7 +97,7 @@
                   <td>{{ opt.number }}</td>
                   <td>{{ opt.name }}</td>
                   <td>{{ opt.count }}</td>
-                  <td>{{ vote.passivevote.num_voters }}</td>
+                  <td>{{ opt.percent }}</td>
                 </tr>
               {% empty %}
                 <div class="col-sm-6 col-sm-3-offset">
