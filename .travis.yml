@@ -1,0 +1,30 @@
+#   A basic travis.yml boilerplate for Django projects
+#
+#   The set-up assumes a postgreSQL database.
+#
+#   Replace the following variables in the code:
+# * your_project_settings
+# * your_github_username
+# * your_repo
+
+language: python
+
+python:
+  - 3.5
+
+env:
+  - DJANGO=1.8.7
+
+before_install:
+  - export DJANGO_SETTINGS_MODULE=jay.dev_settings
+  - export PYTHONPATH=$HOME/builds/kuboschek/jay
+  - export PIP_USE_MIRRORS=true
+
+install:
+  - pip install -r requirements.txt
+
+before_script:
+
+
+script:
+  - python manage.py test
