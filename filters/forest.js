@@ -4,11 +4,6 @@ var parse = function(obj){
   return logic.parse(obj);
 };
 
-/** Simplifies a parsed tree */
-var simplify = function( tree ){
-  return logic.simplify(tree);
-};
-
 /** Checks if an object matches a filter tree */
 var matches = function(tree, obj){
   return logic.matches(tree, obj);

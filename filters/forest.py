@@ -38,14 +38,6 @@ def parse(treestr):
     return ctx.call('parse', treestr)
 
 @memoize
-def simplify(tree):
-    return ctx.call('simplify', tree)
-
-def parse_and_simplify(treestr):
-    tree = parse(treestr)
-    return simplify(tree)
-
-@memoize
 def matches(tree, obj):
     return ctx.call('matches', tree, obj)
 
