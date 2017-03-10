@@ -45,6 +45,13 @@
           <input type="text" class="form-control" id="opt_name_{{o.number}}" name="name" placeholder="Name" value="{{o.name | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
         </div>
       </div>
+      
+      <div class="form-group">
+        <label class="control-label col-sm-3" for="opt_picture_url_{{o.number}}">Picture URL:</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="opt_picture_url_{{o.number}}" name="picture_url" placeholder="Picture URL" value="{{o.picture_url | escape }}" {% if vote_readonly %} readonly="readonly" {% endif %}>
+        </div>
+      </div>
 
       <div class="form-group">
         <label class="control-label col-sm-3">Description:</label>
