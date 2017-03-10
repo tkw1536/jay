@@ -777,6 +777,7 @@ def vote_options_edit(request, system_name, vote_name):
         option.name = form.cleaned_data["name"]
         option.description = form.cleaned_data["description"]
         option.personal_link = form.cleaned_data["personal_link"]
+        option.picture_url = form.cleaned_data["picture_url"]
         option.link_name = form.cleaned_data["link_name"]
 
         option.clean()
