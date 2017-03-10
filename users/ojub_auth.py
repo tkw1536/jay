@@ -5,7 +5,7 @@ from users.models import UserProfile
 
 import requests
 
-OPENJUB_BASE = "https://api.jacobs.university/"
+OPENJUB_BASE = "https://api.jacobs-cs.club/"
 
 class OjubBackend(object):
 	"""
