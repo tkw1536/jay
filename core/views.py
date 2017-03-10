@@ -13,8 +13,14 @@ def home(request):
     results = Vote.objects.filter(status__stage=Status.PUBLIC)
 
     if request.user.is_authenticated():
-        details = json.loads(request.user.profile.details)
-        votes_shown = [v for v in votes if v.filter.matches(details)]
+        try:
+            details = request.user.socialaccount_set.get(
+                provider='dreamjub').extra_data
+        except request.user.DoesNotExist:
+            details = {}
+
+        votes_shown = [v for v in votes if v.filter.matches(json.loads(
+            details))]
 
         ctx["vote_list_title"] = "Your votes"
 
