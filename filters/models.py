@@ -23,7 +23,7 @@ class UserFilter(models.Model):
 
     def clean(self):
         try:
-            self.tree = json.dumps(forest.parse_and_simplify(self.value))
+            self.tree = json.dumps(forest.parse(self.value))
         except Exception as e:
             self.tree = None
 
