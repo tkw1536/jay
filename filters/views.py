@@ -10,7 +10,7 @@ from django.http import Http404
 
 from filters.models import UserFilter
 from filters.forms import NewFilterForm, EditFilterForm, FilterTestForm, FilterTestUserForm
-import filters.forest as forest
+import filters.forest_legacy as forest
 
 
 from votes.models import VotingSystem

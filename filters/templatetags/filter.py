@@ -1,5 +1,5 @@
 from django import template
-import filters.forest as forest
+import filters.forest_legacy as forest
 import json
 
 register = template.Library()
