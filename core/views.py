@@ -7,6 +7,7 @@ from votes.models import Vote, Status
 from filters.models import UserFilter
 from users.models import UserProfile
 
+
 # Create your views here.
 def home(request):
     ctx = {}

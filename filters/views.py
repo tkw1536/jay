@@ -12,12 +12,12 @@ from filters.models import UserFilter
 from filters.forms import NewFilterForm, EditFilterForm, FilterTestForm, FilterTestUserForm
 import filters.forest as forest
 
-import json
-
 
 from votes.models import VotingSystem
 
-from jay.utils import priviliged
+from jay.utils import priviliged, is_elevated, get_all_systems, is_admin_for, get_user_details
+
+import json
 
 FILTER_FOREST_TEMPLATE = "filters/filter_forest.html"
 FILTER_EDIT_TEMPLATE = "filters/filter_edit.html"
@@ -28,7 +28,7 @@ FILTER_TEST_TEMPLATE = "filters/filter_test.html"
 def Forest(request, alert_type=None, alert_head=None, alert_text=None):
 
     # if the user does not have enough priviliges, throw an exception
-    if not request.user.profile.isElevated():
+    if not is_elevated(request.user):
         raise PermissionDenied
 
     # build a new context
@@ -40,7 +40,7 @@ def Forest(request, alert_type=None, alert_head=None, alert_text=None):
     bc.append({'url':reverse('filters:forest'), 'text':'Filters', 'active':True})
     ctx['breadcrumbs'] = bc
 
-    (admin_systems, other_systems) = request.user.profile.getSystems()
+    (admin_systems, other_systems) = get_all_systems(request.user)
 
     # give those to the view
     ctx['admin_systems'] = admin_systems
@@ -77,7 +77,7 @@ def FilterNew(request):
 
     # check if the user can edit it.
     # if not, go back to the overview
-    if not system.isAdmin(request.user.profile):
+    if not is_admin_for(request.user, system):
         return Forest(request, alert_head="Creation failed", alert_text="Nice try. You are not allowed to edit this VotingSystem. ")
 
     # create a new filter
@@ -136,7 +136,7 @@ def FilterEdit(request, filter_id):
     ctx["filter"] = filter
 
     # check if the user can edit it
-    if not filter.canEdit(request.user.profile):
+    if not filter.canEdit(request.user):
         raise PermissionDenied
 
     # Set up the breadcrumbs
@@ -244,7 +244,7 @@ def FilterTestUser(request, filter_id):
         form = FilterTestUserForm(request.POST)
         if form.is_valid():
             obj = form.cleaned_data["user"]
-            obj = User.objects.filter(username=obj)[0].profile.details
+            obj = json.dumps(get_user_details(User.objects.filter(username=obj)[0]))
     except Exception as e:
         print(e)
         pass

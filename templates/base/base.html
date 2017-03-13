@@ -43,11 +43,11 @@
                     {{ user.username }} <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                    {% if user.profile.isSuperAdmin %}
+                    {% if user.is_superuser %}
                       <li class="dropdown-header">Management</li>
 
                       <li role="presentation"><a href="{% url 'settings:systems' %}">Voting Systems</a></li>
-                      <li role="presentation"><a href="{% url 'settings:settings' %}">Super Admins</a></li>
+                      {# <li role="presentation"><a href="{% url 'settings:settings' %}">Super Admins</a></li> #}
                     {% endif %}
 
                     {% with admin_for=user.profile.getAdministratedSystems %}

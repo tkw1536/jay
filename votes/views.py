@@ -49,7 +49,7 @@ def system_home(request, system_name):
 
     all_votes = Vote.objects.filter(system=vs)
 
-    if request.user.is_authenticated() and vs.isAdmin(request.user.profile):
+    if request.user.is_authenticated() and vs.isAdmin(request.user):
         ctx['votes'] = all_votes
         ctx['results'] = Vote.objects.filter(system=vs, status__stage__in=[Status.PUBLIC, Status.CLOSE])
 
@@ -203,7 +203,9 @@ def get_vote_props(ctx, vote):
 
     return ctx
 
+
 def vote_edit_context(request, system_name, vote_name):
+    from jay import utils
     """
         Returns context and basic parameters for vote editing.
     """
@@ -213,14 +215,14 @@ def vote_edit_context(request, system_name, vote_name):
     vote.touch()
 
     # raise an error if the user trying to access is not an admin
-    if not system.isAdmin(request.user.profile):
+    if not system.isAdmin(request.user):
         raise PermissionDenied
 
     # make a context
     ctx = {}
 
     # get all the systems this user can edit
-    (admin_systems, other_systems) = request.user.profile.getSystems()
+    (admin_systems, other_systems) = utils.get_all_systems(request.user)
 
     # add the vote to the system
     ctx['vote'] = vote
@@ -256,7 +258,7 @@ def vote_add(request, system_name):
     vs = get_object_or_404(VotingSystem, machine_name=system_name)
 
     # raise an error if the user trying to access is not an admin
-    if not vs.isAdmin(request.user.profile):
+    if not vs.isAdmin(request.user):
         raise PermissionDenied
 
     v = Vote()
