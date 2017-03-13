@@ -667,6 +667,7 @@ def vote_option(request, system_name, vote_name):
 
     min_votes = form.cleaned_data["min_votes"]
     max_votes = form.cleaned_data["max_votes"]
+    auto_open_options = form.cleaned_data["auto_open_options"]
     count = vote.option_set.count()
 
     # read min and max votes, then store them
@@ -686,6 +687,7 @@ def vote_option(request, system_name, vote_name):
 
         vote.min_votes = min_votes
         vote.max_votes = max_votes
+        vote.auto_open_options = auto_open_options
 
         # and try to clean + save
         vote.clean()
@@ -699,7 +701,7 @@ def vote_option(request, system_name, vote_name):
     # Woo, we made it
     ctx['alert_type'] = 'success'
     ctx['alert_head'] = 'Saving suceeded'
-    ctx['alert_text'] = 'Number of vote options updated. '
+    ctx['alert_text'] = 'Option configuration updated. '
 
     # so render the basic template
     return render(request, VOTE_EDIT_TEMPLATE, ctx)
@@ -940,7 +942,7 @@ def results(request, system_name, vote_name):
 
     # set options and the vote
     ctx['vote'] = vote
-    ctx['options'] = vote.option_set.order_by('-count')
+    ctx['options'] = vote.option_set.order_by('-count').annotate(percent=(F("count") * 100 /vote.passivevote.num_voters))
 
     if vote.status.stage != Status.PUBLIC:
         if vote.status.stage == Status.CLOSE and request.user.is_authenticated():

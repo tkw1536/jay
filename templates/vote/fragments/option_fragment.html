@@ -13,8 +13,8 @@
     {% endif %}
 
     {% if option.description %}
-      <p>{{ option.description | truncatewords_html:5 }}<a href="#" class="caret show-desc"></a></p>
-      <div class="full-desc" class="pull-left" style="display: none;">
+      <p {% if vote.auto_open_options %} style="display: none;" {% endif %}>{{ option.description | truncatewords_html:5 }}<a href="#" class="caret show-desc" {% if vote.auto_open_options %} style="display: none;" {% endif %}></a></p>
+      <div class="full-desc" class="pull-left" {% if not vote.auto_open_options %} style="display: none; " {% endif %}>
         {{ option.description | markdown | safe }}
       </div>
     {% endif %}

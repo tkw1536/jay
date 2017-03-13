@@ -21,10 +21,12 @@ class Vote(models.Model):
 	name = models.CharField(max_length = 64)
 	machine_name = models.SlugField(max_length = 64)
 
-	filter = models.ForeignKey(UserFilter, null=True)
+	auto_open_options = models.BooleanField(default = False)
+
+	filter = models.ForeignKey(UserFilter, null = True)
 	status = models.OneToOneField('Status')
 
-	description = models.TextField()
+	description = models.TextField(blank = True)
 
 	creator = models.ForeignKey(User)
 
@@ -59,12 +61,12 @@ class Vote(models.Model):
 		return self.status.stage == Status.INIT
 
 	def update_eligibility(self, username, password):
-		
+
 		PassiveVote.objects.get_or_create(vote=self, defaults={'num_voters': 0, 'num_eligible': 0})
 
 		if self.filter == None:
 			raise Exception("Missing filter. ")
-		
+
 		# this will take really long
 		everyone = get_all(username, password)
 
@@ -89,7 +91,7 @@ class Vote(models.Model):
 		pv.save()
 
 
-	# Touch yourself
+	# Touch yourself, we lack self-assurance
 	def touch(self):
 		status = self.status
 		stage = self.status.stage
