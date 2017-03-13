@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 
 from settings.models import VotingSystem
 
-import filters.forest as forest
+from filters.forest import logic
 from jay import utils
 
 # Create your models here.
@@ -23,7 +23,7 @@ class UserFilter(models.Model):
 
     def clean(self):
         try:
-            self.tree = json.dumps(forest.parse(self.value))
+            self.tree = json.dumps(logic.parse(self.value))
         except Exception as e:
             self.tree = None
 
@@ -38,7 +38,7 @@ class UserFilter(models.Model):
         """
 
         try:
-            return forest.matches(json.loads(self.tree), obj)
+            return logic.matches(json.loads(self.tree), obj)
         except Exception as e:
             import sys
             sys.stderr.write(e)
@@ -47,7 +47,8 @@ class UserFilter(models.Model):
     def map_matches(self, objs):
 
         try:
-            return forest.map_match(json.loads(self.tree), objs)
+            tree = json.loads(self.tree)
+            return list(lambda o: logic.matches(tree, o), objs)
         except Exception as e:
             return False
 

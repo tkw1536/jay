@@ -10,7 +10,8 @@ from django.http import Http404
 
 from filters.models import UserFilter
 from filters.forms import NewFilterForm, EditFilterForm, FilterTestForm, FilterTestUserForm
-import filters.forest_legacy as forest
+
+from filters.forest import logic
 
 
 from votes.models import VotingSystem
@@ -162,7 +163,7 @@ def FilterEdit(request, filter_id):
 
         # check if we have a valid tree manually
         try:
-            tree = forest.parse(form.cleaned_data['value'])
+            tree = logic.parse(form.cleaned_data['value'])
             if not tree:
                 raise Exception
         except Exception as e:
